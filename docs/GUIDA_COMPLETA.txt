@@ -187,8 +187,9 @@ processi e le app segnalate e richiedere spiegazioni se non riconosciuti.
 9. FILE E CARTELLE
 ─────────────────
   controller 4\
-    AVVIA_CONTROLLO.bat    → Avvio principale (doppio clic)
-    AVVIA_SCANSIONE.bat    → Alternativa avvio
+    AVVIA_CONTROLLO.bat    → Avvio principale: doppio clic, nessuna scelta richiesta
+    AVVIA_SCANSIONE.bat    → Alternativa: scansione rapida, un solo click
+    AVVIA_AVANZATO.bat     → Menu con opzioni (rapida/completa/verifica catena)
     core\
       DVController.ps1     → Script principale
       config\settings.json → Lingua, percorso report, apertura automatica

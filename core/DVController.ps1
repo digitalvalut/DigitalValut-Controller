@@ -23,7 +23,7 @@
     See the LICENSE file for details.
 
 .VERSION
-    4.1.0
+    4.1.1
 
 .LINK
     https://www.digitalvalut.it
@@ -50,7 +50,7 @@ $ErrorActionPreference = "Continue"
 
 # === CONFIGURAZIONE GLOBALE ===
 $Global:DVConfig = @{
-    Version         = "4.1.0"
+    Version         = "4.1.1"
     Author          = "DigitalValut"
     AuthorTitle     = "Sviluppatore: Dott. Giuseppe Falsone e il team DigitalValut"
     Organization    = "DigitalValut Association"

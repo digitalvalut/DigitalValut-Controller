@@ -84,8 +84,14 @@ e usarlo, sia chi non ha mai usato GitHub sia chi lavora con Git ogni giorno.
    e scarica il file `.zip` in cima alla pagina (oppure in alto su questa
    pagina clicca il pulsante verde **"Code" → "Download ZIP"**).
 2. Estrai lo ZIP su una chiavetta USB o sul Desktop.
-3. Doppio clic su `AVVIA_CONTROLLO.bat` (consigliato) o `AVVIA_SCANSIONE.bat`.
+3. Doppio clic su `AVVIA_CONTROLLO.bat`. **Non c'è nessuna scelta da fare**: la
+   scansione parte da sola.
 4. Attendi 30–90 secondi: il report si apre automaticamente nel browser.
+
+Vuoi solo un controllo veloce, o vuoi scegliere tu tra scansione rapida,
+completa e verifica della catena di custodia? Usa rispettivamente
+`AVVIA_SCANSIONE.bat` o `AVVIA_AVANZATO.bat` — entrambi opzionali, per chi
+vuole più controllo.
 
 ### Se usi Git (metodo per professionisti/IT)
 
@@ -134,6 +140,8 @@ stati alterati dopo la generazione:
 powershell -ExecutionPolicy Bypass -File core\DVController.ps1 -VerifyChain
 ```
 
+(oppure, senza riga di comando: doppio clic su `AVVIA_AVANZATO.bat` → opzione 3)
+
 Il meccanismo è **tamper-evident**: rende rilevabile un'alterazione accidentale
 o non esperta. Non è una marca temporale certificata di terza parte (RFC 3161),
 si basa sull'orologio locale ed è rigenerabile da un soggetto tecnicamente
@@ -175,8 +183,9 @@ semplice dei risultati, generata da un modello che gira **in locale**.
 
 ```
 DigitalValut-Controller/
-├── AVVIA_CONTROLLO.bat       # Avvio principale
-├── AVVIA_SCANSIONE.bat       # Avvio alternativo
+├── AVVIA_CONTROLLO.bat       # Avvio principale: doppio clic, nessuna scelta
+├── AVVIA_SCANSIONE.bat       # Scansione rapida, un solo click
+├── AVVIA_AVANZATO.bat        # Menu con opzioni (per chi vuole scegliere)
 ├── core/
 │   ├── DVController.ps1      # Script principale
 │   ├── config/settings.json  # Lingua, apertura automatica del report

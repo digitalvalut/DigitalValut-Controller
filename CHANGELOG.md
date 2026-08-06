@@ -5,6 +5,29 @@ Tutte le modifiche rilevanti a questo progetto sono documentate in questo file.
 Il formato si ispira a [Keep a Changelog](https://keepachangelog.com/it/1.1.0/)
 e il progetto adotta il [Versionamento Semantico](https://semver.org/lang/it/).
 
+## [4.1.1] — 2026-08-06
+
+### Modificato
+
+- **`AVVIA_CONTROLLO.bat` non chiede più nulla**: eseguiva un menu interattivo
+  (`choice /c 1234`) che restava in attesa di un tasto prima di iniziare
+  qualunque cosa. Un utente che si aspettava "doppio clic e via" restava
+  bloccato senza capire perché. Ora il doppio clic avvia direttamente la
+  scansione completa, senza alcuna scelta richiesta.
+- Il menu con le opzioni (rapida/completa/verifica catena di custodia) non è
+  sparito: è stato spostato nel nuovo `AVVIA_AVANZATO.bat`, per chi lo vuole
+  esplicitamente.
+
+### Verificato
+
+- Testato il download reale da GitHub Releases con il blocco "proveniente da
+  Internet" (Mark-of-the-Web) applicato come farebbe un vero browser:
+  **Windows SmartScreen non blocca l'esecuzione** di `AVVIA_CONTROLLO.bat`
+  (nessuna finestra di blocco osservata); l'unico vero ostacolo trovato era
+  il menu interattivo, ora rimosso.
+- Confermato con un'esecuzione reale, senza premere alcun tasto, che il
+  report viene generato e aperto automaticamente.
+
 ## [4.1.0] — 2026-08-06
 
 ### Aggiunto
@@ -99,6 +122,7 @@ e il progetto adotta il [Versionamento Semantico](https://semver.org/lang/it/).
 - Modalità `-QuickScan` per un controllo rapido.
 - Funzionamento portabile: nessuna installazione, nessuna connessione di rete.
 
+[4.1.1]: https://github.com/digitalvalut/DigitalValut-Controller/releases/tag/v4.1.1
 [4.1.0]: https://github.com/digitalvalut/DigitalValut-Controller/releases/tag/v4.1.0
 [4.0.1]: https://github.com/digitalvalut/DigitalValut-Controller/releases/tag/v4.0.1
 [4.0.0]: https://github.com/digitalvalut/DigitalValut-Controller/releases/tag/v4.0.0

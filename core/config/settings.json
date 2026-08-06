@@ -1,5 +1,5 @@
 {
-  "Version": "4.0.0",
+  "Version": "4.1.1",
   "Language": "it",
   "ReportPath": "DigitalValut_Reports",
   "_ReportPathNote": "Non configurabile: i report sono sempre salvati in DigitalValut_Reports accanto al programma, per mantenere un'unica cartella e un'unica catena di custodia su qualunque PC venga usato lo strumento.",

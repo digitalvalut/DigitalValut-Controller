@@ -21,9 +21,12 @@ COME SI USA (3 PASSI):
   1.  COPIA la cartella su chiavetta USB (o sul Desktop)
 
   2.  APRI la cartella e fai DOPPIO CLIC su "AVVIA_CONTROLLO.bat"
-      (oppure "AVVIA_SCANSIONE.bat" se presente)
+      Non devi scegliere nulla: parte da solo.
 
   3.  ASPETTA 30-90 secondi - Il report si apre DA SOLO!
+
+  (Se vuoi scegliere tu tra scansione rapida/completa o verificare un
+  report gia' fatto, usa "AVVIA_AVANZATO.bat" - opzionale, non necessario)
 
 
 DOVE TROVO IL REPORT?

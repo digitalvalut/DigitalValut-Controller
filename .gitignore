@@ -2,6 +2,10 @@
 DigitalValut_Reports/
 *.jsonl
 
+# Pacchetti di release generati da scripts/New-ReleasePackage.ps1 (allegati
+# alla Release GitHub, non al repository)
+dist/
+
 # File di sistema Windows
 Thumbs.db
 desktop.ini
