@@ -20,11 +20,11 @@ function Get-DVFirewallStatus {
     
     try {
         $fw = Get-NetFirewallProfile -ErrorAction SilentlyContinue
-        foreach ($profile in $fw) {
-            switch ($profile.Name) {
-                "Domain"  { $status.DomainProfile  = $profile.Enabled }
-                "Private" { $status.PrivateProfile = $profile.Enabled }
-                "Public"  { $status.PublicProfile  = $profile.Enabled }
+        foreach ($fwProfile in $fw) {
+            switch ($fwProfile.Name) {
+                "Domain"  { $status.DomainProfile  = $fwProfile.Enabled }
+                "Private" { $status.PrivateProfile = $fwProfile.Enabled }
+                "Public"  { $status.PublicProfile  = $fwProfile.Enabled }
             }
         }
         $status.AllEnabled = $status.DomainProfile -and $status.PrivateProfile -and $status.PublicProfile

@@ -71,6 +71,72 @@ function Get-DVLastLedgerEntryHash {
     return "GENESIS"
 }
 
+function Get-DVLastLedgerEntry {
+    <#
+    .SYNOPSIS
+        Restituisce l'ultimo record del registro (oggetto completo), o $null se il
+        registro non esiste o e' vuoto. Usato per confrontare la scansione corrente
+        con l'ultima registrata (vedi Compare-DVScanFindings).
+    #>
+    param([Parameter(Mandatory)][string]$LedgerPath)
+    if (-not (Test-Path $LedgerPath)) { return $null }
+    $lastLine = Get-Content -Path $LedgerPath -Tail 1 -ErrorAction SilentlyContinue
+    if (-not $lastLine) { return $null }
+    try {
+        return ($lastLine | ConvertFrom-Json)
+    } catch {
+        return $null
+    }
+}
+
+function Compare-DVScanFindings {
+    <#
+    .SYNOPSIS
+        Confronta i findings della scansione corrente con quelli dell'ultima
+        scansione registrata nella catena di custodia, leggendo il file JSON
+        della scansione precedente (stessa cartella dei report).
+    .DESCRIPTION
+        Funzione puramente locale: non richiede alcuna connessione di rete.
+        Se non esiste una scansione precedente valida, restituisce $null: in
+        quel caso il report non mostrera' alcuna sezione di confronto.
+    #>
+    param(
+        [Parameter(Mandatory)][string]$LedgerPath,
+        [Parameter(Mandatory)][string]$ReportDir,
+        [Parameter(Mandatory)][int]$CurrentScore,
+        [Parameter(Mandatory)][AllowEmptyCollection()][array]$CurrentFindings
+    )
+
+    $previous = Get-DVLastLedgerEntry -LedgerPath $LedgerPath
+    if (-not $previous) { return $null }
+
+    $prevJsonName = $previous.ReportFileName -replace '\.html$', '.json'
+    $prevJsonPath = Join-Path $ReportDir $prevJsonName
+    if (-not (Test-Path $prevJsonPath)) { return $null }
+
+    try {
+        $prevData = Get-Content -Path $prevJsonPath -Raw -Encoding UTF8 | ConvertFrom-Json
+        $prevFindings = @($prevData.ThreatScore.Findings)
+    } catch {
+        return $null
+    }
+
+    $currentSet = @($CurrentFindings)
+    $newFindings      = @($currentSet | Where-Object { $prevFindings -notcontains $_ })
+    $resolvedFindings = @($prevFindings | Where-Object { $currentSet -notcontains $_ })
+
+    return @{
+        PreviousTimestamp = $previous.Timestamp
+        PreviousScore     = [int]$previous.ThreatScore
+        PreviousLevel     = $previous.ThreatLevel
+        CurrentScore      = $CurrentScore
+        ScoreDelta        = ($CurrentScore - [int]$previous.ThreatScore)
+        NewFindings       = $newFindings
+        ResolvedFindings  = $resolvedFindings
+        Unchanged         = ($newFindings.Count -eq 0 -and $resolvedFindings.Count -eq 0)
+    }
+}
+
 function Add-DVCustodyRecord {
     <#
     .SYNOPSIS
@@ -162,4 +228,4 @@ function Test-DVChainIntegrity {
     return [PSCustomObject]@{ Valid = $true; TotalEntries = $index; Message = "Catena integra: $index record verificati, nessuna manomissione rilevata." }
 }
 
-Export-ModuleMember -Function Get-DVContentHash, Get-DVFileHashSHA256, Get-DVLedgerPath, Get-DVLastLedgerEntryHash, Add-DVCustodyRecord, Test-DVChainIntegrity
+Export-ModuleMember -Function Get-DVContentHash, Get-DVFileHashSHA256, Get-DVLedgerPath, Get-DVLastLedgerEntryHash, Get-DVLastLedgerEntry, Compare-DVScanFindings, Add-DVCustodyRecord, Test-DVChainIntegrity

@@ -1,5 +1,6 @@
-# DigitalValut Controller v4.0
+# DigitalValut Controller v4.1
 
+[![CI](https://github.com/digitalvalut/DigitalValut-Controller/actions/workflows/ci.yml/badge.svg)](https://github.com/digitalvalut/DigitalValut-Controller/actions/workflows/ci.yml)
 [![Licenza: GPL v3](https://img.shields.io/badge/Licenza-GPLv3-blue.svg)](LICENSE)
 [![PowerShell 5.1+](https://img.shields.io/badge/PowerShell-5.1%2B-5391FE.svg)](https://learn.microsoft.com/powershell/)
 [![Piattaforma: Windows](https://img.shields.io/badge/Piattaforma-Windows%2010%2F11-0078D6.svg)](#requisiti)
@@ -34,6 +35,20 @@ modifica il sistema, non invia dati in rete: funziona anche da chiavetta USB.
 - **Sorveglianza audio/video**: uso di microfono e webcam, dispositivi audio
   virtuali (Virtual Audio Cable, VB-Audio, Voicemeeter, Stereo Mix), permessi
   privacy di Windows, indicatori di spyware audio
+- **Firma digitale (Authenticode)** di ogni processo sospetto rilevato: distingue
+  un eseguibile firmato da uno stesso nome ma non firmato o con firma non
+  attendibile (elemento a supporto, non prova da solo — vedi DISCLAIMER.md)
+- **Persistenza avanzata**: sottoscrizioni WMI permanenti non riconosciute,
+  `AppInit_DLLs`, debugger IFEO (hijacking di eseguibili), task pianificati con
+  pattern sospetti (comandi codificati, download remoti, percorsi temporanei)
+- **Confronto con la scansione precedente**: cosa è cambiato — nuovi riscontri
+  e riscontri risolti — rispetto all'ultima volta, letto dalla catena di custodia
+- **Spiegazione in linguaggio semplice generata da AI locale** (opzionale): se
+  hai [Ollama](https://ollama.com) installato sulla stessa macchina, il report
+  include una spiegazione discorsiva dei risultati. Comunica solo con
+  `127.0.0.1` (loopback): nessun dato lascia mai il PC. Se Ollama non è
+  installato questa sezione è semplicemente assente — nessuna dipendenza
+  obbligatoria. Disattivabile con `-DisableAI`.
 
 Il risultato è un report HTML/JSON con punteggio di rischio (SICURO → CRITICO),
 riferimenti normativi e un fac-simile di richiesta al DPO.
@@ -82,6 +97,19 @@ Poi come sopra: doppio clic su `AVVIA_CONTROLLO.bat`.
 
 I report generati vengono salvati in `Desktop\DigitalValut_Reports`.
 
+### Verifica dell'integrità del download (consigliata per ambienti PA/aziendali)
+
+Ogni [release](../../releases) pubblica, insieme allo ZIP, un file `SHA256SUMS.txt`
+con l'hash SHA-256 del pacchetto. Per verificare che il file scaricato sia
+integro e non alterato:
+
+```powershell
+Get-FileHash -Algorithm SHA256 -Path .\DigitalValut-Controller-vX.Y.Z.zip
+```
+
+Confronta l'hash ottenuto con quello indicato in `SHA256SUMS.txt` nella stessa
+release: devono coincidere esattamente.
+
 ### Per uffici pubblici e privati
 
 Lo strumento è pensato anche per un utilizzo su larga scala (PA, aziende,
@@ -112,6 +140,37 @@ si basa sull'orologio locale ed è rigenerabile da un soggetto tecnicamente
 competente. Non va presentato come garanzia di autenticità opponibile a terzi
 (vedi [DISCLAIMER.md](DISCLAIMER.md), sezione 4).
 
+## AI locale (opzionale) via Ollama
+
+Se hai [Ollama](https://ollama.com) installato e in esecuzione sulla stessa
+macchina, il report include automaticamente una spiegazione in linguaggio
+semplice dei risultati, generata da un modello che gira **in locale**.
+
+- L'unico endpoint contattato è `http://127.0.0.1:11434` (loopback): il
+  traffico non esce mai dal dispositivo, non è una connessione Internet.
+- Se Ollama non è installato o non è in esecuzione, questa sezione è
+  semplicemente assente: nessun errore, nessuna dipendenza obbligatoria,
+  nessun rallentamento oltre un controllo di disponibilità di 2 secondi.
+- Per disattivarla esplicitamente anche quando Ollama è presente:
+  ```bash
+  powershell -ExecutionPolicy Bypass -File core\DVController.ps1 -DisableAI
+  ```
+- Il testo generato dall'AI è dichiarato come tale nel report e non sostituisce
+  le sezioni tecniche né un parere legale: può contenere imprecisioni.
+
+## Qualità e affidabilità del codice
+
+- **Test automatici** (Pester): logica di hash e catena di custodia, calcolo
+  del punteggio di rischio, moduli di persistenza e firma digitale — vedi
+  [`tests/`](tests/).
+- **Lint automatico** (PSScriptAnalyzer) su ogni push/PR, configurazione in
+  [`PSScriptAnalyzerSettings.psd1`](PSScriptAnalyzerSettings.psd1).
+- **CI su GitHub Actions**: sintassi, lint e test eseguiti automaticamente a
+  ogni modifica — vedi il badge in cima a questa pagina o la scheda
+  [Actions](../../actions) del repository.
+- Codice sorgente interamente leggibile, nessun binario precompilato nel
+  repository ufficiale.
+
 ## Struttura del progetto
 
 ```
@@ -121,7 +180,11 @@ DigitalValut-Controller/
 ├── core/
 │   ├── DVController.ps1      # Script principale
 │   ├── config/settings.json  # Lingua, apertura automatica del report
-│   └── modules/              # Rete, processi, sorveglianza, report, custodia
+│   └── modules/              # Rete, processi, sorveglianza, persistenza,
+│                              # firma digitale, AI locale, report, custodia
+├── tests/                    # Suite di test Pester
+├── scripts/                  # Strumenti di release (pacchetto + checksum)
+├── .github/workflows/        # CI (lint + test automatici)
 ├── docs/                     # Guida completa, riferimenti legali, quick guide
 ├── templates/                # Template HTML/CSS del report
 ├── DISCLAIMER.md             # Avvertenze e limiti (da leggere)

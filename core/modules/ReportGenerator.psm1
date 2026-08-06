@@ -1,4 +1,4 @@
-# DigitalValut Controller v4.0 - ReportGenerator Module
+# DigitalValut Controller v4.1 - ReportGenerator Module
 # Strumento Tutela Privacy Lavoratori PA
 # Copyright (C) 2024-2026 DigitalValut - www.digitalvalut.it
 # Sviluppatore: Dott. Giuseppe Falsone e il team DigitalValut
@@ -20,7 +20,8 @@ function Get-DVThreatScore {
         [object]$FirewallStatus,
         [object]$NetworkConnections,
         [hashtable]$PortsDb = @{},
-        [object]$SurveillanceCapabilities = $null
+        [object]$SurveillanceCapabilities = $null,
+        [object]$PersistenceFindings = $null
     )
     
     $score = 0
@@ -104,15 +105,39 @@ function Get-DVThreatScore {
             }
         }
     }
-    
-    # Determina livello
-    $level = switch ($score) {
-        {$_ -eq 0}    { @{Text="SICURO"; Color="#2ed573"; Icon="&#x2705;"; Class="secure"} }
-        {$_ -lt 30}   { @{Text="BASSO"; Color="#7bed9f"; Icon="&#x1F7E2;"; Class="low"} }
-        {$_ -lt 60}   { @{Text="MEDIO"; Color="#ffa502"; Icon="&#x1F7E1;"; Class="medium"} }
-        {$_ -lt 100}  { @{Text="ALTO"; Color="#ff6348"; Icon="&#x1F7E0;"; Class="high"} }
-        default       { @{Text="CRITICO"; Color="#ff4757"; Icon="&#x1F534;"; Class="critical"} }
+
+    # Persistenza avanzata (WMI, AppInit_DLLs, IFEO, task pianificati sospetti)
+    if ($PersistenceFindings -and $PersistenceFindings.Score -gt 0) {
+        $score += $PersistenceFindings.Score
+        if ($PersistenceFindings.Findings) {
+            $findings += @($PersistenceFindings.Findings)
+        }
     }
+
+    # Firma digitale: un processo di controllo remoto/spyware NON firmato o con firma
+    # non attendibile e' un elemento aggravante (non decisivo da solo, vedi DISCLAIMER.md)
+    $unsignedFlagged = @()
+    foreach ($proc in $remoteControl + $spyware + $employeeMonitor) {
+        if ($proc.SignatureStatus -and $proc.SignatureStatus -notin @("Valid", "Inaccessible", "Unknown")) {
+            $unsignedFlagged += $proc.ProcessName
+        }
+    }
+    if ($unsignedFlagged.Count -gt 0) {
+        $score += ($unsignedFlagged.Count * 10)
+        $findings += "[FIRMA] Eseguibile senza firma digitale valida: $(($unsignedFlagged | Select-Object -Unique) -join ', ')"
+    }
+
+    # Determina livello.
+    # NOTA: usare if/elseif (non "switch" senza break) e' intenzionale: un blocco switch
+    # senza "break" in PowerShell esegue TUTTE le clausole che risultano vere, non solo la
+    # prima. Con soglie crescenti (-lt 30, -lt 60, -lt 100) questo produceva livelli multipli
+    # sovrapposti per qualunque punteggio tra 1 e 99 (bug corretto in v4.1, individuato dai
+    # test automatici: vedi tests/ThreatScore.Tests.ps1 e CHANGELOG.md).
+    $level = if ($score -eq 0)    { @{Text="SICURO"; Color="#2ed573"; Icon="&#x2705;"; Class="secure"} }
+             elseif ($score -lt 30)  { @{Text="BASSO"; Color="#7bed9f"; Icon="&#x1F7E2;"; Class="low"} }
+             elseif ($score -lt 60)  { @{Text="MEDIO"; Color="#ffa502"; Icon="&#x1F7E1;"; Class="medium"} }
+             elseif ($score -lt 100) { @{Text="ALTO"; Color="#ff6348"; Icon="&#x1F7E0;"; Class="high"} }
+             else                    { @{Text="CRITICO"; Color="#ff4757"; Icon="&#x1F534;"; Class="critical"} }
 
     $timestamp = Get-Date -Format "yyyy-MM-dd HH:mm:ss"
 
@@ -183,6 +208,9 @@ function New-DVReportHTML {
         [object]$Capabilities = $null,
         [object]$SurveillanceCapabilities = $null,
         [object]$ProcessAnalysis = $null,
+        [object]$PersistenceFindings = $null,
+        [object]$ScanDiff = $null,
+        [object]$OllamaExplanation = $null,
         [string]$ControllerRoot,
         [string]$OutputPath,
         [string]$JsonData = "",
@@ -245,9 +273,17 @@ function New-DVReportHTML {
             $totalMem = ($grp.Group | ForEach-Object { $_.MemoryMB } | Where-Object { $_ } | Measure-Object -Sum).Sum
             if ($totalMem) { $mem = "$([math]::Round($totalMem, 2)) MB (tot)" }
         }
-        $processHtml += "<tr><td>$([System.Net.WebUtility]::HtmlEncode($procName))$countStr</td><td>$pids</td><td title=`"$([System.Net.WebUtility]::HtmlEncode($path))`">$([System.Net.WebUtility]::HtmlEncode($pathDisplay))</td><td>$mem</td><td><span class=`"badge badge-$riskClass`">$($first.Risk)</span></td><td>$($first.Type)</td></tr>`n"
+        $sigStatus = $first.SignatureStatus
+        $sigBadge = switch ($sigStatus) {
+            "Valid"        { "<span class=`"badge badge-low`">Firmato</span>" }
+            "Inaccessible" { "<span title=`"File non raggiungibile per la verifica`">N/D</span>" }
+            $null          { "<span title=`"Verifica non eseguita`">N/D</span>" }
+            default        { "<span class=`"badge badge-critical`" title=`"$([System.Net.WebUtility]::HtmlEncode([string]$sigStatus))`">Non firmato</span>" }
+        }
+        if ($first.SignerSubject) { $sigBadge += " <small title=`"$([System.Net.WebUtility]::HtmlEncode($first.SignerSubject))`">&#x2139;&#xFE0F;</small>" }
+        $processHtml += "<tr><td>$([System.Net.WebUtility]::HtmlEncode($procName))$countStr</td><td>$pids</td><td title=`"$([System.Net.WebUtility]::HtmlEncode($path))`">$([System.Net.WebUtility]::HtmlEncode($pathDisplay))</td><td>$mem</td><td><span class=`"badge badge-$riskClass`">$($first.Risk)</span></td><td>$($first.Type)</td><td>$sigBadge</td></tr>`n"
     }
-    if ([string]::IsNullOrEmpty($processHtml)) { $processHtml = "<tr><td colspan=`"6`" style=`"text-align:center;color:#7eb8e8;`">Nessun processo sospetto rilevato.</td></tr>" }
+    if ([string]::IsNullOrEmpty($processHtml)) { $processHtml = "<tr><td colspan=`"7`" style=`"text-align:center;color:#7eb8e8;`">Nessun processo sospetto rilevato.</td></tr>" }
     
     $servicesHtml = ""
     $services = @($ServiceAnalysis)
@@ -532,6 +568,91 @@ function New-DVReportHTML {
 </section>
 "@
     }
+
+    # === PERSISTENZA AVANZATA (WMI, AppInit_DLLs, IFEO, task pianificati) ===
+    $persistenceSection = ""
+    if ($PersistenceFindings) {
+        $pf = $PersistenceFindings
+        $wmiHtml = ""
+        foreach ($w in @($pf.WmiSubscriptions)) {
+            if ($w.Known) { continue }
+            $wmiHtml += "<tr><td>$([System.Net.WebUtility]::HtmlEncode($w.Name))</td><td>$($w.ConsumerType)</td><td>$([System.Net.WebUtility]::HtmlEncode($w.Command))</td><td><span class=`"badge badge-high`">$($w.Risk)</span></td></tr>`n"
+        }
+        if (-not $wmiHtml) { $wmiHtml = "<tr><td colspan=`"4`" style=`"text-align:center;color:#7eb8e8;`">Nessuna sottoscrizione WMI non riconosciuta.</td></tr>" }
+
+        $appInitHtml = if ($pf.AppInitDlls.Configured) {
+            "<span class=`"badge badge-high`">Attivo</span> - DLL: $([System.Net.WebUtility]::HtmlEncode(($pf.AppInitDlls.Dlls -join ', ')))"
+        } else { "<span class=`"badge badge-low`">Non configurato</span>" }
+
+        $ifeoHtml = ""
+        foreach ($i in @($pf.IFEODebuggers)) {
+            $ifeoHtml += "<tr><td>$([System.Net.WebUtility]::HtmlEncode($i.TargetExecutable))</td><td>$([System.Net.WebUtility]::HtmlEncode($i.Debugger))</td><td><span class=`"badge badge-critical`">$($i.Risk)</span></td></tr>`n"
+        }
+        if (-not $ifeoHtml) { $ifeoHtml = "<tr><td colspan=`"3`" style=`"text-align:center;color:#7eb8e8;`">Nessun debugger IFEO configurato.</td></tr>" }
+
+        $tasksHtml = ""
+        foreach ($t in @($pf.ScheduledTasks)) {
+            $tasksHtml += "<tr><td>$([System.Net.WebUtility]::HtmlEncode($t.TaskName))</td><td title=`"$([System.Net.WebUtility]::HtmlEncode($t.Command))`">$([System.Net.WebUtility]::HtmlEncode($t.Reason))</td><td><span class=`"badge badge-high`">$($t.Risk)</span></td></tr>`n"
+        }
+        if (-not $tasksHtml) { $tasksHtml = "<tr><td colspan=`"3`" style=`"text-align:center;color:#7eb8e8;`">Nessun task pianificato sospetto.</td></tr>" }
+
+        $persistenceSection = @"
+<section class="card">
+    <h2>&#x1F9E9; Persistenza avanzata</h2>
+    <p style="font-size:0.85rem;opacity:0.8;">Tecniche usate sia da malware sia, piu' raramente, da strumenti di gestione IT legittimi (es. SCCM). Ogni riscontro va valutato nel contesto: la presenza non dimostra da sola una compromissione.</p>
+    <h3>Sottoscrizioni WMI non riconosciute</h3>
+    <table class="data-table"><thead><tr><th>Nome</th><th>Tipo</th><th>Comando/Script</th><th>Rischio</th></tr></thead><tbody>$wmiHtml</tbody></table>
+    <h3>AppInit_DLLs (iniezione DLL globale)</h3>
+    <p>$appInitHtml</p>
+    <h3>Image File Execution Options - Debugger hijacking</h3>
+    <table class="data-table"><thead><tr><th>Eseguibile target</th><th>Debugger configurato</th><th>Rischio</th></tr></thead><tbody>$ifeoHtml</tbody></table>
+    <h3>Task pianificati sospetti</h3>
+    <table class="data-table"><thead><tr><th>Nome task</th><th>Motivo segnalazione</th><th>Rischio</th></tr></thead><tbody>$tasksHtml</tbody></table>
+</section>
+"@
+    }
+
+    # === DIFF RISPETTO ALL'ULTIMA SCANSIONE ===
+    $scanDiffSection = ""
+    if ($ScanDiff -and -not $ScanDiff.Unchanged) {
+        $deltaText = if ($ScanDiff.ScoreDelta -gt 0) { "+$($ScanDiff.ScoreDelta)" } else { "$($ScanDiff.ScoreDelta)" }
+        $deltaColor = if ($ScanDiff.ScoreDelta -gt 0) { "var(--danger)" } elseif ($ScanDiff.ScoreDelta -lt 0) { "#2ed573" } else { "inherit" }
+        $newHtml = ""
+        foreach ($f in @($ScanDiff.NewFindings)) { $newHtml += "<li class=`"finding-item`">$([System.Net.WebUtility]::HtmlEncode($f))</li>`n" }
+        if (-not $newHtml) { $newHtml = "<li class=`"finding-item safe`">Nessun nuovo riscontro.</li>" }
+        $resolvedHtml = ""
+        foreach ($f in @($ScanDiff.ResolvedFindings)) { $resolvedHtml += "<li class=`"finding-item safe`">$([System.Net.WebUtility]::HtmlEncode($f))</li>`n" }
+        if (-not $resolvedHtml) { $resolvedHtml = "<li class=`"finding-item`">Nessun riscontro precedente risolto.</li>" }
+        $scanDiffSection = @"
+<section class="card">
+    <h2>&#x1F504; Cosa e' cambiato dall'ultima scansione</h2>
+    <p>Scansione precedente: <strong>$($ScanDiff.PreviousTimestamp)</strong> - punteggio $($ScanDiff.PreviousScore) ($($ScanDiff.PreviousLevel)) &rarr; ora <strong>$($ScanDiff.CurrentScore)</strong> (<span style="color:$deltaColor;">$deltaText</span>)</p>
+    <h3>&#x1F195; Nuovi riscontri rispetto all'ultima scansione</h3>
+    <ul class="findings-list">$newHtml</ul>
+    <h3>&#x2705; Non piu' presenti rispetto all'ultima scansione</h3>
+    <ul class="findings-list">$resolvedHtml</ul>
+</section>
+"@
+    } elseif ($ScanDiff -and $ScanDiff.Unchanged) {
+        $scanDiffSection = @"
+<section class="card">
+    <h2>&#x1F504; Cosa e' cambiato dall'ultima scansione</h2>
+    <p>Nessuna variazione rispetto alla scansione del <strong>$($ScanDiff.PreviousTimestamp)</strong> (punteggio $($ScanDiff.PreviousScore), invariato).</p>
+</section>
+"@
+    }
+
+    # === SPIEGAZIONE AI LOCALE (Ollama, opzionale) ===
+    $aiExplanationSection = ""
+    if ($OllamaExplanation -and $OllamaExplanation.Text) {
+        $aiExplanationSection = @"
+<section class="card">
+    <h2>&#x1F916; Spiegazione in linguaggio semplice (AI locale)</h2>
+    <p style="font-size:0.85rem;opacity:0.8;">Generata in locale con il modello <code>$([System.Net.WebUtility]::HtmlEncode($OllamaExplanation.Model))</code> tramite Ollama (127.0.0.1): nessun dato di questa scansione e' stato inviato a Internet. Testo generato automaticamente: puo' contenere imprecisioni, non sostituisce le sezioni tecniche del report ne' un parere legale.</p>
+    <p>$([System.Net.WebUtility]::HtmlEncode($OllamaExplanation.Text))</p>
+</section>
+"@
+    }
     
     $html = @"
 <!DOCTYPE html>
@@ -541,13 +662,13 @@ function New-DVReportHTML {
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="author" content="$($cfg.Author) - $($cfg.AuthorTitle)">
     <meta name="generator" content="DigitalValut Controller $($cfg.Version)">
-    <title>$titleEmoji Report Sicurezza - DigitalValut Controller v4.0</title>
+    <title>$titleEmoji Report Sicurezza - DigitalValut Controller v4.1</title>
     $cssContent
 </head>
 <body>
     <header class="header">
         <div class="logo"><span class="digi">Digital</span><span class="valut">Valut</span></div>
-        <p class="tagline">Controller v4.0 - Strumento di Tutela Privacy Lavoratori PA</p>
+        <p class="tagline">Controller v4.1 - Strumento di Tutela Privacy Lavoratori PA</p>
         <p class="meta">$($SystemInfo.ComputerName) | $($SystemInfo.ScanDate)</p>
     </header>
     
@@ -564,8 +685,12 @@ function New-DVReportHTML {
 
         $alertBox
 
+        $scanDiffSection
+
+        $aiExplanationSection
+
         $capabilitySection
-        
+
         <section class="card">
             <h2>&#x1F4DD; COSA DEVI FARE ORA</h2>
             $cosaFareHtml
@@ -593,7 +718,8 @@ function New-DVReportHTML {
         
         <section class="card">
             <h2>&#x2699;&#xFE0F; Processi rilevati</h2>
-            <table class="data-table"><thead><tr><th>Processo</th><th>PID</th><th>Percorso</th><th>Memoria</th><th>Rischio</th><th>Tipo</th></tr></thead><tbody>$processHtml</tbody></table>
+            <p style="font-size:0.85rem;opacity:0.8;">La colonna Firma indica se l'eseguibile ha una firma digitale (Authenticode) valida. L'assenza di firma non dimostra da sola malevolenza, ne' la presenza di firma dimostra un uso autorizzato: e' un elemento a supporto, non una prova (vedi DISCLAIMER.md).</p>
+            <table class="data-table"><thead><tr><th>Processo</th><th>PID</th><th>Percorso</th><th>Memoria</th><th>Rischio</th><th>Tipo</th><th>Firma</th></tr></thead><tbody>$processHtml</tbody></table>
         </section>
         
         <section class="card">
@@ -607,7 +733,9 @@ function New-DVReportHTML {
         </section>
         
         $surveillanceSection
-        
+
+        $persistenceSection
+
         <section class="card">
             <h2>&#x1F4E6; Software Installato (controllo remoto)</h2>
             <table class="data-table"><thead><tr><th>Nome</th><th>Versione</th><th>Editore</th><th>Rischio</th></tr></thead><tbody>$softwareHtml</tbody></table>

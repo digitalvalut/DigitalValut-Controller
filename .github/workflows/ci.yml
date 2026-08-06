@@ -1,0 +1,77 @@
+name: CI
+
+on:
+  push:
+    branches: [ master, main ]
+  pull_request:
+    branches: [ master, main ]
+  workflow_dispatch:
+
+jobs:
+  lint-and-test:
+    name: Lint (PSScriptAnalyzer) + Test (Pester)
+    runs-on: windows-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Verifica sintassi PowerShell
+        shell: pwsh
+        run: |
+          $ErrorActionPreference = "Stop"
+          $hasErrors = $false
+          Get-ChildItem -Path "core" -Recurse -Include *.ps1,*.psm1 | ForEach-Object {
+            $tokens = $null; $errors = $null
+            [System.Management.Automation.Language.Parser]::ParseFile($_.FullName, [ref]$tokens, [ref]$errors) | Out-Null
+            if ($errors.Count -gt 0) {
+              Write-Host "::error file=$($_.FullName)::Errori di sintassi: $($errors.Count)"
+              $errors | ForEach-Object { Write-Host "::error::$($_.Message) (riga $($_.Extent.StartLineNumber))" }
+              $hasErrors = $true
+            }
+          }
+          if ($hasErrors) { throw "Errori di sintassi PowerShell trovati." }
+          Write-Host "Sintassi valida su tutti i file."
+
+      - name: Installa PSScriptAnalyzer
+        shell: pwsh
+        run: |
+          Install-Module -Name PSScriptAnalyzer -Force -Scope CurrentUser -SkipPublisherCheck
+
+      - name: Esegui PSScriptAnalyzer (fallisce solo su Error)
+        shell: pwsh
+        run: |
+          $results = Invoke-ScriptAnalyzer -Path "core" -Recurse -Settings "PSScriptAnalyzerSettings.psd1"
+          $errors = @($results | Where-Object Severity -eq 'Error')
+          $warnings = @($results | Where-Object Severity -eq 'Warning')
+          Write-Host "Warning: $($warnings.Count) (non bloccanti, vedi PSScriptAnalyzerSettings.psd1)"
+          if ($errors.Count -gt 0) {
+            $errors | ForEach-Object { Write-Host "::error file=$($_.ScriptName)::$($_.RuleName): $($_.Message) (riga $($_.Line))" }
+            throw "$($errors.Count) errori PSScriptAnalyzer bloccanti trovati."
+          }
+          Write-Host "Nessun errore bloccante."
+
+      - name: Installa Pester 5+
+        shell: pwsh
+        run: |
+          Install-Module -Name Pester -MinimumVersion 5.5.0 -Force -SkipPublisherCheck -Scope CurrentUser
+
+      - name: Esegui i test Pester
+        shell: pwsh
+        run: |
+          Import-Module Pester -MinimumVersion 5.5.0 -Force
+          $config = New-PesterConfiguration
+          $config.Run.Path = "tests"
+          $config.Run.Exit = $true
+          $config.Output.Verbosity = "Detailed"
+          $config.TestResult.Enabled = $true
+          $config.TestResult.OutputPath = "testResults.xml"
+          $config.TestResult.OutputFormat = "NUnitXml"
+          Invoke-Pester -Configuration $config
+
+      - name: Pubblica risultati test
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: pester-test-results
+          path: testResults.xml

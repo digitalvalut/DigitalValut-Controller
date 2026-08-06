@@ -1,7 +1,7 @@
 #Requires -Version 5.1
 <#
 .SYNOPSIS
-    DigitalValut Controller v4.0 - Strumento di Tutela Privacy Lavoratori PA
+    DigitalValut Controller v4.1 - Strumento di Tutela Privacy Lavoratori PA
 
 .DESCRIPTION
     Strumento per la verifica di software di controllo remoto non autorizzato.
@@ -23,7 +23,7 @@
     See the LICENSE file for details.
 
 .VERSION
-    4.0.0
+    4.1.0
 
 .LINK
     https://www.digitalvalut.it
@@ -31,19 +31,26 @@
 
 param(
     # Scansione rapida: salta i controlli piu' lenti (ricerca file spyware in AppData,
-    # programmi di avvio automatico, stato antivirus). Utile per un primo controllo veloce.
+    # programmi di avvio automatico, stato antivirus, persistenza avanzata). Utile per
+    # un primo controllo veloce.
     [switch]$QuickScan,
 
     # Non esegue una scansione: verifica solo l'integrita' del registro di catena di
     # custodia esistente (chain_of_custody.jsonl) e mostra l'esito.
-    [switch]$VerifyChain
+    [switch]$VerifyChain,
+
+    # Disattiva il tentativo di usare un LLM locale (Ollama, su 127.0.0.1) per generare
+    # una spiegazione in linguaggio naturale dei risultati. Se Ollama non e' installato
+    # il modulo e' comunque no-op: questo switch serve solo a chi lo ha installato ma
+    # non vuole usarlo per questa scansione.
+    [switch]$DisableAI
 )
 
 $ErrorActionPreference = "Continue"
 
 # === CONFIGURAZIONE GLOBALE ===
 $Global:DVConfig = @{
-    Version         = "4.0.0"
+    Version         = "4.1.0"
     Author          = "DigitalValut"
     AuthorTitle     = "Sviluppatore: Dott. Giuseppe Falsone e il team DigitalValut"
     Organization    = "DigitalValut Association"
@@ -82,6 +89,9 @@ $modules = @(
     "NetworkAnalyzer",
     "SecurityChecker",
     "SurveillanceDetector",
+    "AuthenticodeChecker",
+    "PersistenceAnalyzer",
+    "OllamaAssistant",
     "ReportGenerator",
     "ChainOfCustody"
 )
@@ -163,6 +173,13 @@ $portAnalysis = Get-DVOpenPorts -PortsDb $portDb
 Write-Host "  [*] Scansione processi..." -ForegroundColor Cyan
 $processAnalysis = Get-DVProcessScan -ThreatDb $processDb
 
+Write-Host "  [*] Verifica firma digitale (Authenticode) dei processi rilevati..." -ForegroundColor Cyan
+foreach ($category in @('RemoteControl', 'Spyware', 'EmployeeMonitor', 'OtherSuspicious')) {
+    if ($processAnalysis[$category] -and @($processAnalysis[$category]).Count -gt 0) {
+        $processAnalysis[$category] = Add-DVSignatureInfo -Entries @($processAnalysis[$category])
+    }
+}
+
 Write-Host "  [*] Verifica servizi sospetti..." -ForegroundColor Cyan
 $serviceAnalysis = Get-DVServicesSuspicious -ProcessDb $processDb
 
@@ -185,6 +202,7 @@ $capabilities = Get-DVRemoteControlCapabilities
 $surveillanceCapabilities = $null
 $startupPrograms = @()
 $antivirusStatus = @()
+$persistenceFindings = $null
 if (-not $QuickScan) {
     Write-Host "  [*] Rilevamento sorveglianza audio/video (microfono, webcam)..." -ForegroundColor Cyan
     $surveillanceCapabilities = Get-DVSurveillanceCapabilities
@@ -194,15 +212,36 @@ if (-not $QuickScan) {
 
     Write-Host "  [*] Stato Antivirus..." -ForegroundColor Cyan
     $antivirusStatus = Get-DVAntivirusStatus
+
+    Write-Host "  [*] Persistenza avanzata (WMI, AppInit_DLLs, IFEO, task pianificati)..." -ForegroundColor Cyan
+    $persistenceFindings = Get-DVPersistenceFindings
 } else {
-    Write-Host "  [i] Saltati (modalita' rapida): sorveglianza audio/video, avvio automatico, antivirus." -ForegroundColor DarkGray
+    Write-Host "  [i] Saltati (modalita' rapida): sorveglianza audio/video, avvio automatico, antivirus, persistenza avanzata." -ForegroundColor DarkGray
 }
 
 Write-Host "  [*] Calcolo punteggio di rischio..." -ForegroundColor Cyan
 $threatScore = Get-DVThreatScore -PortAnalysis $portAnalysis -ProcessAnalysis $processAnalysis `
     -ServiceAnalysis $serviceAnalysis -SoftwareAnalysis $softwareAnalysis `
     -FirewallStatus $firewallStatus -NetworkConnections $networkConnections -PortsDb $portDb `
-    -SurveillanceCapabilities $surveillanceCapabilities
+    -SurveillanceCapabilities $surveillanceCapabilities -PersistenceFindings $persistenceFindings
+
+Write-Host "  [*] Confronto con l'ultima scansione registrata..." -ForegroundColor Cyan
+$scanDiff = Compare-DVScanFindings -LedgerPath $ledgerPath -ReportDir $reportDir `
+    -CurrentScore $threatScore.Score -CurrentFindings @($threatScore.Findings)
+if ($scanDiff) {
+    Write-Host "  [i] Scansione precedente: $($scanDiff.PreviousTimestamp) - punteggio $($scanDiff.PreviousScore) ($($scanDiff.PreviousLevel))" -ForegroundColor DarkGray
+}
+
+$ollamaExplanation = $null
+if (-not $DisableAI) {
+    Write-Host "  [*] Verifica presenza di un modello AI locale (Ollama, solo 127.0.0.1)..." -ForegroundColor Cyan
+    $ollamaExplanation = Get-DVOllamaExplanation -Findings @($threatScore.Findings) -Score $threatScore.Score -LevelText $threatScore.Level.Text
+    if ($ollamaExplanation) {
+        Write-Host "  [OK] Spiegazione generata in locale con il modello '$($ollamaExplanation.Model)' (nessun dato inviato a Internet)." -ForegroundColor Green
+    } else {
+        Write-Host "  [i] Nessun modello AI locale disponibile (normale se Ollama non e' installato): sezione saltata." -ForegroundColor DarkGray
+    }
+}
 
 $dateStr = Get-Date -Format "yyyy-MM-dd_HH-mm"
 $safeComputerName = $systemInfo.ComputerName -replace '[^\w\-]', '_'
@@ -223,6 +262,8 @@ $exportData = @{
     SurveillanceCapabilities = $surveillanceCapabilities
     StartupPrograms          = $startupPrograms
     AntivirusStatus          = $antivirusStatus
+    PersistenceFindings      = $persistenceFindings
+    ScanDiff                 = $scanDiff
 }
 $jsonDataString = $exportData | ConvertTo-Json -Depth 10
 $findingsHash = Get-DVContentHash -Content $jsonDataString
@@ -235,6 +276,7 @@ try {
         -FirewallStatus $firewallStatus -ExternalConnections $externalConnections `
         -StartupPrograms $startupPrograms -AntivirusStatus $antivirusStatus `
         -SurveillanceCapabilities $surveillanceCapabilities `
+        -PersistenceFindings $persistenceFindings -ScanDiff $scanDiff -OllamaExplanation $ollamaExplanation `
         -ControllerRoot $controllerRoot -OutputPath $reportFullPath -JsonData $jsonDataString `
         -ContentHash $findingsHash -IsElevated $isElevated
 } catch {
@@ -262,9 +304,9 @@ try {
     $ledgerPath = Get-DVLedgerPath -ReportDir $reportDir
     $reportFileHash = Get-DVFileHashSHA256 -Path $reportFullPath
     $jsonFileHash = Get-DVFileHashSHA256 -Path $jsonPath
-    $custodyRecord = Add-DVCustodyRecord -LedgerPath $ledgerPath -ReportFileName (Split-Path -Leaf $reportFullPath) `
+    Add-DVCustodyRecord -LedgerPath $ledgerPath -ReportFileName (Split-Path -Leaf $reportFullPath) `
         -ReportFileHash $reportFileHash -JsonFileHash $jsonFileHash -SystemInfo $systemInfo `
-        -ThreatScore $threatScore.Score -ThreatLevel $threatScore.Level.Text
+        -ThreatScore $threatScore.Score -ThreatLevel $threatScore.Level.Text | Out-Null
 
     $chainCheck = Test-DVChainIntegrity -LedgerPath $ledgerPath
     Write-Host "  [OK] Hash file report (SHA-256): $reportFileHash" -ForegroundColor Green

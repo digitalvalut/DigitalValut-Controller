@@ -231,8 +231,8 @@ function Get-PrivacyPermissions {
         $capPath = 'HKCU:\SOFTWARE\Microsoft\Windows\CurrentVersion\CapabilityAccessManager\ConsentStore'
         $micVal = (Get-ItemProperty -Path "$capPath\microphone" -Name 'Value' -ErrorAction SilentlyContinue).Value
         $camVal = (Get-ItemProperty -Path "$capPath\webcam" -Name 'Value' -ErrorAction SilentlyContinue).Value
-        if ($micVal -ne $null) { $micEnabled = ($micVal -eq 'Allow') }
-        if ($camVal -ne $null) { $camEnabled = ($camVal -eq 'Allow') }
+        if ($null -ne $micVal) { $micEnabled = ($micVal -eq 'Allow') }
+        if ($null -ne $camVal) { $camEnabled = ($camVal -eq 'Allow') }
         # App con permesso (sottochiavi)
         foreach ($store in @('microphone', 'webcam')) {
             $base = "$capPath\$store"

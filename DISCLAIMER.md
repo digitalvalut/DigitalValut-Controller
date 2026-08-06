@@ -38,6 +38,12 @@ L'utente riconosce espressamente di essere stato informato che:
 
 **d) Ambito di esecuzione.** Eseguito senza privilegi amministrativi, il Software produce risultati parziali. Alcuni controlli possono fallire silenziosamente per restrizioni di sistema, policy aziendali o configurazioni particolari.
 
+**e) Firma digitale (Authenticode).** L'assenza di firma digitale su un eseguibile **non dimostra** malevolenza: molto software legittimo, in particolare interno o aziendale, non è firmato. Allo stesso modo, la presenza di una firma valida **non dimostra** un uso autorizzato: un software commerciale regolarmente firmato (es. TeamViewer) può comunque essere installato senza autorizzazione. È un elemento a supporto della valutazione, non una prova.
+
+**f) Persistenza avanzata.** Le tecniche rilevate (sottoscrizioni WMI, `AppInit_DLLs`, debugger IFEO, task pianificati) sono usate sia da malware sia, più raramente, da strumenti di gestione IT legittimi. Ogni riscontro va valutato nel contesto: la presenza non dimostra da sola una compromissione.
+
+**g) Spiegazione generata da intelligenza artificiale (opzionale).** Se disponibile in locale tramite Ollama, il report può includere una spiegazione dei risultati generata da un modello linguistico. Questo testo è generato automaticamente, **può contenere imprecisioni o omissioni** (fenomeno noto come "allucinazione" nei modelli linguistici), non è stato validato da una persona e **non sostituisce in alcun modo** le sezioni tecniche del report né un parere legale. È fornito unicamente a scopo di leggibilità.
+
 ## 4. LIMITI PROBATORI DEL REPORT
 
 Il report generato dal Software è una **segnalazione tecnica di primo livello**. Esso **NON costituisce**:

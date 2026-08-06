@@ -1,12 +1,12 @@
 ════════════════════════════════════════════════════════════════════════════════
-        DIGITALVALUT CONTROLLER v4.0 - GUIDA COMPLETA
+        DIGITALVALUT CONTROLLER v4.1 - GUIDA COMPLETA
         Manuale utente - DigitalValut - Sviluppatore: Dott. Giuseppe Falsone e il team
         (VETSEC Scanner - Strumento Tutela Privacy Lavoratori PA)
 ════════════════════════════════════════════════════════════════════════════════
 
 1. COS'E' DIGITALVALUT CONTROLLER
 ────────────────────────────────
-DigitalValut Controller (VETSEC Scanner v4.0) e' uno strumento professionale per
+DigitalValut Controller (VETSEC Scanner v4.1) e' uno strumento professionale per
 la verifica di software di controllo remoto, spyware, keylogger e sorveglianza
 audio/video sul PC. E' progettato per la tutela dei lavoratori secondo GDPR e
 Statuto dei Lavoratori (Art. 4, L. 300/1970).
@@ -15,10 +15,16 @@ Cosa rileva:
   - Connessioni remote attive (RDP, VNC, TeamViewer, ecc.)
   - Porte in ascolto sospette
   - Processi e servizi di controllo remoto o monitoraggio
+  - Firma digitale (Authenticode) dei processi sospetti rilevati
+  - Persistenza avanzata: sottoscrizioni WMI, AppInit_DLLs, debugger IFEO,
+    task pianificati sospetti
   - Programmi in avvio automatico
   - Stato antivirus e firewall
   - SORVEGLIANZA AUDIO/VIDEO: chi usa microfono o webcam, dispositivi audio
     virtuali, permessi privacy Windows, indicatori di spyware audio
+  - Confronto automatico con l'ultima scansione: cosa e' cambiato
+  - Spiegazione in linguaggio semplice generata da AI locale (opzionale, solo
+    se e' installato Ollama sulla stessa macchina; nessun dato in rete)
 
 Non installa nulla, non modifica il sistema, funziona da USB.
 
@@ -92,6 +98,11 @@ Sezioni del report:
     · Dispositivi audio virtuali a rischio (Virtual Audio Cable, VB-Audio,
       Voicemeeter, Stereo Mix: possono redirigere l'audio a software nascosti)
     · Indicatori spyware audio (file sospetti, audiodg con connessioni esterne)
+  - Processi rilevati: include ora la colonna Firma digitale (Authenticode)
+  - Persistenza avanzata: sottoscrizioni WMI non riconosciute, AppInit_DLLs,
+    debugger IFEO, task pianificati sospetti
+  - Cosa e' cambiato dall'ultima scansione (se disponibile una scansione precedente)
+  - Spiegazione in linguaggio semplice (AI locale, se disponibile Ollama)
   - Software installato (controllo remoto)
   - Programmi avvio automatico
   - Firewall: stato per dominio, rete privata, rete pubblica
@@ -181,14 +192,17 @@ processi e le app segnalate e richiedere spiegazioni se non riconosciuti.
     core\
       DVController.ps1     → Script principale
       config\settings.json → Lingua, percorso report, apertura automatica
-      modules\             → Moduli (rete, processi, report, sorveglianza, ecc.)
+      modules\             → Moduli (rete, processi, report, sorveglianza,
+                              persistenza, firma digitale, AI locale, ecc.)
+    tests\                 → Suite di test automatici (Pester)
+    scripts\               → Strumenti di release (pacchetto + checksum)
     docs\
       GUIDA_COMPLETA.txt   → Questa guida
       LEGGIMI.txt          → Istruzioni rapide
       README.txt           → Quick guide (EN)
       LEGAL_REFERENCES.txt → Riferimenti normativi
     templates\             → Modello report HTML
-    LICENZA.txt, CREDITS.txt, RIFERIMENTI_LEGALI.txt
+    LICENZA.txt, CREDITS.txt, RIFERIMENTI_LEGALI.txt, DISCLAIMER.md
 
   Report generati:
     Desktop\DigitalValut_Reports\   (o nella cartella del programma)
@@ -209,7 +223,7 @@ In core\config\settings.json puoi impostare (se presente):
 Autore: DigitalValut (www.digitalvalut.it) - Sviluppatore: Dott. Giuseppe Falsone e il team
 Organizzazione: DigitalValut Association
 Specialty: Crypto-Forensics & Blockchain Security
-Licenza: Open Source - DigitalValut Proprietary License
+Licenza: Open Source - GNU GPL v3.0 (gratuito per sempre)
 Sito: https://www.digitalvalut.it
 Email: info@digitalvalut.com
 
@@ -219,7 +233,7 @@ Codice Privacy, Provvedimento Garante 13/07/2016).
 
 
 ════════════════════════════════════════════════════════════════════════════════
-             DigitalValut Controller v4.0 - VETSEC Scanner
+             DigitalValut Controller v4.1 - VETSEC Scanner
              DigitalValut - Sviluppatore: Dott. Giuseppe Falsone e il team
              https://www.digitalvalut.it - info@digitalvalut.com
 ════════════════════════════════════════════════════════════════════════════════

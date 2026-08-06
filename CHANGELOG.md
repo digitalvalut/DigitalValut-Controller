@@ -5,6 +5,56 @@ Tutte le modifiche rilevanti a questo progetto sono documentate in questo file.
 Il formato si ispira a [Keep a Changelog](https://keepachangelog.com/it/1.1.0/)
 e il progetto adotta il [Versionamento Semantico](https://semver.org/lang/it/).
 
+## [4.1.0] — 2026-08-06
+
+### Aggiunto
+
+- **Verifica firma digitale (Authenticode)** di ogni processo sospetto rilevato:
+  nuovo modulo `AuthenticodeChecker.psm1`, colonna "Firma" nella tabella
+  processi del report, elemento aggiuntivo (non decisivo da solo) nel
+  punteggio di rischio.
+- **Rilevamento persistenza avanzata**: nuovo modulo `PersistenceAnalyzer.psm1`
+  — sottoscrizioni WMI permanenti non riconosciute, `AppInit_DLLs`, debugger
+  IFEO (hijacking di eseguibili), task pianificati con pattern sospetti
+  (comandi codificati, download remoti). Nuova sezione dedicata nel report.
+- **Confronto con la scansione precedente**: nuove funzioni
+  `Get-DVLastLedgerEntry` e `Compare-DVScanFindings` in `ChainOfCustody.psm1`;
+  il report mostra nuovi riscontri e riscontri risolti rispetto all'ultima
+  scansione registrata nella catena di custodia.
+- **Spiegazione in linguaggio semplice generata da AI locale (opzionale)**:
+  nuovo modulo `OllamaAssistant.psm1`. Comunica esclusivamente con
+  `127.0.0.1` (loopback): nessun dato lascia mai il dispositivo. Se Ollama
+  non è installato la funzionalità è no-op, senza dipendenze obbligatorie né
+  rallentamenti. Disattivabile con il parametro `-DisableAI`.
+- **Suite di test automatici** (Pester): 45 test su hash/catena di custodia,
+  calcolo del punteggio di rischio, persistenza avanzata, firma digitale,
+  modulo AI locale — cartella [`tests/`](tests/).
+- **CI su GitHub Actions**: sintassi, lint (PSScriptAnalyzer) e test eseguiti
+  automaticamente a ogni push/PR — [`​.github/workflows/ci.yml`](.github/workflows/ci.yml).
+- **`PSScriptAnalyzerSettings.psd1`**: configurazione lint con le esclusioni
+  documentate e motivate per le convenzioni intenzionali del progetto.
+- **`scripts/New-ReleasePackage.ps1`**: genera il pacchetto ZIP di release e
+  il relativo `SHA256SUMS.txt` per la verifica di integrità del download.
+
+### Corretto
+
+- **Bug nel calcolo del livello di rischio**: il blocco `switch` che
+  determinava il livello testuale (SICURO/BASSO/MEDIO/ALTO/CRITICO) non
+  utilizzava `break`, quindi per qualunque punteggio tra 1 e 99 venivano
+  eseguite **più clausole contemporaneamente**, producendo un livello
+  ambiguo (es. array `BASSO, MEDIO, ALTO` invece del solo livello corretto).
+  Individuato dai nuovi test automatici (`tests/ThreatScore.Tests.ps1`) e
+  corretto sostituendo lo switch con una catena if/elseif esplicita.
+- Variabile automatica di PowerShell `$profile` usata come nome di variabile
+  in `SecurityChecker.psm1` (rinominata in `$fwProfile` per evitare
+  l'ombreggiamento non voluto della variabile di sistema).
+- Confronti con `$null` riordinati secondo le best practice PowerShell in
+  `SurveillanceDetector.psm1` (`$null -eq $x` anziché `$x -eq $null`, per
+  evitare il comportamento a sorpresa se `$x` fosse un array).
+- Encoding UTF-8 con BOM ripristinato su `ReportGenerator.psm1` e
+  `SurveillanceDetector.psm1`, per una lettura corretta dei caratteri
+  accentati su Windows PowerShell 5.1 in assenza di BOM.
+
 ## [4.0.1] — 2026-08-06
 
 ### Modificato
@@ -49,5 +99,6 @@ e il progetto adotta il [Versionamento Semantico](https://semver.org/lang/it/).
 - Modalità `-QuickScan` per un controllo rapido.
 - Funzionamento portabile: nessuna installazione, nessuna connessione di rete.
 
+[4.1.0]: https://github.com/digitalvalut/DigitalValut-Controller/releases/tag/v4.1.0
 [4.0.1]: https://github.com/digitalvalut/DigitalValut-Controller/releases/tag/v4.0.1
 [4.0.0]: https://github.com/digitalvalut/DigitalValut-Controller/releases/tag/v4.0.0
