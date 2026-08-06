@@ -1,0 +1,68 @@
+════════════════════════════════════════════════════════════════════════════════
+                    RIFERIMENTI NORMATIVI COMPLETI
+        DigitalValut Controller v4.0 - Tutela Privacy Lavoratori PA
+        Dr. Giuseppe Falsone - CEO DigitalValut
+════════════════════════════════════════════════════════════════════════════════
+
+  STATUTO DEI LAVORATORI - Art. 4 (Legge 300/1970)
+  -------------------------------------------------------------------------------
+  "Gli impianti audiovisivi e gli altri strumenti dai quali derivi anche la
+  possibilita' di controllo a distanza dell'attivita' dei lavoratori possono
+  essere impiegati esclusivamente per esigenze organizzative e produttive,
+  per la sicurezza del lavoro e per la tutela del patrimonio aziendale e
+  possono essere installati previo accordo collettivo stipulato dalla
+  rappresentanza sindacale unitaria o dalle rappresentanze sindacali aziendali
+  [...] In mancanza di accordo, gli impianti e gli strumenti di cui al primo
+  periodo possono essere installati previa autorizzazione della sede
+  territoriale dell'Ispettorato nazionale del lavoro."
+
+  NOTA: UltraVNC, TeamViewer, software di controllo remoto NON sono
+  "strumenti di lavoro" ma strumenti di CONTROLLO. Richiedono accordo
+  sindacale o autorizzazione INL PRIMA dell'installazione.
+
+
+  GDPR - Regolamento UE 2016/679
+  -------------------------------------------------------------------------------
+  Art. 5  - Principi: dati trattati in modo lecito, corretto e TRASPARENTE
+  Art. 6  - Liceita' del trattamento (base giuridica)
+  Art. 13 - Informazioni da fornire all'interessato (finalita', destinatari)
+  Art. 21 - Diritto di opposizione
+  Art. 22 - Processo decisionale automatizzato
+  Art. 83 - Sanzioni: fino a 20.000.000 EUR o 4% del fatturato globale
+
+
+  CODICE PRIVACY - D.Lgs. 196/2003
+  -------------------------------------------------------------------------------
+  Art. 114 - Controllo a distanza (richiama Art. 4 L. 300/1970)
+  Art. 171 - Sanzioni penali: ammenda da 154 EUR a 1.549 EUR o arresto
+             da 15 giorni a 1 anno (violazione Art. 4 Statuto Lavoratori)
+
+
+  PROVVEDIMENTO GARANTE PRIVACY 13/07/2016
+  -------------------------------------------------------------------------------
+  Il Garante ha chiarito che software come VNC, TeamViewer, AnyDesk sono
+  strumenti di controllo a distanza e NON rientrano negli "strumenti di
+  lavoro" esclusi dall'Art. 4 comma 2. Richiedono SEMPRE accordo sindacale
+  o autorizzazione dell'Ispettorato Nazionale del Lavoro.
+
+
+  CONSEGUENZE PER IL DATORE DI LAVORO
+  -------------------------------------------------------------------------------
+  - GDPR Art. 83: sanzioni fino a 20.000.000 EUR o 4% fatturato
+  - Codice Privacy Art. 171: ammenda + arresto fino a 1 anno
+  - Dati raccolti con strumenti illegittimi: INUTILIZZABILI in sede
+    disciplinare e processuale
+
+
+  CONTATTI UTILI
+  -------------------------------------------------------------------------------
+  Garante per la Protezione dei Dati Personali: https://www.garanteprivacy.it
+  Ispettorato Nazionale del Lavoro (INL): per autorizzazioni ex Art. 4
+
+
+════════════════════════════════════════════════════════════════════════════════
+  Le informazioni sopra sono a solo scopo informativo e non costituiscono
+  consulenza legale. Per questioni specifiche rivolgersi a un professionista
+  qualificato.
+  DigitalValut Association - Dr. Giuseppe Falsone - CEO DigitalValut
+════════════════════════════════════════════════════════════════════════════════

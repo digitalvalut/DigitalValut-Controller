@@ -1,0 +1,208 @@
+════════════════════════════════════════════════════════════════════════════════
+        DIGITALVALUT CONTROLLER v4.0 - GUIDA COMPLETA
+        Manuale utente - Dr. Giuseppe Falsone - CEO DigitalValut
+        (VETSEC Scanner - Strumento Tutela Privacy Lavoratori PA)
+════════════════════════════════════════════════════════════════════════════════
+
+1. COS'E' DIGITALVALUT CONTROLLER
+────────────────────────────────
+DigitalValut Controller (VETSEC Scanner v4.0) e' uno strumento professionale per
+la verifica di software di controllo remoto, spyware, keylogger e sorveglianza
+audio/video sul PC. E' progettato per la tutela dei lavoratori secondo GDPR e
+Statuto dei Lavoratori (Art. 4, L. 300/1970).
+
+Cosa rileva:
+  - Connessioni remote attive (RDP, VNC, TeamViewer, ecc.)
+  - Porte in ascolto sospette
+  - Processi e servizi di controllo remoto o monitoraggio
+  - Programmi in avvio automatico
+  - Stato antivirus e firewall
+  - SORVEGLIANZA AUDIO/VIDEO: chi usa microfono o webcam, dispositivi audio
+    virtuali, permessi privacy Windows, indicatori di spyware audio
+
+Non installa nulla, non modifica il sistema, funziona da USB.
+
+
+2. REQUISITI
+────────────
+- Windows 10 (build 19042 o superiore) o Windows 11
+- PowerShell 5.1 (incluso in Windows)
+- Nessuna installazione richiesta
+- Opzionale: esecuzione come amministratore per analisi piu' complete
+  (es. connessioni di rete di audiodg.exe, hook DLL)
+
+
+3. INSTALLAZIONE / USO DA USB
+────────────────────────────
+- Copia l'intera cartella "controller 4" (o DigitalValut_Controller) su
+  chiavetta USB o sul Desktop.
+- Non e' necessaria alcuna installazione.
+- Esegui con doppio clic:
+  · AVVIA_CONTROLLO.bat   (consigliato)
+  · oppure AVVIA_SCANSIONE.bat (se presente)
+
+
+4. COME SI USA
+─────────────
+1) Doppio clic su AVVIA_CONTROLLO.bat (o AVVIA_SCANSIONE.bat)
+2) Attendi 30-90 secondi. La scansione analizza:
+   - informazioni di sistema
+   - porte di rete e connessioni
+   - processi e servizi sospetti
+   - software installato (controllo remoto)
+   - connessioni remote attive (chi e' collegato)
+   - capacita' di controllo remoto (cosa possono fare)
+   - SORVEGLIANZA: microfono, webcam, cronologia accessi, dispositivi audio
+     virtuali, permessi privacy, indicatori spyware audio
+   - programmi in avvio automatico
+   - stato antivirus e firewall
+   - calcolo del punteggio di rischio
+3) Il report HTML si apre automaticamente nel browser (se abilitato in impostazioni)
+4) Report e file JSON sono salvati in:
+   - Desktop\DigitalValut_Reports (se scrivibile)
+   - oppure nella cartella DigitalValut_Reports dentro la cartella del programma
+
+
+5. INTERPRETARE IL REPORT
+────────────────────────
+Punteggio di rischio complessivo:
+  - 0:        SICURO   - Nessun elemento sospetto
+  - 1-29:     BASSO    - Situazione normale
+  - 30-59:    MEDIO    - Verificare i componenti segnalati
+  - 60-99:    ALTO     - Software di controllo remoto o monitoraggio rilevato
+  - 100+:     CRITICO  - Rischio elevato (spyware, controllo remoto o sorveglianza)
+
+Il punteggio include anche i punti per la sorveglianza audio/video (microfono in
+uso da processo sconosciuto, webcam, virtual audio cable, file sospetti, ecc.).
+
+Sezioni del report:
+  - Livello di rischio: punteggio, livello e hash di verifica
+  - Riepilogo riscontri: elenco testuale di tutti i problemi (inclusi alert
+    microfono/webcam e virtual audio)
+  - Chi e' collegato al tuo PC ora: IP remoto, porta, processo, stato
+  - Informazioni sistema: computer, utente, OS, IP, ecc.
+  - Porte sospette: porte di rete in ascolto (RDP, VNC, TeamViewer, ecc.)
+  - Processi rilevati: processi attivi riconducibili a controllo remoto o spyware
+  - Connessioni esterne attive
+  - Servizi sospetti: servizi Windows associati a software di monitoraggio
+  - SORVEGLIANZA AUDIO/VIDEO:
+    · Rischio complessivo audio/video (score e livello)
+    · Microfono: in uso, processi con accesso, permesso sistema, cronologia
+    · Webcam: in uso, processi con accesso, permesso sistema, virtual camera
+    · Dispositivi audio virtuali a rischio (Virtual Audio Cable, VB-Audio,
+      Voicemeeter, Stereo Mix: possono redirigere l'audio a software nascosti)
+    · Indicatori spyware audio (file sospetti, audiodg con connessioni esterne)
+  - Software installato (controllo remoto)
+  - Programmi avvio automatico
+  - Firewall: stato per dominio, rete privata, rete pubblica
+  - Antivirus: stato e aggiornamenti
+  - Modello richiesta al DPO (copia e personalizza)
+  - Riferimenti normativi: GDPR, Art. 4 Statuto Lavoratori, Codice Privacy
+  - Dati grezzi (JSON): espandibile per verifica tecnica
+
+
+6. SORVEGLIANZA AUDIO/VIDEO - DETTAGLIO
+───────────────────────────────────────
+Il modulo di rilevamento sorveglianza verifica:
+
+  a) MICROFONO
+     - Quali processi stanno usando il microfono in tempo reale
+     - Processi "noti" (Teams, Zoom, browser, Discord, ecc.) non sono segnalati
+     - Processi sconosciuti con accesso al microfono → segnalati come sospetti
+     - Cronologia accessi dal registro Windows (ultimo utilizzo per app)
+     - Permesso globale "Consenti alle app di accedere al microfono"
+
+  b) WEBCAM
+     - Se la webcam e' in uso e da quale processo
+     - Virtual camera (OBS Virtual Cam, ManyCam, ecc.) rilevate
+     - Permesso globale "Consenti alle app di accedere alla fotocamera"
+
+  c) DISPOSITIVI AUDIO VIRTUALI
+     - Virtual Audio Cable, VB-Audio, Voicemeeter, Stereo Mix
+     - Consentono di redirigere l'audio a software di registrazione nascosti
+     - Segnalati come rischio ALTO
+
+  d) INDICATORI SPYWARE AUDIO
+     - File sospetti in AppData (nomi con record, audio, capture, spy, monitor)
+     - audiodg.exe (servizio audio Windows) con connessioni di rete esterne
+       (anomalo e possibile intercettazione)
+
+  e) PERMESSI PRIVACY
+     - Quali app hanno il permesso esplicito per microfono e fotocamera
+
+In caso di rischio ALTO o CRITICO nella sezione Sorveglianza, verificare i
+processi e le app segnalate e richiedere spiegazioni se non riconosciuti.
+
+
+7. COSA FARE IN CASO DI RISCHIO
+──────────────────────────────
+- Conservare il report (prova documentale con hash e timestamp)
+- Non modificare o disinstallare nulla senza aver consultato il datore di lavoro/IT
+- Richiedere spiegazioni formali (anche scritte) sull'uso di software di
+  controllo, monitoraggio o accesso a microfono/webcam
+- In caso di dubbi, contattare il DPO (Data Protection Officer) o il sindacato
+- Nel report e' incluso un modello di lettera per la richiesta al DPO
+  (copia e personalizza)
+- I riferimenti legali nel report sono informativi; per consulenza legale
+  rivolgersi a un professionista
+
+
+8. PORTABILITA' E PRIVACY
+─────────────────────────
+- Lo strumento non invia dati in rete
+- Tutti i dati restano sul PC; il report e' salvato in locale
+- Puo' essere eseguito senza connessione internet
+- Non richiede account o registrazione
+- Non installa componenti e non modifica il sistema
+
+
+9. FILE E CARTELLE
+─────────────────
+  controller 4\
+    AVVIA_CONTROLLO.bat    → Avvio principale (doppio clic)
+    AVVIA_SCANSIONE.bat    → Alternativa avvio
+    core\
+      DVController.ps1     → Script principale
+      config\settings.json → Lingua, percorso report, apertura automatica
+      modules\             → Moduli (rete, processi, report, sorveglianza, ecc.)
+    docs\
+      GUIDA_COMPLETA.txt   → Questa guida
+      LEGGIMI.txt          → Istruzioni rapide
+      README.txt           → Quick guide (EN)
+      LEGAL_REFERENCES.txt → Riferimenti normativi
+    templates\             → Modello report HTML
+    LICENZA.txt, CREDITS.txt, RIFERIMENTI_LEGALI.txt
+
+  Report generati:
+    Desktop\DigitalValut_Reports\   (o nella cartella del programma)
+      DV_Report_[NOMEPC]_[DATA-ORA].html
+      DV_Report_[NOMEPC]_[DATA-ORA].json
+
+
+10. CONFIGURAZIONE (OPZIONALE)
+─────────────────────────────
+In core\config\settings.json puoi impostare (se presente):
+  - "Language": "it" o "en"
+  - "ReportPath": percorso dove salvare i report (es. "Desktop\\DigitalValut_Reports")
+  - "AutoOpenReport": true/false → se aprire automaticamente il report nel browser
+
+
+11. LICENZA E CREDITI
+────────────────────
+Autore: Dr. Giuseppe Falsone - CEO DigitalValut
+Organizzazione: DigitalValut Association
+Specialty: Crypto-Forensics & Blockchain Security
+Licenza: Open Source - DigitalValut Proprietary License
+Sito: https://digitalvalut.com
+Email: info@digitalvalut.com
+
+Vedi LICENZA.txt e CREDITS.txt per dettagli.
+Vedi RIFERIMENTI_LEGALI.txt per la normativa (Art. 4 Statuto Lavoratori, GDPR,
+Codice Privacy, Provvedimento Garante 13/07/2016).
+
+
+════════════════════════════════════════════════════════════════════════════════
+             DigitalValut Controller v4.0 - VETSEC Scanner
+             Dr. Giuseppe Falsone - CEO DigitalValut
+             https://digitalvalut.com - info@digitalvalut.com
+════════════════════════════════════════════════════════════════════════════════

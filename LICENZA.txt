@@ -1,0 +1,54 @@
+════════════════════════════════════════════════════════════════════════════════
+                    DIGITALVALUT CONTROLLER v4.0
+                    LICENZA: GNU GPL v3.0 (o successiva)
+════════════════════════════════════════════════════════════════════════════════
+
+AUTORE E TITOLARE DEI DIRITTI
+─────────────────────────────
+Dr. Giuseppe Falsone
+CEO & Founder - DigitalValut Association
+
+ORGANIZZAZIONE
+──────────────
+DigitalValut Association
+Associazione no-profit specializzata in sicurezza informatica,
+crypto-forensics e tutela dei lavoratori.
+
+TIPO DI LICENZA
+───────────────
+Questo software e' rilasciato sotto GNU General Public License v3.0 (o, a
+scelta del licenziatario, qualsiasi versione successiva pubblicata dalla
+Free Software Foundation). Il testo integrale e legalmente vincolante e'
+nel file LICENSE incluso in questo repository.
+
+IN SINTESI (non sostituisce il testo legale in LICENSE)
+─────────────────────────────────────────────────────
+- USO: libero, per chiunque, per qualsiasi scopo (personale, professionale,
+  in una PA o azienda).
+- COPIA E DISTRIBUZIONE: libere, mantenendo licenza e avviso di copyright.
+- MODIFICA: libera; le versioni modificate distribuite devono restare
+  anch'esse sotto GPLv3 e con codice sorgente disponibile (copyleft).
+- NESSUNA GARANZIA: il software e' fornito "COSI' COM'E'" (AS IS), senza
+  garanzie di alcun tipo, come previsto dalle sezioni 15 e 16 della GPLv3.
+
+USO RESPONSABILE
+────────────────
+L'utente si impegna a utilizzare questo strumento solo su dispositivi di cui
+ha legittimo accesso o proprieta'. L'utilizzo su sistemi altrui senza
+autorizzazione potrebbe violare le leggi vigenti.
+
+NOTA LEGALE
+───────────
+I riferimenti normativi contenuti nei report sono forniti a solo scopo
+informativo e non costituiscono consulenza legale. Per questioni specifiche,
+rivolgersi a un professionista qualificato.
+
+CONTATTI
+────────
+Website: https://digitalvalut.com
+Email: info@digitalvalut.com
+
+════════════════════════════════════════════════════════════════════════════════
+© 2024-2026 Dr. Giuseppe Falsone - DigitalValut Association
+Rilasciato sotto licenza GNU GPL v3.0+ — vedi il file LICENSE
+════════════════════════════════════════════════════════════════════════════════

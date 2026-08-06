@@ -1,0 +1,38 @@
+════════════════════════════════════════════════════════════════════════════════
+                    DIGITALVALUT CONTROLLER v3.0
+                           CREDITI
+════════════════════════════════════════════════════════════════════════════════
+
+AUTORE E SVILUPPO
+────────────────
+Dr. Giuseppe Falsone
+CEO & Founder - DigitalValut Association
+Crypto-Forensics & Blockchain Security Expert
+
+ORGANIZZAZIONE
+──────────────
+DigitalValut Association
+Associazione no-profit - Sicurezza informatica e tutela dei lavoratori
+
+SCOPO DEL PROGETTO
+──────────────────
+Strumento professionale per la verifica di software di controllo remoto,
+spyware e keylogger non autorizzati. Progettato per la tutela dei lavoratori
+secondo GDPR e Statuto dei Lavoratori (Art. 4, L. 300/1970).
+
+TECNOLOGIE
+──────────
+- PowerShell 5.1+
+- HTML5 / CSS3
+- Report portabili (HTML, JSON)
+
+CONTATTI
+────────
+Website: https://digitalvalut.com
+Email: info@digitalvalut.com
+
+════════════════════════════════════════════════════════════════════════════════
+             DigitalValut Controller v3.0 - Open Source
+             © 2024-2026 DigitalValut Association
+             Dr. Giuseppe Falsone - CEO DigitalValut
+════════════════════════════════════════════════════════════════════════════════

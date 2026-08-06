@@ -1,0 +1,404 @@
+/* DigitalValut Controller v4.0 - Tutela Privacy Lavoratori PA */
+/* Dr. Giuseppe Falsone - CEO DigitalValut */
+
+:root {
+    --primary: #00d4ff;
+    --secondary: #ffd700;
+    --danger: #ff4757;
+    --warning: #ffa502;
+    --success: #2ed573;
+    --dark: #0a0a1a;
+    --darker: #050510;
+    --card-bg: linear-gradient(145deg, #12122a 0%, #1a1a3e 100%);
+}
+
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+body {
+    font-family: 'Segoe UI', -apple-system, BlinkMacSystemFont, sans-serif;
+    background: var(--darker);
+    color: #e0e0e0;
+    min-height: 100vh;
+    line-height: 1.6;
+}
+
+.header {
+    background: linear-gradient(135deg, rgba(0,212,255,0.1) 0%, rgba(255,215,0,0.1) 100%);
+    backdrop-filter: blur(10px);
+    border-bottom: 1px solid rgba(255,255,255,0.1);
+    padding: 2rem;
+    text-align: center;
+}
+
+.logo {
+    font-size: 2.5rem;
+    font-weight: 800;
+    letter-spacing: -2px;
+}
+
+.logo .digi { color: var(--primary); }
+.logo .valut { color: var(--secondary); }
+
+.tagline {
+    margin-top: 0.5rem;
+    color: rgba(255,255,255,0.8);
+    font-size: 1rem;
+}
+
+.meta {
+    margin-top: 0.5rem;
+    font-size: 0.9rem;
+    color: rgba(255,255,255,0.6);
+}
+
+.container {
+    max-width: 900px;
+    margin: 0 auto;
+    padding: 2rem;
+}
+
+.risk-score {
+    font-size: 4rem;
+    font-weight: 900;
+    text-shadow: 0 0 50px currentColor;
+    animation: pulse 2s infinite;
+}
+
+@keyframes pulse {
+    0%, 100% { transform: scale(1); opacity: 1; }
+    50% { transform: scale(1.02); opacity: 0.9; }
+}
+
+.risk-level {
+    font-size: 1.5rem;
+    font-weight: 700;
+    margin-top: 0.5rem;
+}
+
+.hash-line {
+    margin-top: 1rem;
+    font-size: 0.85rem;
+    color: rgba(255,255,255,0.6);
+}
+
+.hash-line code {
+    background: rgba(0,0,0,0.3);
+    padding: 0.2rem 0.5rem;
+    border-radius: 4px;
+}
+
+.card {
+    background: var(--card-bg);
+    border-radius: 20px;
+    padding: 2rem;
+    margin: 1.5rem 0;
+    border: 1px solid rgba(255,255,255,0.05);
+    box-shadow: 0 10px 40px rgba(0,0,0,0.5), inset 0 1px 0 rgba(255,255,255,0.05);
+    transition: transform 0.3s, box-shadow 0.3s;
+}
+
+.card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 20px 60px rgba(0,0,0,0.6), inset 0 1px 0 rgba(255,255,255,0.1);
+}
+
+.card h2 {
+    margin-bottom: 1rem;
+    color: var(--primary);
+    font-size: 1.25rem;
+}
+
+.badge {
+    display: inline-flex;
+    align-items: center;
+    padding: 0.3rem 0.8rem;
+    border-radius: 50px;
+    font-weight: 700;
+    font-size: 0.75rem;
+    text-transform: uppercase;
+}
+
+.badge-critical {
+    background: linear-gradient(135deg, #ff4757, #c0392b);
+    color: white;
+}
+
+.badge-high {
+    background: linear-gradient(135deg, #ff6348, #e74c3c);
+    color: white;
+}
+
+.badge-medium {
+    background: linear-gradient(135deg, #ffa502, #f39c12);
+    color: #111;
+}
+
+.badge-low {
+    background: linear-gradient(135deg, #7bed9f, #2ed573);
+    color: #111;
+}
+
+.badge-critical::before { content: "\1F534 "; }
+.badge-high::before { content: "\1F7E0 "; }
+.badge-medium::before { content: "\1F7E1 "; }
+.badge-low::before { content: "\1F7E2 "; }
+
+.info-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 1rem;
+}
+
+.info-item {
+    background: rgba(0,0,0,0.2);
+    padding: 1rem;
+    border-radius: 10px;
+}
+
+.info-label {
+    display: block;
+    font-size: 0.8rem;
+    color: var(--primary);
+    margin-bottom: 0.3rem;
+}
+
+.info-value {
+    font-weight: 600;
+    font-size: 1rem;
+}
+
+.alert {
+    display: flex;
+    gap: 1rem;
+    padding: 1.5rem;
+    border-radius: 15px;
+    margin: 1.5rem 0;
+}
+
+.alert-danger {
+    background: linear-gradient(135deg, rgba(255,71,87,0.2) 0%, rgba(192,57,43,0.2) 100%);
+    border: 2px solid var(--danger);
+}
+
+.alert-icon {
+    font-size: 2rem;
+}
+
+.alert-content strong {
+    color: var(--danger);
+    font-size: 1.1rem;
+}
+
+.action-buttons {
+    display: flex;
+    gap: 1rem;
+    justify-content: center;
+    margin: 2rem 0;
+}
+
+.btn {
+    padding: 0.8rem 1.5rem;
+    border: none;
+    border-radius: 10px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: transform 0.2s;
+}
+
+.btn:hover {
+    transform: translateY(-2px);
+}
+
+.btn-primary {
+    background: var(--primary);
+    color: var(--dark);
+}
+
+.btn-secondary {
+    background: rgba(255,255,255,0.1);
+    color: white;
+    border: 1px solid rgba(255,255,255,0.2);
+}
+
+.data-table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+.data-table th,
+.data-table td {
+    padding: 0.75rem 1rem;
+    text-align: left;
+    border-bottom: 1px solid rgba(255,255,255,0.08);
+}
+
+.data-table th {
+    color: var(--primary);
+    font-weight: 600;
+}
+
+.findings-list {
+    list-style: none;
+}
+
+.finding-item {
+    padding: 0.5rem 0;
+    border-left: 4px solid var(--warning);
+    padding-left: 1rem;
+    margin: 0.5rem 0;
+}
+
+.finding-item.safe {
+    border-left-color: var(--success);
+}
+
+.legal-section {
+    background: linear-gradient(135deg, #1a0a2e 0%, #0a1a2e 100%);
+    border: 2px solid #6b4c8c;
+    border-radius: 20px;
+    padding: 2rem;
+    margin: 2rem 0;
+}
+
+.legal-section h2 {
+    color: var(--secondary);
+    margin-bottom: 1rem;
+}
+
+.legal-article {
+    padding: 1rem 1.5rem;
+    background: rgba(255,255,255,0.02);
+    border-radius: 12px;
+    margin: 1rem 0;
+    border-left: 4px solid var(--primary);
+}
+
+.legal-article blockquote {
+    margin: 0.5rem 0;
+    padding-left: 1rem;
+    border-left: 3px solid var(--secondary);
+    font-style: italic;
+    color: rgba(255,255,255,0.9);
+}
+
+.law-note {
+    margin-top: 0.5rem;
+    font-size: 0.9rem;
+    color: var(--secondary);
+}
+
+.sanctions-box {
+    margin-top: 1.5rem;
+    padding: 1rem;
+    background: rgba(255,71,87,0.1);
+    border: 2px solid var(--danger);
+    border-radius: 12px;
+}
+
+.sanctions-box h3 { color: var(--danger); margin-bottom: 0.5rem; }
+
+.danger-card {
+    border: 2px solid var(--danger);
+    background: linear-gradient(145deg, #1a0a0a 0%, #2a1212 100%);
+}
+
+.capability-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+    gap: 1rem;
+    margin: 1rem 0;
+}
+
+.capability {
+    background: rgba(0,0,0,0.3);
+    padding: 1rem;
+    border-radius: 12px;
+    border-left: 4px solid rgba(255,255,255,0.2);
+    opacity: 0.6;
+}
+
+.capability.active {
+    border-left-color: var(--danger);
+    opacity: 1;
+}
+
+.capability .icon { font-size: 1.5rem; display: block; margin-bottom: 0.3rem; }
+.capability .label { font-weight: 700; font-size: 0.85rem; display: block; color: var(--danger); }
+.capability .detail { font-size: 0.8rem; opacity: 0.9; }
+
+.warning-box {
+    margin-top: 1rem;
+    padding: 1rem;
+    background: rgba(255,71,87,0.15);
+    border: 2px solid var(--danger);
+    border-radius: 12px;
+}
+
+.warning-box strong { color: var(--danger); }
+
+.step {
+    display: flex;
+    gap: 1rem;
+    margin: 1rem 0;
+    padding: 1rem;
+    background: rgba(0,0,0,0.2);
+    border-radius: 12px;
+}
+
+.step-number {
+    flex-shrink: 0;
+    width: 2.5rem;
+    height: 2.5rem;
+    background: var(--primary);
+    color: var(--dark);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 800;
+}
+
+.step-content h3 { font-size: 1rem; color: var(--primary); margin-bottom: 0.3rem; }
+.step-content p { margin: 0; font-size: 0.95rem; }
+
+.template-card .template-text {
+    background: rgba(0,0,0,0.2);
+    padding: 1.5rem;
+    border-radius: 10px;
+    margin: 1rem 0;
+    font-size: 0.9rem;
+    line-height: 1.6;
+}
+
+.template-card .template-text ul, .template-card .template-text ol { margin: 0.5rem 0; padding-left: 1.5rem; }
+.template-card .btn { margin-top: 0.5rem; }
+
+.footer-signature {
+    text-align: center;
+    padding: 3rem;
+    background: linear-gradient(180deg, transparent 0%, rgba(0,212,255,0.05) 100%);
+}
+
+.author-badge {
+    display: inline-block;
+    padding: 1.5rem 2rem;
+    background: var(--card-bg);
+    border: 2px solid var(--primary);
+    border-radius: 15px;
+}
+
+.author-badge strong { color: var(--primary); }
+.author-badge small { opacity: 0.8; }
+
+@media print {
+    body { background: white; color: #111; }
+    .card { border: 1px solid #ddd; box-shadow: none; }
+    .risk-score { animation: none; }
+    .header { background: #f0f0f0; }
+    .logo .digi, .logo .valut { color: #333; }
+    .no-print { display: none !important; }
+}

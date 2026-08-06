@@ -1,0 +1,12 @@
+# Report generati dalle scansioni (contengono dati reali della macchina/utente)
+DigitalValut_Reports/
+*.jsonl
+
+# File di sistema Windows
+Thumbs.db
+desktop.ini
+
+# Editor / OS
+.vscode/
+.idea/
+*.swp

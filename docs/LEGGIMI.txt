@@ -1,0 +1,68 @@
+════════════════════════════════════════════════════════════════════════════════
+        DIGITALVALUT CONTROLLER v4.0 - TUTELA PRIVACY LAVORATORI PA
+        (VETSEC Scanner) - Autore: Dr. Giuseppe Falsone - CEO DigitalValut
+════════════════════════════════════════════════════════════════════════════════
+
+COSA FA QUESTO STRUMENTO:
+  Rileva se sul tuo PC sono attivi software di controllo remoto (es. UltraVNC,
+  TeamViewer, RDP) installati dal CED senza informativa. Mostra CHI e' collegato
+  e COSA possono fare. Inoltre rileva SORVEGLIANZA AUDIO/VIDEO: chi usa
+  microfono o webcam, dispositivi audio virtuali, permessi privacy e indicatori
+  di spyware audio. Genera un report con valore documentale per richieste al DPO,
+  sindacato o Garante Privacy.
+
+
+COME SI USA (3 PASSI):
+
+  1.  COPIA la cartella su chiavetta USB (o sul Desktop)
+
+  2.  APRI la cartella e fai DOPPIO CLIC su "AVVIA_CONTROLLO.bat"
+      (oppure "AVVIA_SCANSIONE.bat" se presente)
+
+  3.  ASPETTA 30-90 secondi - Il report si apre DA SOLO!
+
+
+DOVE TROVO IL REPORT?
+
+  Desktop -> Cartella "DigitalValut_Reports"
+  Nome file: DV_Report_[NOMEPC]_[DATA].html
+  (Viene salvato anche un file .json con gli stessi dati)
+
+
+LIVELLI DI RISCHIO:
+
+  SICURO   (0)      ->  Tutto ok, nessun software sospetto
+  BASSO    (1-29)   ->  Situazione normale
+  MEDIO    (30-59)  ->  Qualcosa da verificare
+  ALTO     (60-99)  ->  Software di controllo o sorveglianza rilevato!
+  CRITICO  (100+)   ->  ALLARME - Controllo remoto o sorveglianza attiva!
+
+  Il punteggio include anche microfono/webcam usati da processi sconosciuti,
+  virtual audio cable, file sospetti audio, ecc.
+
+
+SE TROVI SOFTWARE DI CONTROLLO REMOTO O SORVEGLIANZA:
+
+  1. CONSERVA il report (e' una prova documentale con hash e timestamp)
+  2. NON MODIFICARE nulla sul PC (puo' servire per perizia)
+  3. Richiedi per iscritto al DPO: informativa, base giuridica, accordo sindacale
+  4. Contatta RSU/sindacato (Art. 4 richiede accordo PRIMA dell'installazione)
+  5. Se non ottieni risposte: segnala al Garante Privacy (garanteprivacy.it)
+
+
+QUESTO STRUMENTO:
+
+  - NON installa nulla
+  - NON modifica il PC
+  - NON invia dati in rete
+  - Funziona da USB senza installazione
+
+  Nel report trovi anche un MODELLO DI LETTERA per la richiesta al DPO
+  (copia e personalizza). Per la guida completa apri docs\GUIDA_COMPLETA.txt.
+  Per la normativa completa vedi RIFERIMENTI_LEGALI.txt.
+
+════════════════════════════════════════════════════════════════════════════════
+             DigitalValut Controller v4.0 - Tutela Privacy Lavoratori PA
+             Dr. Giuseppe Falsone - CEO DigitalValut
+             Open Source - DigitalValut Association
+════════════════════════════════════════════════════════════════════════════════

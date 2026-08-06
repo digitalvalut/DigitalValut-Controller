@@ -1,0 +1,45 @@
+════════════════════════════════════════════════════════════════════════════════
+                        RIFERIMENTI NORMATIVI
+        DigitalValut Controller v3.0 - Dr. Giuseppe Falsone
+════════════════════════════════════════════════════════════════════════════════
+
+  GDPR - REGOLAMENTO UE 2016/679
+  -------------------------------------------------------------------------------
+  Art. 5  - Principi di trasparenza nel trattamento dati
+  Art. 6  - Liceita' del trattamento (base giuridica)
+  Art. 13 - Informazioni da fornire all'interessato
+  Art. 21 - Diritto di opposizione
+  Art. 22 - Processo decisionale automatizzato
+
+  STATUTO DEI LAVORATORI - LEGGE 300/1970
+  -------------------------------------------------------------------------------
+  Art. 4  - Impianti audiovisivi e strumenti di controllo
+            "Gli strumenti dai quali derivi anche la possibilita' di
+            controllo a distanza dell'attivita' dei lavoratori possono
+            essere impiegati esclusivamente per esigenze organizzative
+            e produttive, per la sicurezza del lavoro e per la tutela
+            del patrimonio aziendale e possono essere installati previo
+            accordo collettivo [...] o autorizzazione dell'INL."
+
+  CODICE PRIVACY - D.LGS. 196/2003
+  -------------------------------------------------------------------------------
+  Art. 114 - Controllo a distanza (richiama Art. 4 Statuto Lavoratori)
+  Art. 171 - Sanzioni penali per violazioni
+
+  PROVVEDIMENTI GARANTE PRIVACY
+  -------------------------------------------------------------------------------
+  - Linee guida sul monitoraggio dei dipendenti (2007)
+  - Provvedimento su e-mail e internet (2007)
+  - Parere su videosorveglianza luoghi lavoro (2010)
+
+  SANZIONI
+  -------------------------------------------------------------------------------
+  - GDPR: fino a 20 milioni EUR o 4% fatturato globale
+  - Codice Privacy: ammenda da 154 EUR a 1.549 EUR o arresto fino a 3 anni
+  - Utilizzo dati illegittimi: prove inutilizzabili in sede disciplinare
+
+════════════════════════════════════════════════════════════════════════════════
+             DigitalValut Association - Informazione non costituisce
+             parere legale. Per questioni specifiche rivolgersi a
+             un professionista qualificato.
+════════════════════════════════════════════════════════════════════════════════
