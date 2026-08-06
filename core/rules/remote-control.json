@@ -1,0 +1,306 @@
+[
+    {
+        "id":  "DV-RC-0001",
+        "name":  "Ammyy Admin",
+        "description":  "Rilevamento di Ammyy Admin tramite nome del processo.",
+        "author":  "DigitalValut",
+        "type":  "process",
+        "category":  "Remote Control",
+        "risk":  "CRITICAL",
+        "alert":  true,
+        "match":  {
+                      "nameContains":  [
+                                           "ammyy"
+                                       ]
+                  },
+        "falsePositiveNote":  "Puo\u0027 essere legittimo se installato e autorizzato dal reparto IT della tua organizzazione."
+    },
+    {
+        "id":  "DV-RC-0002",
+        "name":  "AnyDesk",
+        "description":  "Rilevamento di AnyDesk tramite nome del processo.",
+        "author":  "DigitalValut",
+        "type":  "process",
+        "category":  "Remote Control",
+        "risk":  "CRITICAL",
+        "alert":  true,
+        "match":  {
+                      "nameContains":  [
+                                           "anydesk"
+                                       ]
+                  },
+        "falsePositiveNote":  "Puo\u0027 essere legittimo se installato e autorizzato dal reparto IT della tua organizzazione."
+    },
+    {
+        "id":  "DV-RC-0003",
+        "name":  "Bomgar/BeyondTrust",
+        "description":  "Rilevamento di Bomgar/BeyondTrust tramite nome del processo.",
+        "author":  "DigitalValut",
+        "type":  "process",
+        "category":  "Remote Control",
+        "risk":  "HIGH",
+        "alert":  true,
+        "match":  {
+                      "nameContains":  [
+                                           "bomgar"
+                                       ]
+                  },
+        "falsePositiveNote":  "Puo\u0027 essere legittimo se installato e autorizzato dal reparto IT della tua organizzazione."
+    },
+    {
+        "id":  "DV-RC-0004",
+        "name":  "DameWare",
+        "description":  "Rilevamento di DameWare tramite nome del processo.",
+        "author":  "DigitalValut",
+        "type":  "process",
+        "category":  "Remote Control",
+        "risk":  "HIGH",
+        "alert":  true,
+        "match":  {
+                      "nameContains":  [
+                                           "dameware"
+                                       ]
+                  },
+        "falsePositiveNote":  "Puo\u0027 essere legittimo se installato e autorizzato dal reparto IT della tua organizzazione."
+    },
+    {
+        "id":  "DV-RC-0005",
+        "name":  "GoToMyPC",
+        "description":  "Rilevamento di GoToMyPC tramite nome del processo.",
+        "author":  "DigitalValut",
+        "type":  "process",
+        "category":  "Remote Control",
+        "risk":  "HIGH",
+        "alert":  true,
+        "match":  {
+                      "nameContains":  [
+                                           "gotomypc"
+                                       ]
+                  },
+        "falsePositiveNote":  "Puo\u0027 essere legittimo se installato e autorizzato dal reparto IT della tua organizzazione."
+    },
+    {
+        "id":  "DV-RC-0006",
+        "name":  "Iperius Remote",
+        "description":  "Rilevamento di Iperius Remote tramite nome del processo.",
+        "author":  "DigitalValut",
+        "type":  "process",
+        "category":  "Remote Control",
+        "risk":  "HIGH",
+        "alert":  true,
+        "match":  {
+                      "nameContains":  [
+                                           "iperius"
+                                       ]
+                  },
+        "falsePositiveNote":  "Puo\u0027 essere legittimo se installato e autorizzato dal reparto IT della tua organizzazione."
+    },
+    {
+        "id":  "DV-RC-0007",
+        "name":  "LogMeIn",
+        "description":  "Rilevamento di LogMeIn tramite nome del processo.",
+        "author":  "DigitalValut",
+        "type":  "process",
+        "category":  "Remote Control",
+        "risk":  "HIGH",
+        "alert":  true,
+        "match":  {
+                      "nameContains":  [
+                                           "logmein"
+                                       ]
+                  },
+        "falsePositiveNote":  "Puo\u0027 essere legittimo se installato e autorizzato dal reparto IT della tua organizzazione."
+    },
+    {
+        "id":  "DV-RC-0008",
+        "name":  "Radmin",
+        "description":  "Rilevamento di Radmin tramite nome del processo.",
+        "author":  "DigitalValut",
+        "type":  "process",
+        "category":  "Remote Control",
+        "risk":  "CRITICAL",
+        "alert":  true,
+        "match":  {
+                      "nameContains":  [
+                                           "radmin"
+                                       ]
+                  },
+        "falsePositiveNote":  "Puo\u0027 essere legittimo se installato e autorizzato dal reparto IT della tua organizzazione."
+    },
+    {
+        "id":  "DV-RC-0009",
+        "name":  "RealVNC",
+        "description":  "Rilevamento di RealVNC tramite nome del processo.",
+        "author":  "DigitalValut",
+        "type":  "process",
+        "category":  "Remote Control",
+        "risk":  "CRITICAL",
+        "alert":  true,
+        "match":  {
+                      "nameContains":  [
+                                           "realvnc"
+                                       ]
+                  },
+        "falsePositiveNote":  "Puo\u0027 essere legittimo se installato e autorizzato dal reparto IT della tua organizzazione."
+    },
+    {
+        "id":  "DV-RC-0010",
+        "name":  "RemotePC",
+        "description":  "Rilevamento di RemotePC tramite nome del processo.",
+        "author":  "DigitalValut",
+        "type":  "process",
+        "category":  "Remote Control",
+        "risk":  "HIGH",
+        "alert":  true,
+        "match":  {
+                      "nameContains":  [
+                                           "remotepc"
+                                       ]
+                  },
+        "falsePositiveNote":  "Puo\u0027 essere legittimo se installato e autorizzato dal reparto IT della tua organizzazione."
+    },
+    {
+        "id":  "DV-RC-0011",
+        "name":  "RustDesk",
+        "description":  "Rilevamento di RustDesk tramite nome del processo.",
+        "author":  "DigitalValut",
+        "type":  "process",
+        "category":  "Remote Control",
+        "risk":  "HIGH",
+        "alert":  true,
+        "match":  {
+                      "nameContains":  [
+                                           "rustdesk"
+                                       ]
+                  },
+        "falsePositiveNote":  "Puo\u0027 essere legittimo se installato e autorizzato dal reparto IT della tua organizzazione."
+    },
+    {
+        "id":  "DV-RC-0012",
+        "name":  "ScreenConnect/ConnectWise",
+        "description":  "Rilevamento di ScreenConnect/ConnectWise tramite nome del processo.",
+        "author":  "DigitalValut",
+        "type":  "process",
+        "category":  "Remote Control",
+        "risk":  "CRITICAL",
+        "alert":  true,
+        "match":  {
+                      "nameContains":  [
+                                           "screenconnect"
+                                       ]
+                  },
+        "falsePositiveNote":  "Puo\u0027 essere legittimo se installato e autorizzato dal reparto IT della tua organizzazione."
+    },
+    {
+        "id":  "DV-RC-0013",
+        "name":  "Splashtop",
+        "description":  "Rilevamento di Splashtop tramite nome del processo.",
+        "author":  "DigitalValut",
+        "type":  "process",
+        "category":  "Remote Control",
+        "risk":  "HIGH",
+        "alert":  true,
+        "match":  {
+                      "nameContains":  [
+                                           "splashtop"
+                                       ]
+                  },
+        "falsePositiveNote":  "Puo\u0027 essere legittimo se installato e autorizzato dal reparto IT della tua organizzazione."
+    },
+    {
+        "id":  "DV-RC-0014",
+        "name":  "Supremo",
+        "description":  "Rilevamento di Supremo tramite nome del processo.",
+        "author":  "DigitalValut",
+        "type":  "process",
+        "category":  "Remote Control",
+        "risk":  "HIGH",
+        "alert":  true,
+        "match":  {
+                      "nameContains":  [
+                                           "supremo"
+                                       ]
+                  },
+        "falsePositiveNote":  "Puo\u0027 essere legittimo se installato e autorizzato dal reparto IT della tua organizzazione."
+    },
+    {
+        "id":  "DV-RC-0015",
+        "name":  "TeamViewer",
+        "description":  "Rilevamento di TeamViewer tramite nome del processo.",
+        "author":  "DigitalValut",
+        "type":  "process",
+        "category":  "Remote Control",
+        "risk":  "CRITICAL",
+        "alert":  true,
+        "match":  {
+                      "nameContains":  [
+                                           "teamviewer"
+                                       ]
+                  },
+        "falsePositiveNote":  "Puo\u0027 essere legittimo se installato e autorizzato dal reparto IT della tua organizzazione."
+    },
+    {
+        "id":  "DV-RC-0016",
+        "name":  "TigerVNC",
+        "description":  "Rilevamento di TigerVNC tramite nome del processo.",
+        "author":  "DigitalValut",
+        "type":  "process",
+        "category":  "Remote Control",
+        "risk":  "CRITICAL",
+        "alert":  true,
+        "match":  {
+                      "nameContains":  [
+                                           "tigervnc"
+                                       ]
+                  },
+        "falsePositiveNote":  "Puo\u0027 essere legittimo se installato e autorizzato dal reparto IT della tua organizzazione."
+    },
+    {
+        "id":  "DV-RC-0017",
+        "name":  "TightVNC",
+        "description":  "Rilevamento di TightVNC tramite nome del processo.",
+        "author":  "DigitalValut",
+        "type":  "process",
+        "category":  "Remote Control",
+        "risk":  "CRITICAL",
+        "alert":  true,
+        "match":  {
+                      "nameContains":  [
+                                           "tvnserver"
+                                       ]
+                  },
+        "falsePositiveNote":  "Puo\u0027 essere legittimo se installato e autorizzato dal reparto IT della tua organizzazione."
+    },
+    {
+        "id":  "DV-RC-0018",
+        "name":  "UltraVNC",
+        "description":  "Rilevamento di UltraVNC tramite nome del processo.",
+        "author":  "DigitalValut",
+        "type":  "process",
+        "category":  "Remote Control",
+        "risk":  "CRITICAL",
+        "alert":  true,
+        "match":  {
+                      "nameContains":  [
+                                           "ultravnc"
+                                       ]
+                  },
+        "falsePositiveNote":  "Puo\u0027 essere legittimo se installato e autorizzato dal reparto IT della tua organizzazione."
+    },
+    {
+        "id":  "DV-RC-0019",
+        "name":  "WinVNC",
+        "description":  "Rilevamento di WinVNC tramite nome del processo.",
+        "author":  "DigitalValut",
+        "type":  "process",
+        "category":  "Remote Control",
+        "risk":  "CRITICAL",
+        "alert":  true,
+        "match":  {
+                      "nameContains":  [
+                                           "winvnc"
+                                       ]
+                  },
+        "falsePositiveNote":  "Puo\u0027 essere legittimo se installato e autorizzato dal reparto IT della tua organizzazione."
+    }
+]

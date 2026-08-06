@@ -1,4 +1,4 @@
-# DigitalValut Controller v4.1 - AuthenticodeChecker Module
+# DigitalValut Controller v4.2 - AuthenticodeChecker Module
 # Copyright (C) 2024-2026 DigitalValut - www.digitalvalut.it
 # Sviluppatore: Dott. Giuseppe Falsone e il team DigitalValut
 #

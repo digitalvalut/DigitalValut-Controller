@@ -1,0 +1,50 @@
+[
+    {
+        "id":  "DV-MS-0001",
+        "name":  "Remote Assistance",
+        "description":  "Rilevamento di Remote Assistance tramite nome del processo.",
+        "author":  "DigitalValut",
+        "type":  "process",
+        "category":  "Microsoft",
+        "risk":  "MEDIUM",
+        "alert":  false,
+        "match":  {
+                      "nameContains":  [
+                                           "msra"
+                                       ]
+                  },
+        "falsePositiveNote":  "Puo\u0027 essere legittimo se installato e autorizzato dal reparto IT della tua organizzazione."
+    },
+    {
+        "id":  "DV-MS-0002",
+        "name":  "RDP Client",
+        "description":  "Rilevamento di RDP Client tramite nome del processo.",
+        "author":  "DigitalValut",
+        "type":  "process",
+        "category":  "Microsoft",
+        "risk":  "LOW",
+        "alert":  false,
+        "match":  {
+                      "nameContains":  [
+                                           "mstsc"
+                                       ]
+                  },
+        "falsePositiveNote":  "Puo\u0027 essere legittimo se installato e autorizzato dal reparto IT della tua organizzazione."
+    },
+    {
+        "id":  "DV-MS-0003",
+        "name":  "RDP Clipboard",
+        "description":  "Rilevamento di RDP Clipboard tramite nome del processo.",
+        "author":  "DigitalValut",
+        "type":  "process",
+        "category":  "Microsoft",
+        "risk":  "LOW",
+        "alert":  false,
+        "match":  {
+                      "nameContains":  [
+                                           "rdpclip"
+                                       ]
+                  },
+        "falsePositiveNote":  "Puo\u0027 essere legittimo se installato e autorizzato dal reparto IT della tua organizzazione."
+    }
+]

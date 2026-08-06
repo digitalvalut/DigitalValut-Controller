@@ -1,0 +1,130 @@
+[
+    {
+        "id":  "DV-EM-0001",
+        "name":  "ActivTrak",
+        "description":  "Rilevamento di ActivTrak tramite nome del processo.",
+        "author":  "DigitalValut",
+        "type":  "process",
+        "category":  "Employee Monitor",
+        "risk":  "HIGH",
+        "alert":  true,
+        "match":  {
+                      "nameContains":  [
+                                           "activtrak"
+                                       ]
+                  },
+        "falsePositiveNote":  "Puo\u0027 essere legittimo se installato e autorizzato dal reparto IT della tua organizzazione."
+    },
+    {
+        "id":  "DV-EM-0002",
+        "name":  "DeskTime",
+        "description":  "Rilevamento di DeskTime tramite nome del processo.",
+        "author":  "DigitalValut",
+        "type":  "process",
+        "category":  "Employee Monitor",
+        "risk":  "MEDIUM",
+        "alert":  true,
+        "match":  {
+                      "nameContains":  [
+                                           "desktime"
+                                       ]
+                  },
+        "falsePositiveNote":  "Puo\u0027 essere legittimo se installato e autorizzato dal reparto IT della tua organizzazione."
+    },
+    {
+        "id":  "DV-EM-0003",
+        "name":  "Hubstaff",
+        "description":  "Rilevamento di Hubstaff tramite nome del processo.",
+        "author":  "DigitalValut",
+        "type":  "process",
+        "category":  "Employee Monitor",
+        "risk":  "HIGH",
+        "alert":  true,
+        "match":  {
+                      "nameContains":  [
+                                           "hubstaff"
+                                       ]
+                  },
+        "falsePositiveNote":  "Puo\u0027 essere legittimo se installato e autorizzato dal reparto IT della tua organizzazione."
+    },
+    {
+        "id":  "DV-EM-0004",
+        "name":  "InterGuard",
+        "description":  "Rilevamento di InterGuard tramite nome del processo.",
+        "author":  "DigitalValut",
+        "type":  "process",
+        "category":  "Employee Monitor",
+        "risk":  "HIGH",
+        "alert":  true,
+        "match":  {
+                      "nameContains":  [
+                                           "interguard"
+                                       ]
+                  },
+        "falsePositiveNote":  "Puo\u0027 essere legittimo se installato e autorizzato dal reparto IT della tua organizzazione."
+    },
+    {
+        "id":  "DV-EM-0005",
+        "name":  "Teramind",
+        "description":  "Rilevamento di Teramind tramite nome del processo.",
+        "author":  "DigitalValut",
+        "type":  "process",
+        "category":  "Employee Monitor",
+        "risk":  "HIGH",
+        "alert":  true,
+        "match":  {
+                      "nameContains":  [
+                                           "teramind"
+                                       ]
+                  },
+        "falsePositiveNote":  "Puo\u0027 essere legittimo se installato e autorizzato dal reparto IT della tua organizzazione."
+    },
+    {
+        "id":  "DV-EM-0006",
+        "name":  "Time Doctor",
+        "description":  "Rilevamento di Time Doctor tramite nome del processo.",
+        "author":  "DigitalValut",
+        "type":  "process",
+        "category":  "Employee Monitor",
+        "risk":  "HIGH",
+        "alert":  true,
+        "match":  {
+                      "nameContains":  [
+                                           "timedoctor"
+                                       ]
+                  },
+        "falsePositiveNote":  "Puo\u0027 essere legittimo se installato e autorizzato dal reparto IT della tua organizzazione."
+    },
+    {
+        "id":  "DV-EM-0007",
+        "name":  "Veriato",
+        "description":  "Rilevamento di Veriato tramite nome del processo.",
+        "author":  "DigitalValut",
+        "type":  "process",
+        "category":  "Employee Monitor",
+        "risk":  "HIGH",
+        "alert":  true,
+        "match":  {
+                      "nameContains":  [
+                                           "veriato"
+                                       ]
+                  },
+        "falsePositiveNote":  "Puo\u0027 essere legittimo se installato e autorizzato dal reparto IT della tua organizzazione."
+    },
+    {
+        "id":  "DV-EM-0008",
+        "name":  "WorkPuls/Insightful",
+        "description":  "Rilevamento di WorkPuls/Insightful tramite nome del processo.",
+        "author":  "DigitalValut",
+        "type":  "process",
+        "category":  "Employee Monitor",
+        "risk":  "HIGH",
+        "alert":  true,
+        "match":  {
+                      "nameContains":  [
+                                           "workpuls"
+                                       ]
+                  },
+        "falsePositiveNote":  "Puo\u0027 essere legittimo se installato e autorizzato dal reparto IT della tua organizzazione."
+    }
+]

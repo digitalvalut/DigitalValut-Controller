@@ -1,4 +1,4 @@
-# DigitalValut Controller v4.0 - ThreatDatabase Module
+# DigitalValut Controller v4.2 - ThreatDatabase Module
 # Copyright (C) 2024-2026 DigitalValut - www.digitalvalut.it
 # Sviluppatore: Dott. Giuseppe Falsone e il team DigitalValut
 #
@@ -17,18 +17,18 @@ $Global:RemotePorts = @{
     5901  = @{Name="VNC-1"; Risk="CRITICAL"; Category="Remote Control"; Description="VNC Display 1"}
     5902  = @{Name="VNC-2"; Risk="CRITICAL"; Category="Remote Control"; Description="VNC Display 2"}
     5500  = @{Name="VNC-Reverse"; Risk="CRITICAL"; Category="Remote Control"; Description="VNC Reverse Connection"}
-    
+
     # RDP
     3389  = @{Name="RDP"; Risk="HIGH"; Category="Remote Desktop"; Description="Microsoft Remote Desktop Protocol"}
     3390  = @{Name="RDP-Alt"; Risk="HIGH"; Category="Remote Desktop"; Description="RDP Porta alternativa"}
-    
+
     # TeamViewer
     5938  = @{Name="TeamViewer"; Risk="CRITICAL"; Category="Commercial RAT"; Description="TeamViewer - Controllo remoto commerciale"}
-    
+
     # AnyDesk
     6568  = @{Name="AnyDesk"; Risk="CRITICAL"; Category="Commercial RAT"; Description="AnyDesk - Controllo remoto"}
     7070  = @{Name="AnyDesk-Alt"; Risk="CRITICAL"; Category="Commercial RAT"; Description="AnyDesk Porta alternativa"}
-    
+
     # Altri
     22    = @{Name="SSH"; Risk="MEDIUM"; Category="Shell Access"; Description="Secure Shell - Accesso remoto cifrato"}
     23    = @{Name="Telnet"; Risk="HIGH"; Category="Legacy"; Description="Telnet - Accesso remoto NON cifrato"}
@@ -40,12 +40,12 @@ $Global:RemotePorts = @{
     5631  = @{Name="pcAnywhere"; Risk="HIGH"; Category="Legacy"; Description="Symantec pcAnywhere"}
     5632  = @{Name="pcAnywhere-Data"; Risk="HIGH"; Category="Legacy"; Description="pcAnywhere Data"}
     10000 = @{Name="Webmin"; Risk="HIGH"; Category="Web Admin"; Description="Webmin Server"}
-    
+
     # Nuovi software emergenti
     7788  = @{Name="RustDesk"; Risk="HIGH"; Category="Open Source RAT"; Description="RustDesk Remote"}
     21116 = @{Name="RustDesk-Relay"; Risk="HIGH"; Category="Open Source RAT"; Description="RustDesk Relay"}
     6783  = @{Name="Parsec"; Risk="MEDIUM"; Category="Gaming/Streaming"; Description="Parsec Gaming"}
-    
+
     # Porte enterprise
     135   = @{Name="RPC"; Risk="MEDIUM"; Category="Windows"; Description="Microsoft RPC"}
     139   = @{Name="NetBIOS"; Risk="MEDIUM"; Category="Windows"; Description="NetBIOS Session"}
@@ -79,12 +79,12 @@ $Global:SuspiciousProcesses = @{
     "connectwise"     = @{Name="ConnectWise"; Risk="HIGH"; Type="RMM"; Alert=$true}
     "datto"           = @{Name="Datto RMM"; Risk="HIGH"; Type="RMM"; Alert=$true}
     "ninjaone"        = @{Name="NinjaOne/NinjaRMM"; Risk="HIGH"; Type="RMM"; Alert=$true}
-    
+
     # Microsoft
     "mstsc"           = @{Name="RDP Client"; Risk="LOW"; Type="Microsoft"; Alert=$false}
     "msra"            = @{Name="Remote Assistance"; Risk="MEDIUM"; Type="Microsoft"; Alert=$false}
     "rdpclip"         = @{Name="RDP Clipboard"; Risk="LOW"; Type="Microsoft"; Alert=$false}
-    
+
     # Spyware/Keylogger
     "keylogger"       = @{Name="Generic Keylogger"; Risk="CRITICAL"; Type="Spyware"; Alert=$true}
     "spyware"         = @{Name="Generic Spyware"; Risk="CRITICAL"; Type="Spyware"; Alert=$true}
@@ -101,7 +101,7 @@ $Global:SuspiciousProcesses = @{
     "flexispy"        = @{Name="FlexiSpy"; Risk="CRITICAL"; Type="Spyware"; Alert=$true}
     "hookexe"         = @{Name="Hook Keyboard"; Risk="CRITICAL"; Type="Spyware"; Alert=$true}
     "keysniff"        = @{Name="KeySniff"; Risk="CRITICAL"; Type="Spyware"; Alert=$true}
-    
+
     # Software Monitoraggio Enterprise
     "activtrak"       = @{Name="ActivTrak"; Risk="HIGH"; Type="Employee Monitor"; Alert=$true}
     "teramind"        = @{Name="Teramind"; Risk="HIGH"; Type="Employee Monitor"; Alert=$true}
@@ -113,6 +113,75 @@ $Global:SuspiciousProcesses = @{
     "desktime"        = @{Name="DeskTime"; Risk="MEDIUM"; Type="Employee Monitor"; Alert=$true}
 }
 
+# === CARICAMENTO DA REGOLE ESTERNE (con riserva interna) ===
+#
+# Dalla v4.2 le firme vivono in file .json nella cartella "core\rules", cosi'
+# chiunque puo' aggiungerne di proprie senza modificare il codice (vedi RULES.md).
+# Le tabelle qui sopra restano come RISERVA: se la cartella regole manca, e'
+# vuota o illeggibile, lo strumento continua a funzionare esattamente come prima.
+# Questo garantisce che una cartella regole danneggiata non renda inutile lo
+# strumento proprio a chi ne ha bisogno.
+
+$Global:DVLoadedRules = @()
+$Global:DVRulesInfo = @{ Loaded = 0; Skipped = @(); UsedFallback = $true; SourceCount = 0 }
+
+function Initialize-DVThreatData {
+    <#
+    .SYNOPSIS
+        Carica le regole esterne e prepara i database di porte e processi.
+        Da chiamare una volta all'avvio; se fallisce, restano attive le
+        tabelle interne di riserva.
+    #>
+    param([string]$RulesPath = "")
+
+    if (-not (Get-Command Import-DVRules -ErrorAction SilentlyContinue)) {
+        # RuleEngine non disponibile: si resta sulla riserva interna.
+        return $Global:DVRulesInfo
+    }
+
+    try {
+        $loaded = if ($RulesPath) { Import-DVRules -RulesPath $RulesPath } else { Import-DVRules }
+    } catch {
+        return $Global:DVRulesInfo
+    }
+
+    $Global:DVRulesInfo.Skipped = @($loaded.Skipped)
+    $Global:DVRulesInfo.SourceCount = $loaded.SourceCount
+
+    if (@($loaded.Rules).Count -eq 0) {
+        return $Global:DVRulesInfo
+    }
+
+    $portDb = ConvertTo-DVPortDatabase -Rules $loaded.Rules
+    $procDb = ConvertTo-DVProcessDatabase -Rules $loaded.Rules -Types @('process')
+
+    # Si adottano le regole esterne solo se producono effettivamente dati utili:
+    # meglio la riserva interna che un database vuoto.
+    if ($portDb.Count -gt 0) { $Global:RemotePorts = $portDb }
+    if ($procDb.Count -gt 0) { $Global:SuspiciousProcesses = $procDb }
+
+    if ($portDb.Count -gt 0 -or $procDb.Count -gt 0) {
+        $Global:DVLoadedRules = $loaded.Rules
+        $Global:DVRulesInfo.Loaded = @($loaded.Rules).Count
+        $Global:DVRulesInfo.UsedFallback = $false
+    }
+
+    return $Global:DVRulesInfo
+}
+
+function Get-DVRulesInfo {
+    <#
+    .SYNOPSIS
+        Restituisce lo stato del caricamento regole (quante caricate, quante
+        scartate e perche', se si sta usando la riserva interna).
+    #>
+    return $Global:DVRulesInfo
+}
+
+function Get-DVAllLoadedRules {
+    return $Global:DVLoadedRules
+}
+
 function Get-RemotePortsDatabase {
     return $Global:RemotePorts
 }
@@ -121,4 +190,5 @@ function Get-SuspiciousProcessesDatabase {
     return $Global:SuspiciousProcesses
 }
 
-Export-ModuleMember -Function Get-RemotePortsDatabase, Get-SuspiciousProcessesDatabase
+Export-ModuleMember -Function Get-RemotePortsDatabase, Get-SuspiciousProcessesDatabase, `
+    Initialize-DVThreatData, Get-DVRulesInfo, Get-DVAllLoadedRules

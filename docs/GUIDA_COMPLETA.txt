@@ -1,12 +1,12 @@
 ════════════════════════════════════════════════════════════════════════════════
-        DIGITALVALUT CONTROLLER v4.1 - GUIDA COMPLETA
+        DIGITALVALUT CONTROLLER v4.2 - GUIDA COMPLETA
         Manuale utente - DigitalValut - Sviluppatore: Dott. Giuseppe Falsone e il team
         (VETSEC Scanner - Strumento Tutela Privacy Lavoratori PA)
 ════════════════════════════════════════════════════════════════════════════════
 
 1. COS'E' DIGITALVALUT CONTROLLER
 ────────────────────────────────
-DigitalValut Controller (VETSEC Scanner v4.1) e' uno strumento professionale per
+DigitalValut Controller (VETSEC Scanner v4.2) e' uno strumento professionale per
 la verifica di software di controllo remoto, spyware, keylogger e sorveglianza
 audio/video sul PC. E' progettato per la tutela dei lavoratori secondo GDPR e
 Statuto dei Lavoratori (Art. 4, L. 300/1970).
@@ -22,11 +22,34 @@ Cosa rileva:
   - Stato antivirus e firewall
   - SORVEGLIANZA AUDIO/VIDEO: chi usa microfono o webcam, dispositivi audio
     virtuali, permessi privacy Windows, indicatori di spyware audio
+  - DLL caricate da percorsi anomali (iniezione in processi legittimi)
+  - Analisi storica: cosa e' SUCCESSO sul PC (servizi installati di recente,
+    cancellazioni del registro di sicurezza, accessi remoti RDP)
   - Confronto automatico con l'ultima scansione: cosa e' cambiato
   - Spiegazione in linguaggio semplice generata da AI locale (opzionale, solo
     se e' installato Ollama sulla stessa macchina; nessun dato in rete)
 
 Non installa nulla, non modifica il sistema, funziona da USB.
+
+
+1-bis. REGOLE DI RILEVAMENTO PERSONALIZZABILI (dalla v4.2)
+──────────────────────────────────────────────────────────
+Le firme di rilevamento NON sono scritte dentro il programma: sono file .json
+nella cartella core\rules. Chiunque puo' aggiungere i propri rilevamenti
+creando un file, senza saper programmare e senza modificare il codice.
+
+  - Le tue regole vanno in: core\rules\custom\
+    (questa cartella non viene sovrascritta dagli aggiornamenti)
+  - Guida completa con esempi copia-incolla: file RULES.md
+  - Un modello pronto: core\rules\custom\ESEMPIO.json.txt
+
+Garanzie:
+  - Le regole sono SOLO dati, mai codice eseguibile: un file di regole
+    scaricato da terzi non puo' eseguire comandi sul tuo PC.
+  - Una regola scritta male viene ignorata senza bloccare la scansione; il
+    report indica quale file e perche'.
+  - Se la cartella regole manca o e' danneggiata, il programma continua a
+    funzionare con il database interno di riserva.
 
 
 2. REQUISITI
@@ -101,6 +124,9 @@ Sezioni del report:
   - Processi rilevati: include ora la colonna Firma digitale (Authenticode)
   - Persistenza avanzata: sottoscrizioni WMI non riconosciute, AppInit_DLLs,
     debugger IFEO, task pianificati sospetti
+  - DLL caricate da percorsi anomali (possibile iniezione in processi legittimi)
+  - Cosa e' successo su questo PC: analisi storica dei registri eventi
+  - Regole di rilevamento caricate (con eventuali scarti e relativo motivo)
   - Cosa e' cambiato dall'ultima scansione (se disponibile una scansione precedente)
   - Spiegazione in linguaggio semplice (AI locale, se disponibile Ollama)
   - Software installato (controllo remoto)
@@ -234,7 +260,7 @@ Codice Privacy, Provvedimento Garante 13/07/2016).
 
 
 ════════════════════════════════════════════════════════════════════════════════
-             DigitalValut Controller v4.1 - VETSEC Scanner
+             DigitalValut Controller v4.2 - VETSEC Scanner
              DigitalValut - Sviluppatore: Dott. Giuseppe Falsone e il team
              https://www.digitalvalut.it - info@digitalvalut.com
 ════════════════════════════════════════════════════════════════════════════════

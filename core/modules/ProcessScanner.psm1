@@ -1,4 +1,4 @@
-# DigitalValut Controller v4.0 - ProcessScanner Module
+# DigitalValut Controller v4.2 - ProcessScanner Module
 # Copyright (C) 2024-2026 DigitalValut - www.digitalvalut.it
 # Sviluppatore: Dott. Giuseppe Falsone e il team DigitalValut
 #
@@ -12,12 +12,12 @@
 
 function Get-DVProcessScan {
     param([hashtable]$ThreatDb)
-    
+
     $remoteControl = @()
     $spyware = @()
     $employeeMonitor = @()
     $otherSuspicious = @()
-    
+
     try {
         $processes = Get-Process -ErrorAction SilentlyContinue | Select-Object Id, ProcessName, Path, WorkingSet64
     } catch {
@@ -29,10 +29,10 @@ function Get-DVProcessScan {
             Error           = $_.Exception.Message
         }
     }
-    
+
     foreach ($proc in $processes) {
         $nameLower = $proc.ProcessName.ToLower()
-        
+
         foreach ($key in $ThreatDb.Keys) {
             if ($nameLower -like "*$key*") {
                 $entry = $ThreatDb[$key].Clone()
@@ -40,7 +40,7 @@ function Get-DVProcessScan {
                 $entry.ProcessId   = $proc.Id
                 $entry.Path        = $proc.Path
                 $entry.MemoryMB    = if ($proc.WorkingSet64) { [math]::Round($proc.WorkingSet64 / 1MB, 2) } else { $null }
-                
+
                 switch ($entry.Type) {
                     "Remote Control"   { $remoteControl += $entry; break }
                     "Commercial RAT"   { $remoteControl += $entry; break }
@@ -54,7 +54,7 @@ function Get-DVProcessScan {
             }
         }
     }
-    
+
     return @{
         RemoteControl   = $remoteControl
         Spyware         = $spyware
@@ -65,23 +65,23 @@ function Get-DVProcessScan {
 
 function Get-DVInstalledSuspiciousSoftware {
     param([hashtable]$ThreatDb)
-    
+
     $found = @()
     $searchKeys = $ThreatDb.Keys | Where-Object { $ThreatDb[$_].Alert -eq $true }
-    
+
     try {
         $uninstallPaths = @(
             "HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall\*",
             "HKLM:\SOFTWARE\WOW6432Node\Microsoft\Windows\CurrentVersion\Uninstall\*",
             "HKCU:\SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall\*"
         )
-        
+
         $installed = Get-ItemProperty $uninstallPaths -ErrorAction SilentlyContinue |
             Where-Object { $_.DisplayName }
     } catch {
         return $found
     }
-    
+
     foreach ($item in $installed) {
         $nameLower = $item.DisplayName.ToLower()
         foreach ($key in $searchKeys) {
@@ -97,7 +97,7 @@ function Get-DVInstalledSuspiciousSoftware {
             }
         }
     }
-    
+
     return $found
 }
 

@@ -27,11 +27,23 @@ includendo:
 > includono nome macchina, nome utente, dominio, indirizzi IP ed elenco dei
 > processi. Anonimizza sempre prima di condividere qualsiasi output.
 
+## Aggiungere una regola di rilevamento (non serve una pull request)
+
+Dalla v4.2 le firme sono file `.json` in `core/rules/`. **Puoi aggiungere i tuoi
+rilevamenti in locale senza aprire una pull request e senza aspettare che
+qualcuno li approvi**: crea un file in `core/rules/custom/` e funziona subito.
+Guida: [`RULES.md`](RULES.md).
+
+Se vuoi proporre una regola per la distribuzione ufficiale, apri pure una PR con
+il file `.json` — ma non è necessario perché la tua regola funzioni.
+
 ## Segnalare un falso positivo o un falso negativo
 
 Sono i contributi più utili. Indica il nome esatto del processo, servizio o
 software, il produttore e il motivo per cui la classificazione è errata.
-Le firme si trovano in [`core/modules/ThreatDatabase.psm1`](core/modules/ThreatDatabase.psm1).
+Le firme ufficiali si trovano in [`core/rules/`](core/rules/); il database
+interno di riserva è in
+[`core/modules/ThreatDatabase.psm1`](core/modules/ThreatDatabase.psm1).
 
 ## Vulnerabilità di sicurezza
 

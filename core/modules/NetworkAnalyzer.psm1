@@ -1,4 +1,4 @@
-# DigitalValut Controller v4.0 - NetworkAnalyzer Module
+# DigitalValut Controller v4.2 - NetworkAnalyzer Module
 # Copyright (C) 2024-2026 DigitalValut - www.digitalvalut.it
 # Sviluppatore: Dott. Giuseppe Falsone e il team DigitalValut
 #
@@ -12,16 +12,16 @@
 
 function Get-DVOpenPorts {
     param([hashtable]$PortsDb)
-    
+
     $suspiciousPorts = @()
-    
+
     try {
         $connections = Get-NetTCPConnection -State Listen -ErrorAction SilentlyContinue |
             Select-Object LocalPort -Unique
     } catch {
         return @{ SuspiciousPorts = $suspiciousPorts; Error = $_.Exception.Message }
     }
-    
+
     $listeningPorts = $connections.LocalPort
     foreach ($port in $listeningPorts) {
         if ($PortsDb.ContainsKey($port)) {
@@ -30,18 +30,18 @@ function Get-DVOpenPorts {
             $suspiciousPorts += $info
         }
     }
-    
+
     return @{ SuspiciousPorts = $suspiciousPorts }
 }
 
 function Get-DVNetworkConnections {
     $suspicious = @()
     $conns = $null
-    
+
     try {
         $conns = Get-NetTCPConnection -State Established -ErrorAction SilentlyContinue |
             Where-Object { $_.RemoteAddress -and $_.RemoteAddress -ne "0.0.0.0" -and $_.RemoteAddress -notlike "127.*" }
-        
+
         if ($conns) {
             foreach ($c in $conns) {
                 $suspicious += @{
@@ -56,7 +56,7 @@ function Get-DVNetworkConnections {
     } catch {
         # Ignore
     }
-    
+
     return @{ Connections = $conns; Suspicious = $suspicious }
 }
 

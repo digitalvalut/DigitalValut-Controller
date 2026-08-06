@@ -1,4 +1,4 @@
-# DigitalValut Controller v4.0 - SurveillanceDetector Module
+# DigitalValut Controller v4.2 - SurveillanceDetector Module
 # Modulo rilevamento sorveglianza audio/video
 # Copyright (C) 2024-2026 DigitalValut - www.digitalvalut.it
 # Sviluppatore: Dott. Giuseppe Falsone e il team DigitalValut

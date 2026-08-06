@@ -5,6 +5,45 @@ Tutte le modifiche rilevanti a questo progetto sono documentate in questo file.
 Il formato si ispira a [Keep a Changelog](https://keepachangelog.com/it/1.1.0/)
 e il progetto adotta il [Versionamento Semantico](https://semver.org/lang/it/).
 
+## [4.2.0] — 2026-08-06
+
+### Aggiunto
+
+- **Motore di regole esterne**: le firme di rilevamento non vivono più dentro il
+  codice PowerShell ma in file `.json` nella cartella `core/rules/`. Chiunque
+  può aggiungere i propri rilevamenti creando un file, senza saper programmare,
+  senza modificare il codice sorgente e senza dover coinvolgere l'autore del
+  progetto. Nuovo modulo `RuleEngine.psm1`, guida in [`RULES.md`](RULES.md).
+  - Le regole sono **solo dati dichiarativi**, mai codice eseguibile: un file di
+    regole di terze parti non può eseguire comandi sul PC. Scelta di sicurezza
+    deliberata.
+  - Una regola malformata viene **ignorata senza bloccare la scansione**, con il
+    motivo dello scarto riportato nel report.
+  - Se la cartella regole manca o è danneggiata si usa il **database interno di
+    riserva**: nessuna regressione rispetto alle versioni precedenti.
+  - Le 75 firme esistenti (25 porte + 50 processi) sono state migrate in 7 file
+    di regole, con conversione verificata identica all'originale.
+- **Rilevamento di DLL caricate da percorsi anomali** (`ModuleAnalyzer.psm1`):
+  molti strumenti di monitoraggio non girano come processo autonomo ma si
+  iniettano come libreria dentro processi legittimi. Vengono segnalate le DLL
+  caricate da cartelle temporanee o pubbliche, con verifica della firma digitale
+  e soppressione dei falsi positivi dei vendor noti (Chrome, Teams, Discord,
+  Zoom e altri installano legittimamente in AppData).
+- **Analisi storica dei registri eventi di Windows** (`EventLogAnalyzer.psm1`):
+  tutti gli altri controlli fotografano il presente; questo guarda indietro nel
+  tempo. Servizi installati di recente (evento 7045), cancellazioni del registro
+  di sicurezza (1102), accessi remoti RDP (4624 tipo 10). Degrada con grazia
+  senza privilegi amministrativi, dichiarando apertamente nel report cosa non è
+  stato possibile verificare.
+- Nuove sezioni nel report: DLL sospette, analisi storica, regole caricate
+  (con elenco degli scarti e istruzioni per aggiungerne di proprie).
+- 48 nuovi test automatici (da 45 a **93 totali**), inclusa la verifica che le
+  regole ufficiali del progetto siano tutte valide e senza id duplicati.
+
+### Modificato
+
+- Rimossi gli spazi a fine riga da tutti i file PowerShell del progetto.
+
 ## [4.1.1] — 2026-08-06
 
 ### Modificato
@@ -122,6 +161,7 @@ e il progetto adotta il [Versionamento Semantico](https://semver.org/lang/it/).
 - Modalità `-QuickScan` per un controllo rapido.
 - Funzionamento portabile: nessuna installazione, nessuna connessione di rete.
 
+[4.2.0]: https://github.com/digitalvalut/DigitalValut-Controller/releases/tag/v4.2.0
 [4.1.1]: https://github.com/digitalvalut/DigitalValut-Controller/releases/tag/v4.1.1
 [4.1.0]: https://github.com/digitalvalut/DigitalValut-Controller/releases/tag/v4.1.0
 [4.0.1]: https://github.com/digitalvalut/DigitalValut-Controller/releases/tag/v4.0.1

@@ -1,0 +1,377 @@
+[
+    {
+        "id":  "DV-PORT-0001",
+        "name":  "SSH",
+        "description":  "Secure Shell - Accesso remoto cifrato",
+        "author":  "DigitalValut",
+        "type":  "port",
+        "category":  "Shell Access",
+        "risk":  "MEDIUM",
+        "match":  {
+                      "ports":  [
+                                    22
+                                ]
+                  },
+        "falsePositiveNote":  "Una porta in ascolto non implica di per se\u0027 un uso illecito: puo\u0027 essere un servizio aziendale legittimo e autorizzato."
+    },
+    {
+        "id":  "DV-PORT-0002",
+        "name":  "Telnet",
+        "description":  "Telnet - Accesso remoto NON cifrato",
+        "author":  "DigitalValut",
+        "type":  "port",
+        "category":  "Legacy",
+        "risk":  "HIGH",
+        "match":  {
+                      "ports":  [
+                                    23
+                                ]
+                  },
+        "falsePositiveNote":  "Una porta in ascolto non implica di per se\u0027 un uso illecito: puo\u0027 essere un servizio aziendale legittimo e autorizzato."
+    },
+    {
+        "id":  "DV-PORT-0003",
+        "name":  "RPC",
+        "description":  "Microsoft RPC",
+        "author":  "DigitalValut",
+        "type":  "port",
+        "category":  "Windows",
+        "risk":  "MEDIUM",
+        "match":  {
+                      "ports":  [
+                                    135
+                                ]
+                  },
+        "falsePositiveNote":  "Una porta in ascolto non implica di per se\u0027 un uso illecito: puo\u0027 essere un servizio aziendale legittimo e autorizzato."
+    },
+    {
+        "id":  "DV-PORT-0004",
+        "name":  "NetBIOS",
+        "description":  "NetBIOS Session",
+        "author":  "DigitalValut",
+        "type":  "port",
+        "category":  "Windows",
+        "risk":  "MEDIUM",
+        "match":  {
+                      "ports":  [
+                                    139
+                                ]
+                  },
+        "falsePositiveNote":  "Una porta in ascolto non implica di per se\u0027 un uso illecito: puo\u0027 essere un servizio aziendale legittimo e autorizzato."
+    },
+    {
+        "id":  "DV-PORT-0005",
+        "name":  "SMB",
+        "description":  "Server Message Block",
+        "author":  "DigitalValut",
+        "type":  "port",
+        "category":  "Windows",
+        "risk":  "MEDIUM",
+        "match":  {
+                      "ports":  [
+                                    445
+                                ]
+                  },
+        "falsePositiveNote":  "Una porta in ascolto non implica di per se\u0027 un uso illecito: puo\u0027 essere un servizio aziendale legittimo e autorizzato."
+    },
+    {
+        "id":  "DV-PORT-0006",
+        "name":  "Citrix-ICA",
+        "description":  "Citrix ICA Protocol",
+        "author":  "DigitalValut",
+        "type":  "port",
+        "category":  "VDI",
+        "risk":  "MEDIUM",
+        "match":  {
+                      "ports":  [
+                                    1494
+                                ]
+                  },
+        "falsePositiveNote":  "Una porta in ascolto non implica di per se\u0027 un uso illecito: puo\u0027 essere un servizio aziendale legittimo e autorizzato."
+    },
+    {
+        "id":  "DV-PORT-0007",
+        "name":  "Citrix-CGP",
+        "description":  "Citrix CGP Protocol",
+        "author":  "DigitalValut",
+        "type":  "port",
+        "category":  "VDI",
+        "risk":  "MEDIUM",
+        "match":  {
+                      "ports":  [
+                                    2598
+                                ]
+                  },
+        "falsePositiveNote":  "Una porta in ascolto non implica di per se\u0027 un uso illecito: puo\u0027 essere un servizio aziendale legittimo e autorizzato."
+    },
+    {
+        "id":  "DV-PORT-0008",
+        "name":  "Apple-Remote",
+        "description":  "Apple Remote Desktop",
+        "author":  "DigitalValut",
+        "type":  "port",
+        "category":  "Apple",
+        "risk":  "MEDIUM",
+        "match":  {
+                      "ports":  [
+                                    3283
+                                ]
+                  },
+        "falsePositiveNote":  "Una porta in ascolto non implica di per se\u0027 un uso illecito: puo\u0027 essere un servizio aziendale legittimo e autorizzato."
+    },
+    {
+        "id":  "DV-PORT-0009",
+        "name":  "RDP",
+        "description":  "Microsoft Remote Desktop Protocol",
+        "author":  "DigitalValut",
+        "type":  "port",
+        "category":  "Remote Desktop",
+        "risk":  "HIGH",
+        "match":  {
+                      "ports":  [
+                                    3389
+                                ]
+                  },
+        "falsePositiveNote":  "Una porta in ascolto non implica di per se\u0027 un uso illecito: puo\u0027 essere un servizio aziendale legittimo e autorizzato."
+    },
+    {
+        "id":  "DV-PORT-0010",
+        "name":  "RDP-Alt",
+        "description":  "RDP Porta alternativa",
+        "author":  "DigitalValut",
+        "type":  "port",
+        "category":  "Remote Desktop",
+        "risk":  "HIGH",
+        "match":  {
+                      "ports":  [
+                                    3390
+                                ]
+                  },
+        "falsePositiveNote":  "Una porta in ascolto non implica di per se\u0027 un uso illecito: puo\u0027 essere un servizio aziendale legittimo e autorizzato."
+    },
+    {
+        "id":  "DV-PORT-0011",
+        "name":  "Radmin",
+        "description":  "Radmin Server",
+        "author":  "DigitalValut",
+        "type":  "port",
+        "category":  "Remote Admin",
+        "risk":  "CRITICAL",
+        "match":  {
+                      "ports":  [
+                                    4899
+                                ]
+                  },
+        "falsePositiveNote":  "Una porta in ascolto non implica di per se\u0027 un uso illecito: puo\u0027 essere un servizio aziendale legittimo e autorizzato."
+    },
+    {
+        "id":  "DV-PORT-0012",
+        "name":  "VNC-Reverse",
+        "description":  "VNC Reverse Connection",
+        "author":  "DigitalValut",
+        "type":  "port",
+        "category":  "Remote Control",
+        "risk":  "CRITICAL",
+        "match":  {
+                      "ports":  [
+                                    5500
+                                ]
+                  },
+        "falsePositiveNote":  "Una porta in ascolto non implica di per se\u0027 un uso illecito: puo\u0027 essere un servizio aziendale legittimo e autorizzato."
+    },
+    {
+        "id":  "DV-PORT-0013",
+        "name":  "pcAnywhere",
+        "description":  "Symantec pcAnywhere",
+        "author":  "DigitalValut",
+        "type":  "port",
+        "category":  "Legacy",
+        "risk":  "HIGH",
+        "match":  {
+                      "ports":  [
+                                    5631
+                                ]
+                  },
+        "falsePositiveNote":  "Una porta in ascolto non implica di per se\u0027 un uso illecito: puo\u0027 essere un servizio aziendale legittimo e autorizzato."
+    },
+    {
+        "id":  "DV-PORT-0014",
+        "name":  "pcAnywhere-Data",
+        "description":  "pcAnywhere Data",
+        "author":  "DigitalValut",
+        "type":  "port",
+        "category":  "Legacy",
+        "risk":  "HIGH",
+        "match":  {
+                      "ports":  [
+                                    5632
+                                ]
+                  },
+        "falsePositiveNote":  "Una porta in ascolto non implica di per se\u0027 un uso illecito: puo\u0027 essere un servizio aziendale legittimo e autorizzato."
+    },
+    {
+        "id":  "DV-PORT-0015",
+        "name":  "VNC",
+        "description":  "Virtual Network Computing - Controllo schermo",
+        "author":  "DigitalValut",
+        "type":  "port",
+        "category":  "Remote Control",
+        "risk":  "CRITICAL",
+        "match":  {
+                      "ports":  [
+                                    5900
+                                ]
+                  },
+        "falsePositiveNote":  "Una porta in ascolto non implica di per se\u0027 un uso illecito: puo\u0027 essere un servizio aziendale legittimo e autorizzato."
+    },
+    {
+        "id":  "DV-PORT-0016",
+        "name":  "VNC-1",
+        "description":  "VNC Display 1",
+        "author":  "DigitalValut",
+        "type":  "port",
+        "category":  "Remote Control",
+        "risk":  "CRITICAL",
+        "match":  {
+                      "ports":  [
+                                    5901
+                                ]
+                  },
+        "falsePositiveNote":  "Una porta in ascolto non implica di per se\u0027 un uso illecito: puo\u0027 essere un servizio aziendale legittimo e autorizzato."
+    },
+    {
+        "id":  "DV-PORT-0017",
+        "name":  "VNC-2",
+        "description":  "VNC Display 2",
+        "author":  "DigitalValut",
+        "type":  "port",
+        "category":  "Remote Control",
+        "risk":  "CRITICAL",
+        "match":  {
+                      "ports":  [
+                                    5902
+                                ]
+                  },
+        "falsePositiveNote":  "Una porta in ascolto non implica di per se\u0027 un uso illecito: puo\u0027 essere un servizio aziendale legittimo e autorizzato."
+    },
+    {
+        "id":  "DV-PORT-0018",
+        "name":  "TeamViewer",
+        "description":  "TeamViewer - Controllo remoto commerciale",
+        "author":  "DigitalValut",
+        "type":  "port",
+        "category":  "Commercial RAT",
+        "risk":  "CRITICAL",
+        "match":  {
+                      "ports":  [
+                                    5938
+                                ]
+                  },
+        "falsePositiveNote":  "Una porta in ascolto non implica di per se\u0027 un uso illecito: puo\u0027 essere un servizio aziendale legittimo e autorizzato."
+    },
+    {
+        "id":  "DV-PORT-0019",
+        "name":  "AnyDesk",
+        "description":  "AnyDesk - Controllo remoto",
+        "author":  "DigitalValut",
+        "type":  "port",
+        "category":  "Commercial RAT",
+        "risk":  "CRITICAL",
+        "match":  {
+                      "ports":  [
+                                    6568
+                                ]
+                  },
+        "falsePositiveNote":  "Una porta in ascolto non implica di per se\u0027 un uso illecito: puo\u0027 essere un servizio aziendale legittimo e autorizzato."
+    },
+    {
+        "id":  "DV-PORT-0020",
+        "name":  "Parsec",
+        "description":  "Parsec Gaming",
+        "author":  "DigitalValut",
+        "type":  "port",
+        "category":  "Gaming/Streaming",
+        "risk":  "MEDIUM",
+        "match":  {
+                      "ports":  [
+                                    6783
+                                ]
+                  },
+        "falsePositiveNote":  "Una porta in ascolto non implica di per se\u0027 un uso illecito: puo\u0027 essere un servizio aziendale legittimo e autorizzato."
+    },
+    {
+        "id":  "DV-PORT-0021",
+        "name":  "AnyDesk-Alt",
+        "description":  "AnyDesk Porta alternativa",
+        "author":  "DigitalValut",
+        "type":  "port",
+        "category":  "Commercial RAT",
+        "risk":  "CRITICAL",
+        "match":  {
+                      "ports":  [
+                                    7070
+                                ]
+                  },
+        "falsePositiveNote":  "Una porta in ascolto non implica di per se\u0027 un uso illecito: puo\u0027 essere un servizio aziendale legittimo e autorizzato."
+    },
+    {
+        "id":  "DV-PORT-0022",
+        "name":  "RustDesk",
+        "description":  "RustDesk Remote",
+        "author":  "DigitalValut",
+        "type":  "port",
+        "category":  "Open Source RAT",
+        "risk":  "HIGH",
+        "match":  {
+                      "ports":  [
+                                    7788
+                                ]
+                  },
+        "falsePositiveNote":  "Una porta in ascolto non implica di per se\u0027 un uso illecito: puo\u0027 essere un servizio aziendale legittimo e autorizzato."
+    },
+    {
+        "id":  "DV-PORT-0023",
+        "name":  "GoToMyPC",
+        "description":  "GoToMyPC Cloud",
+        "author":  "DigitalValut",
+        "type":  "port",
+        "category":  "Commercial",
+        "risk":  "HIGH",
+        "match":  {
+                      "ports":  [
+                                    8200
+                                ]
+                  },
+        "falsePositiveNote":  "Una porta in ascolto non implica di per se\u0027 un uso illecito: puo\u0027 essere un servizio aziendale legittimo e autorizzato."
+    },
+    {
+        "id":  "DV-PORT-0024",
+        "name":  "Webmin",
+        "description":  "Webmin Server",
+        "author":  "DigitalValut",
+        "type":  "port",
+        "category":  "Web Admin",
+        "risk":  "HIGH",
+        "match":  {
+                      "ports":  [
+                                    10000
+                                ]
+                  },
+        "falsePositiveNote":  "Una porta in ascolto non implica di per se\u0027 un uso illecito: puo\u0027 essere un servizio aziendale legittimo e autorizzato."
+    },
+    {
+        "id":  "DV-PORT-0025",
+        "name":  "RustDesk-Relay",
+        "description":  "RustDesk Relay",
+        "author":  "DigitalValut",
+        "type":  "port",
+        "category":  "Open Source RAT",
+        "risk":  "HIGH",
+        "match":  {
+                      "ports":  [
+                                    21116
+                                ]
+                  },
+        "falsePositiveNote":  "Una porta in ascolto non implica di per se\u0027 un uso illecito: puo\u0027 essere un servizio aziendale legittimo e autorizzato."
+    }
+]

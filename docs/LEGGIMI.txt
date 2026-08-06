@@ -1,5 +1,5 @@
 ════════════════════════════════════════════════════════════════════════════════
-        DIGITALVALUT CONTROLLER v4.0 - TUTELA PRIVACY LAVORATORI PA
+        DIGITALVALUT CONTROLLER v4.2 - TUTELA PRIVACY LAVORATORI PA
         (VETSEC Scanner) - Autore: DigitalValut - www.digitalvalut.it
 ════════════════════════════════════════════════════════════════════════════════
 
@@ -72,7 +72,7 @@ QUESTO STRUMENTO:
   Per la normativa completa vedi RIFERIMENTI_LEGALI.txt.
 
 ════════════════════════════════════════════════════════════════════════════════
-             DigitalValut Controller v4.0 - Tutela Privacy Lavoratori PA
+             DigitalValut Controller v4.2 - Tutela Privacy Lavoratori PA
              DigitalValut - Sviluppatore: Dott. Giuseppe Falsone e il team
              Open Source - DigitalValut Association
 ════════════════════════════════════════════════════════════════════════════════

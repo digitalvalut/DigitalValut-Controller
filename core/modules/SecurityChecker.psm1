@@ -1,4 +1,4 @@
-# DigitalValut Controller v4.0 - SecurityChecker Module
+# DigitalValut Controller v4.2 - SecurityChecker Module
 # Copyright (C) 2024-2026 DigitalValut - www.digitalvalut.it
 # Sviluppatore: Dott. Giuseppe Falsone e il team DigitalValut
 #
@@ -17,7 +17,7 @@ function Get-DVFirewallStatus {
         PublicProfile   = $false
         AllEnabled      = $false
     }
-    
+
     try {
         $fw = Get-NetFirewallProfile -ErrorAction SilentlyContinue
         foreach ($fwProfile in $fw) {
@@ -31,7 +31,7 @@ function Get-DVFirewallStatus {
     } catch {
         $status.AllEnabled = $false
     }
-    
+
     return $status
 }
 
@@ -100,10 +100,10 @@ function Get-DVRemoteControlCapabilities {
 
 function Get-DVServicesSuspicious {
     param([hashtable]$ProcessDb)
-    
+
     $found = @()
     $keys = $ProcessDb.Keys | Where-Object { $ProcessDb[$_].Alert -eq $true }
-    
+
     try {
         $services = Get-CimInstance -ClassName Win32_Service -ErrorAction SilentlyContinue |
             Where-Object { $_.State -eq "Running" } |
@@ -111,7 +111,7 @@ function Get-DVServicesSuspicious {
     } catch {
         return $found
     }
-    
+
     foreach ($svc in $services) {
         $nameLower = ($svc.Name + " " + $svc.DisplayName).ToLower()
         foreach ($key in $keys) {
@@ -125,7 +125,7 @@ function Get-DVServicesSuspicious {
             }
         }
     }
-    
+
     return $found
 }
 

@@ -1,4 +1,4 @@
-# DigitalValut Controller v4.0 - SystemInfo Module
+# DigitalValut Controller v4.2 - SystemInfo Module
 # Copyright (C) 2024-2026 DigitalValut - www.digitalvalut.it
 # Sviluppatore: Dott. Giuseppe Falsone e il team DigitalValut
 #
@@ -23,7 +23,7 @@ function Get-DVSystemInfo {
         IPAddress      = ""
         LastBoot       = ""
     }
-    
+
     try {
         $os = Get-CimInstance -ClassName Win32_OperatingSystem -ErrorAction SilentlyContinue
         if ($os) {
@@ -35,19 +35,19 @@ function Get-DVSystemInfo {
         $info.OSVersion = "Unknown"
         $info.OSBuild   = "N/A"
     }
-    
+
     try {
         $cs = Get-CimInstance -ClassName Win32_ComputerSystem -ErrorAction SilentlyContinue
         if ($cs -and $cs.Domain) { $info.Domain = $cs.Domain }
     } catch { }
-    
+
     try {
         $ip = Get-NetIPAddress -AddressFamily IPv4 -ErrorAction SilentlyContinue |
             Where-Object { $_.InterfaceAlias -notlike "*Loopback*" -and $_.IPAddress -notlike "127.*" } |
             Select-Object -First 1
         if ($ip) { $info.IPAddress = $ip.IPAddress }
     } catch { }
-    
+
     return $info
 }
 

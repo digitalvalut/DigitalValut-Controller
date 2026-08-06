@@ -1,0 +1,16 @@
+{
+    "id":  "DV-GS-0001",
+    "name":  "Parsec",
+    "description":  "Rilevamento di Parsec tramite nome del processo.",
+    "author":  "DigitalValut",
+    "type":  "process",
+    "category":  "Gaming/Streaming",
+    "risk":  "MEDIUM",
+    "alert":  false,
+    "match":  {
+                  "nameContains":  [
+                                       "parsec"
+                                   ]
+              },
+    "falsePositiveNote":  "Puo\u0027 essere legittimo se installato e autorizzato dal reparto IT della tua organizzazione."
+}

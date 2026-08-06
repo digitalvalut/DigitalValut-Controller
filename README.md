@@ -1,4 +1,4 @@
-# DigitalValut Controller v4.1
+# DigitalValut Controller v4.2
 
 [![CI](https://github.com/digitalvalut/DigitalValut-Controller/actions/workflows/ci.yml/badge.svg)](https://github.com/digitalvalut/DigitalValut-Controller/actions/workflows/ci.yml)
 [![Licenza: GPL v3](https://img.shields.io/badge/Licenza-GPLv3-blue.svg)](LICENSE)
@@ -41,6 +41,14 @@ modifica il sistema, non invia dati in rete: funziona anche da chiavetta USB.
 - **Persistenza avanzata**: sottoscrizioni WMI permanenti non riconosciute,
   `AppInit_DLLs`, debugger IFEO (hijacking di eseguibili), task pianificati con
   pattern sospetti (comandi codificati, download remoti, percorsi temporanei)
+- **DLL iniettate in processi legittimi**: molti strumenti di monitoraggio non
+  girano come processo autonomo (visibile in Gestione attività) ma si iniettano
+  come libreria dentro browser, Explorer o client di posta. Vengono segnalate le
+  DLL caricate da cartelle temporanee o pubbliche, con verifica della firma
+- **Analisi storica**: cosa è *successo* su questo PC, non solo cosa c'è adesso —
+  servizi installati di recente, cancellazioni del registro di sicurezza, accessi
+  remoti RDP. Un software di controllo può essere stato installato, usato e
+  rimosso
 - **Confronto con la scansione precedente**: cosa è cambiato — nuovi riscontri
   e riscontri risolti — rispetto all'ultima volta, letto dalla catena di custodia
 - **Spiegazione in linguaggio semplice generata da AI locale** (opzionale): se
@@ -53,6 +61,36 @@ modifica il sistema, non invia dati in rete: funziona anche da chiavetta USB.
 Il risultato è un report HTML/JSON con punteggio di rischio (SICURO → CRITICO),
 riferimenti normativi e un fac-simile di richiesta al DPO.
 
+## Estendibile da chiunque, senza toccare il codice
+
+Le firme di rilevamento **non sono scritte dentro il programma**: sono file
+`.json` nella cartella `core/rules/`. Chiunque può aggiungere i propri
+rilevamenti creando un file — senza saper programmare, senza modificare il
+codice, senza dover chiedere niente a nessuno.
+
+```json
+{
+  "id": "MIO-0001",
+  "name": "Software da rilevare",
+  "type": "process",
+  "risk": "HIGH",
+  "match": { "nameContains": ["nomeprocesso"] }
+}
+```
+
+Metti il file in `core/rules/custom/`, rilancia la scansione, funziona.
+Guida completa con esempi: **[RULES.md](RULES.md)**.
+
+Tre garanzie di progetto su questo meccanismo:
+
+- **Le regole sono solo dati, mai codice eseguibile.** Un file di regole
+  scaricato da terzi non può eseguire comandi sul tuo PC. È una scelta di
+  sicurezza deliberata.
+- **Una regola scritta male non rompe niente**: viene ignorata, la scansione
+  prosegue, e il report indica quale file e perché.
+- **Se la cartella regole manca o è danneggiata**, lo strumento continua a
+  funzionare con il database interno di riserva.
+
 ## Cosa NON fa (limiti dichiarati)
 
 La trasparenza sui limiti fa parte dello strumento. Il Software **non** rileva
@@ -60,6 +98,13 @@ in modo affidabile: rootkit in kernel mode, bootkit, impianti a livello
 firmware/UEFI, hypervisor malevoli, dispositivi hardware di intercettazione,
 monitoraggio effettuato a livello di rete o su infrastruttura esterna al
 dispositivo, né strumenti progettati specificamente per eludere l'analisi.
+
+Sul rilevamento delle DLL iniettate: non vede le tecniche avanzate (*reflective
+loading*, *manual mapping*), che non lasciano un modulo elencabile. Sull'analisi
+storica: i registri eventi di Windows ruotano, quindi eventi più vecchi possono
+essere già stati sovrascritti legittimamente, e senza privilegi di
+amministratore il registro di sicurezza non è leggibile affatto (il report lo
+dichiara apertamente quando succede).
 
 **Un esito "SICURO" non dimostra l'assenza di sorveglianza**, così come la
 segnalazione di un software non dimostra un uso illecito: gli strumenti di
@@ -168,9 +213,9 @@ semplice dei risultati, generata da un modello che gira **in locale**.
 
 ## Qualità e affidabilità del codice
 
-- **Test automatici** (Pester): logica di hash e catena di custodia, calcolo
-  del punteggio di rischio, moduli di persistenza e firma digitale — vedi
-  [`tests/`](tests/).
+- **93 test automatici** (Pester): motore delle regole, hash e catena di
+  custodia, calcolo del punteggio di rischio, persistenza, firma digitale,
+  DLL iniettate, analisi eventi — vedi [`tests/`](tests/).
 - **Lint automatico** (PSScriptAnalyzer) su ogni push/PR, configurazione in
   [`PSScriptAnalyzerSettings.psd1`](PSScriptAnalyzerSettings.psd1).
 - **CI su GitHub Actions**: sintassi, lint e test eseguiti automaticamente a
@@ -189,14 +234,18 @@ DigitalValut-Controller/
 ├── core/
 │   ├── DVController.ps1      # Script principale
 │   ├── config/settings.json  # Lingua, apertura automatica del report
+│   ├── rules/                # ⭐ Regole di rilevamento (file .json)
+│   │   └── custom/           #    Le TUE regole: vedi RULES.md
 │   └── modules/              # Rete, processi, sorveglianza, persistenza,
-│                              # firma digitale, AI locale, report, custodia
-├── tests/                    # Suite di test Pester
+│                             # firma digitale, DLL, eventi, AI locale,
+│                             # motore regole, report, catena di custodia
+├── tests/                    # Suite di test Pester (93 test)
 ├── scripts/                  # Strumenti di release (pacchetto + checksum)
 ├── .github/workflows/        # CI (lint + test automatici)
 ├── docs/                     # Guida completa, riferimenti legali, quick guide
 ├── templates/                # Template HTML/CSS del report
 ├── DISCLAIMER.md             # Avvertenze e limiti (da leggere)
+├── RULES.md                  # Come scrivere le tue regole di rilevamento
 ├── SECURITY.md               # Segnalazione vulnerabilità
 ├── CONTRIBUTING.md           # Linee guida per i contributi
 ├── CHANGELOG.md              # Cronologia delle versioni

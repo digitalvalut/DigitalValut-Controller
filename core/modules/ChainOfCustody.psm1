@@ -1,4 +1,4 @@
-# DigitalValut Controller v4.0 - ChainOfCustody Module
+# DigitalValut Controller v4.2 - ChainOfCustody Module
 # Copyright (C) 2024-2026 DigitalValut - www.digitalvalut.it
 # Sviluppatore: Dott. Giuseppe Falsone e il team DigitalValut
 #

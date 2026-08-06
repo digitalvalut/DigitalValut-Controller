@@ -42,7 +42,31 @@ L'utente riconosce espressamente di essere stato informato che:
 
 **f) Persistenza avanzata.** Le tecniche rilevate (sottoscrizioni WMI, `AppInit_DLLs`, debugger IFEO, task pianificati) sono usate sia da malware sia, più raramente, da strumenti di gestione IT legittimi. Ogni riscontro va valutato nel contesto: la presenza non dimostra da sola una compromissione.
 
-**g) Spiegazione generata da intelligenza artificiale (opzionale).** Se disponibile in locale tramite Ollama, il report può includere una spiegazione dei risultati generata da un modello linguistico. Questo testo è generato automaticamente, **può contenere imprecisioni o omissioni** (fenomeno noto come "allucinazione" nei modelli linguistici), non è stato validato da una persona e **non sostituisce in alcun modo** le sezioni tecniche del report né un parere legale. È fornito unicamente a scopo di leggibilità.
+**g) Regole di rilevamento di terze parti.** Il Software carica le regole di
+rilevamento da file esterni, che possono essere stati scritti da soggetti diversi
+dall'autore. Tali regole sono **soltanto dati dichiarativi** e non possono
+eseguire codice sul sistema; tuttavia una regola scritta male o in malafede può
+produrre **segnalazioni errate o fuorvianti**. L'autore non risponde in alcun
+modo del contenuto, dell'accuratezza o degli effetti di regole non incluse nella
+distribuzione ufficiale. Nel report è sempre indicato il file di provenienza di
+ogni rilevamento.
+
+**h) Rilevamento di DLL caricate da percorsi anomali.** Il controllo è basato sul
+**percorso** del file, non sul comportamento: non stabilisce se una libreria sia
+malevola. Non rileva le tecniche di iniezione avanzate (*reflective loading*,
+*manual mapping*), che non lasciano un modulo elencabile con questo metodo. Senza
+privilegi amministrativi molti processi non sono ispezionabili: **l'assenza di
+segnalazioni non dimostra l'assenza di iniezione**.
+
+**i) Analisi storica dei registri eventi.** I registri eventi di Windows hanno
+dimensione limitata e ruotano: eventi più vecchi possono essere già stati
+sovrascritti in modo del tutto legittimo. Il registro di sicurezza richiede
+privilegi amministrativi e, in loro assenza, quella parte dell'analisi viene
+saltata (il report lo dichiara). L'installazione di un servizio è inoltre
+un'operazione ordinaria — driver, aggiornamenti e software aziendale ne
+installano di continuo — e **non costituisce di per sé indice di un problema**.
+
+**j) Spiegazione generata da intelligenza artificiale (opzionale).** Se disponibile in locale tramite Ollama, il report può includere una spiegazione dei risultati generata da un modello linguistico. Questo testo è generato automaticamente, **può contenere imprecisioni o omissioni** (fenomeno noto come "allucinazione" nei modelli linguistici), non è stato validato da una persona e **non sostituisce in alcun modo** le sezioni tecniche del report né un parere legale. È fornito unicamente a scopo di leggibilità.
 
 ## 4. LIMITI PROBATORI DEL REPORT
 

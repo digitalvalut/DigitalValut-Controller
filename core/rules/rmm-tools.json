@@ -1,0 +1,66 @@
+[
+    {
+        "id":  "DV-RMM-0001",
+        "name":  "Atera Agent",
+        "description":  "Rilevamento di Atera Agent tramite nome del processo.",
+        "author":  "DigitalValut",
+        "type":  "process",
+        "category":  "RMM",
+        "risk":  "HIGH",
+        "alert":  true,
+        "match":  {
+                      "nameContains":  [
+                                           "atera"
+                                       ]
+                  },
+        "falsePositiveNote":  "Puo\u0027 essere legittimo se installato e autorizzato dal reparto IT della tua organizzazione."
+    },
+    {
+        "id":  "DV-RMM-0002",
+        "name":  "ConnectWise",
+        "description":  "Rilevamento di ConnectWise tramite nome del processo.",
+        "author":  "DigitalValut",
+        "type":  "process",
+        "category":  "RMM",
+        "risk":  "HIGH",
+        "alert":  true,
+        "match":  {
+                      "nameContains":  [
+                                           "connectwise"
+                                       ]
+                  },
+        "falsePositiveNote":  "Puo\u0027 essere legittimo se installato e autorizzato dal reparto IT della tua organizzazione."
+    },
+    {
+        "id":  "DV-RMM-0003",
+        "name":  "Datto RMM",
+        "description":  "Rilevamento di Datto RMM tramite nome del processo.",
+        "author":  "DigitalValut",
+        "type":  "process",
+        "category":  "RMM",
+        "risk":  "HIGH",
+        "alert":  true,
+        "match":  {
+                      "nameContains":  [
+                                           "datto"
+                                       ]
+                  },
+        "falsePositiveNote":  "Puo\u0027 essere legittimo se installato e autorizzato dal reparto IT della tua organizzazione."
+    },
+    {
+        "id":  "DV-RMM-0004",
+        "name":  "NinjaOne/NinjaRMM",
+        "description":  "Rilevamento di NinjaOne/NinjaRMM tramite nome del processo.",
+        "author":  "DigitalValut",
+        "type":  "process",
+        "category":  "RMM",
+        "risk":  "HIGH",
+        "alert":  true,
+        "match":  {
+                      "nameContains":  [
+                                           "ninjaone"
+                                       ]
+                  },
+        "falsePositiveNote":  "Puo\u0027 essere legittimo se installato e autorizzato dal reparto IT della tua organizzazione."
+    }
+]

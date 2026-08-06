@@ -1,7 +1,7 @@
 #Requires -Version 5.1
 <#
 .SYNOPSIS
-    DigitalValut Controller v4.1 - Strumento di Tutela Privacy Lavoratori PA
+    DigitalValut Controller v4.2 - Strumento di Tutela Privacy Lavoratori PA
 
 .DESCRIPTION
     Strumento per la verifica di software di controllo remoto non autorizzato.
@@ -23,7 +23,7 @@
     See the LICENSE file for details.
 
 .VERSION
-    4.1.1
+    4.2.0
 
 .LINK
     https://www.digitalvalut.it
@@ -50,7 +50,7 @@ $ErrorActionPreference = "Continue"
 
 # === CONFIGURAZIONE GLOBALE ===
 $Global:DVConfig = @{
-    Version         = "4.1.1"
+    Version         = "4.2.0"
     Author          = "DigitalValut"
     AuthorTitle     = "Sviluppatore: Dott. Giuseppe Falsone e il team DigitalValut"
     Organization    = "DigitalValut Association"
@@ -81,8 +81,12 @@ if (Test-Path $configPath) {
 $controllerRoot = (Get-Item $PSScriptRoot).Parent.FullName
 $modulesPath = Join-Path $PSScriptRoot "modules"
 
-# Importa moduli
+# Importa moduli.
+# Nota: RuleEngine va caricato PRIMA di ThreatDatabase, perche' quest'ultimo usa
+# le funzioni del motore per leggere le regole esterne (con riserva interna se
+# il motore o la cartella regole non sono disponibili).
 $modules = @(
+    "RuleEngine",
     "ThreatDatabase",
     "SystemInfo",
     "ProcessScanner",
@@ -91,6 +95,8 @@ $modules = @(
     "SurveillanceDetector",
     "AuthenticodeChecker",
     "PersistenceAnalyzer",
+    "ModuleAnalyzer",
+    "EventLogAnalyzer",
     "OllamaAssistant",
     "ReportGenerator",
     "ChainOfCustody"
@@ -98,7 +104,7 @@ $modules = @(
 foreach ($mod in $modules) {
     $modPath = Join-Path $modulesPath "$mod.psm1"
     if (Test-Path $modPath) {
-        Import-Module $modPath -Force
+        Import-Module $modPath -Force -Global
     } else {
         Write-Host "  [!] Modulo mancante: $mod.psm1 - alcune funzionalita' potrebbero non essere disponibili." -ForegroundColor Yellow
     }
@@ -161,6 +167,21 @@ if ($VerifyChain) {
 if ($QuickScan) {
     Write-Host "  [*] Modalita' scansione RAPIDA (alcuni controlli lenti saranno saltati)." -ForegroundColor Cyan
 }
+# Carica le regole di rilevamento esterne (core\rules). Chiunque puo' aggiungere
+# le proprie regole in quella cartella senza toccare il codice: vedi RULES.md.
+# Se la cartella manca o e' danneggiata si usa la riserva interna, senza bloccare nulla.
+Write-Host "  [*] Caricamento regole di rilevamento..." -ForegroundColor Cyan
+$rulesPath = Join-Path $PSScriptRoot "rules"
+$rulesInfo = Initialize-DVThreatData -RulesPath $rulesPath
+if ($rulesInfo.UsedFallback) {
+    Write-Host "  [i] Nessuna regola esterna caricata: in uso il database interno di riserva." -ForegroundColor DarkGray
+} else {
+    Write-Host "  [OK] $($rulesInfo.Loaded) regole caricate da $($rulesInfo.SourceCount) file." -ForegroundColor Green
+}
+if (@($rulesInfo.Skipped).Count -gt 0) {
+    Write-Host "  [!] $(@($rulesInfo.Skipped).Count) regole scartate perche' non valide (dettaglio nel report)." -ForegroundColor Yellow
+}
+
 Write-Host "  [*] Raccolta informazioni sistema..." -ForegroundColor Cyan
 $systemInfo = Get-DVSystemInfo
 
@@ -203,6 +224,8 @@ $surveillanceCapabilities = $null
 $startupPrograms = @()
 $antivirusStatus = @()
 $persistenceFindings = $null
+$moduleFindings = $null
+$eventLogFindings = $null
 if (-not $QuickScan) {
     Write-Host "  [*] Rilevamento sorveglianza audio/video (microfono, webcam)..." -ForegroundColor Cyan
     $surveillanceCapabilities = Get-DVSurveillanceCapabilities
@@ -215,15 +238,25 @@ if (-not $QuickScan) {
 
     Write-Host "  [*] Persistenza avanzata (WMI, AppInit_DLLs, IFEO, task pianificati)..." -ForegroundColor Cyan
     $persistenceFindings = Get-DVPersistenceFindings
+
+    Write-Host "  [*] DLL caricate da percorsi anomali (iniezione in processi legittimi)..." -ForegroundColor Cyan
+    $moduleFindings = Get-DVModuleFindings
+
+    Write-Host "  [*] Analisi storica registri eventi (cosa e' successo su questo PC)..." -ForegroundColor Cyan
+    $eventLogFindings = Get-DVEventLogFindings -DaysBack 30 -ProcessDb $processDb
+    if (-not $eventLogFindings.SecurityLogReadable) {
+        Write-Host "  [i] Registro Security non leggibile senza privilegi di amministratore: parte dell'analisi storica e' stata saltata." -ForegroundColor DarkGray
+    }
 } else {
-    Write-Host "  [i] Saltati (modalita' rapida): sorveglianza audio/video, avvio automatico, antivirus, persistenza avanzata." -ForegroundColor DarkGray
+    Write-Host "  [i] Saltati (modalita' rapida): sorveglianza audio/video, avvio automatico, antivirus, persistenza avanzata, DLL iniettate, analisi storica." -ForegroundColor DarkGray
 }
 
 Write-Host "  [*] Calcolo punteggio di rischio..." -ForegroundColor Cyan
 $threatScore = Get-DVThreatScore -PortAnalysis $portAnalysis -ProcessAnalysis $processAnalysis `
     -ServiceAnalysis $serviceAnalysis -SoftwareAnalysis $softwareAnalysis `
     -FirewallStatus $firewallStatus -NetworkConnections $networkConnections -PortsDb $portDb `
-    -SurveillanceCapabilities $surveillanceCapabilities -PersistenceFindings $persistenceFindings
+    -SurveillanceCapabilities $surveillanceCapabilities -PersistenceFindings $persistenceFindings `
+    -ModuleFindings $moduleFindings -EventLogFindings $eventLogFindings
 
 Write-Host "  [*] Confronto con l'ultima scansione registrata..." -ForegroundColor Cyan
 $scanDiff = Compare-DVScanFindings -LedgerPath $ledgerPath -ReportDir $reportDir `
@@ -263,6 +296,9 @@ $exportData = @{
     StartupPrograms          = $startupPrograms
     AntivirusStatus          = $antivirusStatus
     PersistenceFindings      = $persistenceFindings
+    ModuleFindings           = $moduleFindings
+    EventLogFindings         = $eventLogFindings
+    RulesInfo                = $rulesInfo
     ScanDiff                 = $scanDiff
 }
 $jsonDataString = $exportData | ConvertTo-Json -Depth 10
@@ -277,6 +313,7 @@ try {
         -StartupPrograms $startupPrograms -AntivirusStatus $antivirusStatus `
         -SurveillanceCapabilities $surveillanceCapabilities `
         -PersistenceFindings $persistenceFindings -ScanDiff $scanDiff -OllamaExplanation $ollamaExplanation `
+        -ModuleFindings $moduleFindings -EventLogFindings $eventLogFindings -RulesInfo $rulesInfo `
         -ControllerRoot $controllerRoot -OutputPath $reportFullPath -JsonData $jsonDataString `
         -ContentHash $findingsHash -IsElevated $isElevated
 } catch {

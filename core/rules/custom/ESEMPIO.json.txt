@@ -1,0 +1,35 @@
+QUESTO E' UN MODELLO DI ESEMPIO - NON VIENE CARICATO
+====================================================
+
+Ha estensione .json.txt proprio per NON essere letto dallo strumento.
+
+Per creare una tua regola:
+  1. Copia questo file
+  2. Rinominalo togliendo ".txt" finale (deve finire in .json), es. "mie-regole.json"
+  3. Modifica i valori qui sotto
+  4. Rilancia la scansione: la tua regola e' attiva
+
+Guida completa con tutti i campi e altri esempi: file RULES.md
+
+Le regole che metti in questa cartella "custom" non vengono sovrascritte
+quando aggiorni DigitalValut Controller a una versione nuova.
+
+------------------------------------------------------------------------
+COPIA DA QUI IN GIU' NEL TUO FILE .json
+------------------------------------------------------------------------
+[
+  {
+    "id": "MIO-0001",
+    "name": "Nome del software da rilevare",
+    "description": "Spiega a cosa serve questa regola",
+    "author": "Il tuo nome o la tua organizzazione",
+    "type": "process",
+    "category": "Remote Control",
+    "risk": "HIGH",
+    "alert": true,
+    "match": {
+      "nameContains": ["nomeprocesso"]
+    },
+    "falsePositiveNote": "Indica quando questo rilevamento potrebbe essere un falso allarme"
+  }
+]

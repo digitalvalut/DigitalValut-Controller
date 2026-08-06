@@ -1,4 +1,4 @@
-# DigitalValut Controller v4.1 - ReportGenerator Module
+# DigitalValut Controller v4.2 - ReportGenerator Module
 # Strumento Tutela Privacy Lavoratori PA
 # Copyright (C) 2024-2026 DigitalValut - www.digitalvalut.it
 # Sviluppatore: Dott. Giuseppe Falsone e il team DigitalValut
@@ -21,12 +21,14 @@ function Get-DVThreatScore {
         [object]$NetworkConnections,
         [hashtable]$PortsDb = @{},
         [object]$SurveillanceCapabilities = $null,
-        [object]$PersistenceFindings = $null
+        [object]$PersistenceFindings = $null,
+        [object]$ModuleFindings = $null,
+        [object]$EventLogFindings = $null
     )
-    
+
     $score = 0
     $findings = @()
-    
+
     # Porte (peso elevato)
     $suspiciousPorts = @()
     if ($PortAnalysis -and $PortAnalysis.SuspiciousPorts) { $suspiciousPorts = $PortAnalysis.SuspiciousPorts }
@@ -38,7 +40,7 @@ function Get-DVThreatScore {
             "MEDIUM"   { $score += 10; $findings += "[MEDIO] Porta $($port.Port) ($($port.Name)) aperta" }
         }
     }
-    
+
     # Processi (peso massimo per spyware)
     $remoteControl = @()
     $spyware = @()
@@ -48,7 +50,7 @@ function Get-DVThreatScore {
         if ($ProcessAnalysis.Spyware)         { $spyware = $ProcessAnalysis.Spyware }
         if ($ProcessAnalysis.EmployeeMonitor) { $employeeMonitor = $ProcessAnalysis.EmployeeMonitor }
     }
-    
+
     foreach ($proc in $remoteControl) {
         $risk = if ($proc.Risk) { $proc.Risk } else { "HIGH" }
         switch ($risk) {
@@ -56,33 +58,33 @@ function Get-DVThreatScore {
             "HIGH"     { $score += 30; $findings += "[ALTO] Software controllo remoto: $($proc.Name)" }
         }
     }
-    
+
     foreach ($spy in $spyware) {
         $score += 100
         $findings += "[ALLARME] Potenziale spyware: $($spy.Name)"
     }
-    
+
     foreach ($mon in $employeeMonitor) {
         $score += 60
         $findings += "[ATTENZIONE] Software monitoraggio dipendenti: $($mon.Name)"
     }
-    
+
     # Servizi attivi
     $activeServices = @()
     if ($ServiceAnalysis) { $activeServices = @($ServiceAnalysis) }
     $score += ($activeServices.Count * 30)
-    
+
     # Software installato
     $softwareCount = 0
     if ($SoftwareAnalysis) { $softwareCount = @($SoftwareAnalysis).Count }
     $score += ($softwareCount * 15)
-    
+
     # Firewall disabilitato
     if ($FirewallStatus -and -not $FirewallStatus.AllEnabled) {
         $score += 25
         $findings += "[RISCHIO] Firewall non completamente attivo"
     }
-    
+
     # Connessioni sospette (solo verso porte RAT note)
     $suspiciousConns = @()
     if ($NetworkConnections -and $NetworkConnections.Suspicious) { $suspiciousConns = $NetworkConnections.Suspicious }
@@ -94,7 +96,7 @@ function Get-DVThreatScore {
             $findings += "[SOSPETTO] Connessione verso $remoteIP`:$remotePort"
         }
     }
-    
+
     # Sorveglianza audio/video: somma punteggio e findings
     if ($SurveillanceCapabilities -and $SurveillanceCapabilities.OverallAudioVideoRisk) {
         $avScore = $SurveillanceCapabilities.OverallAudioVideoRisk.Score
@@ -111,6 +113,22 @@ function Get-DVThreatScore {
         $score += $PersistenceFindings.Score
         if ($PersistenceFindings.Findings) {
             $findings += @($PersistenceFindings.Findings)
+        }
+    }
+
+    # DLL caricate da percorsi anomali (possibile iniezione in processi legittimi)
+    if ($ModuleFindings -and $ModuleFindings.Score -gt 0) {
+        $score += $ModuleFindings.Score
+        if ($ModuleFindings.Findings) {
+            $findings += @($ModuleFindings.Findings)
+        }
+    }
+
+    # Analisi storica dei registri eventi (cosa e' successo in passato)
+    if ($EventLogFindings -and $EventLogFindings.Score -gt 0) {
+        $score += $EventLogFindings.Score
+        if ($EventLogFindings.Findings) {
+            $findings += @($EventLogFindings.Findings)
         }
     }
 
@@ -211,13 +229,16 @@ function New-DVReportHTML {
         [object]$PersistenceFindings = $null,
         [object]$ScanDiff = $null,
         [object]$OllamaExplanation = $null,
+        [object]$ModuleFindings = $null,
+        [object]$EventLogFindings = $null,
+        [object]$RulesInfo = $null,
         [string]$ControllerRoot,
         [string]$OutputPath,
         [string]$JsonData = "",
         [string]$ContentHash = "",
         [bool]$IsElevated = $true
     )
-    
+
     $cssContent = ""
     $cssPath = Join-Path $ControllerRoot "templates\assets\styles.css"
     if ($ControllerRoot -and (Test-Path $cssPath)) {
@@ -225,7 +246,7 @@ function New-DVReportHTML {
     } else {
         $cssContent = "<link rel=`"stylesheet`" href=`"assets/styles.css`">"
     }
-    
+
     $level = $ThreatScore.Level
     $titleEmoji = switch ($level.Class) {
         "critical" { "&#x1F534;" }
@@ -234,7 +255,7 @@ function New-DVReportHTML {
         "low"      { "&#x1F7E2;" }
         default    { "&#x2705;" }
     }
-    
+
     $findingsHtml = ""
     foreach ($f in $ThreatScore.Findings) {
         $findingsHtml += "<li class=`"finding-item`">$([System.Net.WebUtility]::HtmlEncode($f))</li>`n"
@@ -242,7 +263,7 @@ function New-DVReportHTML {
     if ([string]::IsNullOrEmpty($findingsHtml)) {
         $findingsHtml = "<li class=`"finding-item safe`">Nessun elemento sospetto rilevato.</li>"
     }
-    
+
     $portsHtml = ""
     $suspiciousPorts = @()
     if ($PortAnalysis -and $PortAnalysis.SuspiciousPorts) { $suspiciousPorts = $PortAnalysis.SuspiciousPorts }
@@ -251,7 +272,7 @@ function New-DVReportHTML {
         $portsHtml += "<tr><td>$($p.Port)</td><td>$($p.Name)</td><td><span class=`"badge badge-$riskClass`">$($p.Risk)</span></td><td>$([System.Net.WebUtility]::HtmlEncode($p.Description))</td></tr>`n"
     }
     if ([string]::IsNullOrEmpty($portsHtml)) { $portsHtml = "<tr><td colspan=`"4`" style=`"text-align:center;color:#7eb8e8;`">Nessuna porta sospetta in ascolto.</td></tr>" }
-    
+
     $allProcs = @()
     if ($ProcessAnalysis) {
         $allProcs = @($ProcessAnalysis.RemoteControl) + @($ProcessAnalysis.Spyware) + @($ProcessAnalysis.EmployeeMonitor) + @($ProcessAnalysis.OtherSuspicious)
@@ -284,7 +305,7 @@ function New-DVReportHTML {
         $processHtml += "<tr><td>$([System.Net.WebUtility]::HtmlEncode($procName))$countStr</td><td>$pids</td><td title=`"$([System.Net.WebUtility]::HtmlEncode($path))`">$([System.Net.WebUtility]::HtmlEncode($pathDisplay))</td><td>$mem</td><td><span class=`"badge badge-$riskClass`">$($first.Risk)</span></td><td>$($first.Type)</td><td>$sigBadge</td></tr>`n"
     }
     if ([string]::IsNullOrEmpty($processHtml)) { $processHtml = "<tr><td colspan=`"7`" style=`"text-align:center;color:#7eb8e8;`">Nessun processo sospetto rilevato.</td></tr>" }
-    
+
     $servicesHtml = ""
     $services = @($ServiceAnalysis)
     if ($services.Count -eq 0) {
@@ -296,7 +317,7 @@ function New-DVReportHTML {
             $servicesHtml += "<tr><td>$([System.Net.WebUtility]::HtmlEncode($svcName))</td><td><span class=`"badge badge-$riskClass`">$($svc.Risk)</span></td><td>$($svc.Status)</td></tr>`n"
         }
     }
-    
+
     $fwRows = ""
     if ($FirewallStatus) {
         $profiles = @(
@@ -310,7 +331,7 @@ function New-DVReportHTML {
         }
     }
     if ([string]::IsNullOrEmpty($fwRows)) { $fwRows = "<tr><td colspan=`"4`">Dati non disponibili.</td></tr>" }
-    
+
     $extConnHtml = ""
     $extConns = @($ExternalConnections)
     if ($extConns.Count -eq 0) {
@@ -320,7 +341,7 @@ function New-DVReportHTML {
             $extConnHtml += "<tr><td>$($c.RemoteIP)</td><td>$($c.RemotePort)</td><td>$($c.Process)</td><td>$($c.PID)</td></tr>`n"
         }
     }
-    
+
     $softwareHtml = ""
     $softwareList = @($SoftwareAnalysis)
     if ($softwareList.Count -eq 0) {
@@ -332,7 +353,7 @@ function New-DVReportHTML {
             $softwareHtml += "<tr><td>$([System.Net.WebUtility]::HtmlEncode($s.DisplayName))</td><td>$ver</td><td>$([System.Net.WebUtility]::HtmlEncode($pub))</td><td>$($s.Risk)</td></tr>`n"
         }
     }
-    
+
     $startupHtml = ""
     $startupList = @($StartupPrograms)
     if ($startupList.Count -eq 0) {
@@ -345,7 +366,7 @@ function New-DVReportHTML {
             $startupHtml += "<tr><td>$([System.Net.WebUtility]::HtmlEncode($s.Name))</td><td title=`"$([System.Net.WebUtility]::HtmlEncode($s.Command))`">$([System.Net.WebUtility]::HtmlEncode($cmdShort))</td><td>$($s.Location)</td><td>$susBadge</td></tr>`n"
         }
     }
-    
+
     $avHtml = ""
     $avList = @($AntivirusStatus)
     if ($avList.Count -eq 0) {
@@ -357,9 +378,9 @@ function New-DVReportHTML {
             $avHtml += "<tr><td>$([System.Net.WebUtility]::HtmlEncode($a.Name))</td><td>$enBadge</td><td>$upBadge</td><td>$([System.Net.WebUtility]::HtmlEncode($a.Path))</td></tr>`n"
         }
     }
-    
+
     $legalHtml = Get-DVLegalSectionHTML
-    
+
     $activeConnHtml = ""
     $activeConns = @($ActiveRemoteConnections)
     if ($activeConns.Count -eq 0) {
@@ -371,7 +392,7 @@ function New-DVReportHTML {
             $activeConnHtml += "<tr><td>$($ac.IPRemoto)</td><td>$([System.Net.WebUtility]::HtmlEncode($ac.HostRemoto))</td><td>$($ac.PortaLocale)</td><td>$($ac.Processo)</td><td>$($ac.PID)</td><td><span class=`"badge badge-$riskClass`">$([System.Net.WebUtility]::HtmlEncode($ac.Stato))</span></td></tr>`n"
         }
     }
-    
+
     $capabilityHtml = ""
     if (-not $Capabilities -and $ThreatScore.Score -ge 60) {
         $Capabilities = @{ PuoVedereLOSchermo = $true; PuoUsareMouseTastiera = $true; PuoLeggereFile = $true; PuoVedereClipboard = $true }
@@ -389,7 +410,7 @@ function New-DVReportHTML {
             $capabilityHtml += "<div class=`"$cls`"><span class=`"icon`">$($c.Icon)</span><span class=`"label`">$($c.Label)</span><span class=`"detail`">$($c.Detail)</span></div>`n"
         }
     }
-    
+
     $cosaFareHtml = @"
 <div class="step"><div class="step-number">1</div><div class="step-content"><h3>CONSERVA QUESTO REPORT</h3><p>Salva il file HTML e stampalo. E' una <strong>segnalazione tecnica documentata</strong> con data, ora e hash SHA-256 di verifica: utile a supportare una richiesta al DPO o una successiva analisi forense. <strong>Non sostituisce una perizia informatica forense</strong> e non ha di per se' valore di prova legale.</p></div></div>
 <div class="step"><div class="step-number">2</div><div class="step-content"><h3>NON MODIFICARE NULLA SUL PC</h3><p>Non disinstallare software, non cambiare impostazioni. Se intendi far valere quanto rilevato, rivolgiti a un perito informatico forense: solo un'acquisizione forense eseguita da un tecnico qualificato ha piena spendibilita' probatoria.</p></div></div>
@@ -397,7 +418,7 @@ function New-DVReportHTML {
 <div class="step"><div class="step-number">4</div><div class="step-content"><h3>CONTATTA IL SINDACATO</h3><p>RSU, RSA o sindacato di categoria. L'Art. 4 prevede accordo sindacale PRIMA dell'installazione.</p></div></div>
 <div class="step"><div class="step-number">5</div><div class="step-content"><h3>SEGNALA AL GARANTE PRIVACY</h3><p>Se non ottieni risposte, puoi segnalare al <a href=`"https://www.garanteprivacy.it`" target=`"_blank`">Garante per la Protezione dei Dati Personali</a>.</p></div></div>
 "@
-    
+
     $reportHash = if ($ContentHash) { $ContentHash.Substring(0, [Math]::Min(16, $ContentHash.Length)) } else { "N/D" }
     $reportDate = $SystemInfo.ScanDate
     $pcName = $SystemInfo.ComputerName
@@ -428,7 +449,7 @@ function New-DVReportHTML {
 </div>
 <button type="button" onclick="var t=document.getElementById('dpo-request');var s=document.createElement('textarea');s.value=t.innerText;document.body.appendChild(s);s.select();document.execCommand('copy');document.body.removeChild(s);alert('Testo copiato negli appunti.');" class="btn btn-primary no-print">&#x1F4CB; Copia Testo</button>
 "@
-    
+
     $alertBox = ""
     if ($ThreatScore.Score -ge 60) {
         $alertBox = @"
@@ -470,14 +491,14 @@ function New-DVReportHTML {
         $val = if ($item.V) { $item.V } else { "-" }
         $infoGrid += "<div class=`"info-item`"><span class=`"info-label`">$($item.L)</span><span class=`"info-value`">$([System.Net.WebUtility]::HtmlEncode($val))</span></div>`n"
     }
-    
+
     $actionButtons = @"
 <div class="action-buttons no-print">
     <button type="button" onclick="window.print()" class="btn btn-primary">&#x1F5A8;&#xFE0F; Stampa Report</button>
     <button type="button" onclick="var a=document.createElement('a');a.href=location.href;a.download=document.title.replace(/\\s/g,'_')+'.html';a.click();" class="btn btn-secondary">&#x1F4BE; Salva Copia</button>
 </div>
 "@
-    
+
     $jsonSection = ""
     if ($JsonData) {
         $jsonEscaped = [System.Net.WebUtility]::HtmlEncode($JsonData)
@@ -488,10 +509,10 @@ function New-DVReportHTML {
 </details>
 "@
     }
-    
+
     $cfg = $Global:DVConfig
     $copyrightHtml = "&copy; 2024-2026 DigitalValut Association. All Rights Reserved."
-    
+
     $capabilitySection = ""
     if ($capabilityHtml) {
         $capabilitySection = @"
@@ -505,7 +526,7 @@ function New-DVReportHTML {
 </section>
 "@
     }
-    
+
     $surveillanceSection = ""
     if ($SurveillanceCapabilities) {
         $sv = $SurveillanceCapabilities
@@ -642,6 +663,79 @@ function New-DVReportHTML {
 "@
     }
 
+    # === DLL CARICATE DA PERCORSI ANOMALI ===
+    $modulesSection = ""
+    if ($ModuleFindings) {
+        $modRows = ""
+        foreach ($m in @($ModuleFindings.SuspiciousModules)) {
+            $sigBadge = if ($m.SignatureStatus -eq 'Valid') { "<span class=`"badge badge-medium`">Firmata</span>" } else { "<span class=`"badge badge-critical`">Non firmata</span>" }
+            $modRows += "<tr><td>$([System.Net.WebUtility]::HtmlEncode($m.ModuleName))</td><td>$([System.Net.WebUtility]::HtmlEncode($m.ProcessName)) ($($m.ProcessId))</td><td title=`"$([System.Net.WebUtility]::HtmlEncode($m.ModulePath))`">$([System.Net.WebUtility]::HtmlEncode($m.Reason))</td><td>$sigBadge</td><td><span class=`"badge badge-$($m.Risk.ToLower())`">$($m.Risk)</span></td></tr>`n"
+        }
+        if (-not $modRows) { $modRows = "<tr><td colspan=`"5`" style=`"text-align:center;color:#7eb8e8;`">Nessuna DLL caricata da percorsi anomali.</td></tr>" }
+        $inaccessibleNote = if ($ModuleFindings.Inaccessible -gt 0) { " $($ModuleFindings.Inaccessible) processi non ispezionabili (protetti dal sistema o privilegi insufficienti)." } else { "" }
+        $modulesSection = @"
+<section class="card">
+    <h2>&#x1F9EC; DLL caricate da percorsi anomali</h2>
+    <p style="font-size:0.85rem;opacity:0.8;">Molti strumenti di monitoraggio non girano come processo autonomo ma si iniettano come DLL dentro programmi legittimi. Qui sono elencate le DLL caricate da cartelle temporanee o pubbliche, dove normalmente non dovrebbero trovarsi. Analizzati $($ModuleFindings.ProcessesAnalyzed) processi.$inaccessibleNote</p>
+    <p style="font-size:0.85rem;opacity:0.8;"><strong>Limite:</strong> questo controllo non rileva le tecniche di iniezione avanzate (reflective loading / manual mapping), che non lasciano un modulo elencabile. L'assenza di righe non dimostra l'assenza di iniezione.</p>
+    <table class="data-table"><thead><tr><th>DLL</th><th>Processo ospite</th><th>Motivo segnalazione</th><th>Firma</th><th>Rischio</th></tr></thead><tbody>$modRows</tbody></table>
+</section>
+"@
+    }
+
+    # === ANALISI STORICA REGISTRI EVENTI ===
+    $eventLogSection = ""
+    if ($EventLogFindings) {
+        $svcRows = ""
+        foreach ($s in @($EventLogFindings.ServiceInstalls)) {
+            $riskBadge = if ($s.MatchedTool) { "<span class=`"badge badge-high`">$([System.Net.WebUtility]::HtmlEncode($s.MatchedTool))</span>" } else { "-" }
+            $svcRows += "<tr><td>$($s.TimeCreated)</td><td>$([System.Net.WebUtility]::HtmlEncode($s.ServiceName))</td><td title=`"$([System.Net.WebUtility]::HtmlEncode($s.ImagePath))`">$([System.Net.WebUtility]::HtmlEncode($s.ImagePath))</td><td>$riskBadge</td></tr>`n"
+        }
+        if (-not $svcRows) { $svcRows = "<tr><td colspan=`"4`" style=`"text-align:center;color:#7eb8e8;`">Nessuna installazione di servizio registrata nel periodo analizzato.</td></tr>" }
+
+        $securityNote = if ($EventLogFindings.SecurityLogReadable) {
+            "<p style=`"font-size:0.85rem;`">Registro di sicurezza: <strong>leggibile</strong>. Cancellazioni rilevate: $(@($EventLogFindings.SecurityLogCleared).Count) &middot; Accessi remoti (RDP): $(@($EventLogFindings.RemoteLogons).Count)</p>"
+        } else {
+            "<p style=`"font-size:0.85rem;color:#ffa502;`"><strong>Registro di sicurezza non leggibile</strong> (richiede privilegi di amministratore): cancellazioni del log e accessi remoti RDP <strong>non sono stati verificati</strong>. Per un'analisi completa riesegui come amministratore.</p>"
+        }
+
+        $eventLogSection = @"
+<section class="card">
+    <h2>&#x1F553; Cosa e' successo su questo PC (analisi storica)</h2>
+    <p style="font-size:0.85rem;opacity:0.8;">Gli altri controlli fotografano il presente. Questa sezione guarda indietro negli ultimi $($EventLogFindings.DaysAnalyzed) giorni leggendo i registri eventi di Windows: un software di controllo puo' essere stato installato, usato e poi rimosso.</p>
+    $securityNote
+    <p style="font-size:0.85rem;opacity:0.8;"><strong>Limite:</strong> i registri eventi ruotano e hanno dimensione limitata, quindi eventi piu' vecchi possono essere gia' stati sovrascritti legittimamente. L'installazione di un servizio e' inoltre un'operazione normalissima (driver, aggiornamenti, software aziendale).</p>
+    <h3>Servizi installati nel periodo</h3>
+    <table class="data-table"><thead><tr><th>Data e ora</th><th>Nome servizio</th><th>Percorso eseguibile</th><th>Corrispondenza nota</th></tr></thead><tbody>$svcRows</tbody></table>
+</section>
+"@
+    }
+
+    # === REGOLE DI RILEVAMENTO CARICATE ===
+    $rulesSection = ""
+    if ($RulesInfo) {
+        $skippedHtml = ""
+        foreach ($sk in @($RulesInfo.Skipped)) {
+            $skippedHtml += "<li class=`"finding-item`">$([System.Net.WebUtility]::HtmlEncode($sk))</li>`n"
+        }
+        $skippedBlock = if ($skippedHtml) {
+            "<h3>Regole scartate perche' non valide</h3><ul class=`"findings-list`">$skippedHtml</ul><p style=`"font-size:0.85rem;opacity:0.8;`">Una regola scartata non blocca la scansione: viene semplicemente ignorata. Correggi il file indicato e rilancia.</p>"
+        } else { "" }
+        $sourceText = if ($RulesInfo.UsedFallback) {
+            "In uso il <strong>database interno di riserva</strong> (nessuna regola esterna caricata)."
+        } else {
+            "<strong>$($RulesInfo.Loaded) regole</strong> caricate da $($RulesInfo.SourceCount) file nella cartella <code>core\rules</code>."
+        }
+        $rulesSection = @"
+<section class="card">
+    <h2>&#x1F4D0; Regole di rilevamento</h2>
+    <p>$sourceText</p>
+    <p style="font-size:0.85rem;opacity:0.8;">Le firme di rilevamento non sono scritte nel codice: sono file di dati modificabili da chiunque. Puoi aggiungere le tue regole nella cartella <code>core\rules\custom</code> senza saper programmare e senza modificare il programma. Guida: file <code>RULES.md</code>.</p>
+    $skippedBlock
+</section>
+"@
+    }
+
     # === SPIEGAZIONE AI LOCALE (Ollama, opzionale) ===
     $aiExplanationSection = ""
     if ($OllamaExplanation -and $OllamaExplanation.Text) {
@@ -653,7 +747,7 @@ function New-DVReportHTML {
 </section>
 "@
     }
-    
+
     $html = @"
 <!DOCTYPE html>
 <html lang="$($cfg.Language)">
@@ -662,16 +756,16 @@ function New-DVReportHTML {
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="author" content="$($cfg.Author) - $($cfg.AuthorTitle)">
     <meta name="generator" content="DigitalValut Controller $($cfg.Version)">
-    <title>$titleEmoji Report Sicurezza - DigitalValut Controller v4.1</title>
+    <title>$titleEmoji Report Sicurezza - DigitalValut Controller v4.2</title>
     $cssContent
 </head>
 <body>
     <header class="header">
         <div class="logo"><span class="digi">Digital</span><span class="valut">Valut</span></div>
-        <p class="tagline">Controller v4.1 - Strumento di Tutela Privacy Lavoratori PA</p>
+        <p class="tagline">Controller v4.2 - Strumento di Tutela Privacy Lavoratori PA</p>
         <p class="meta">$($SystemInfo.ComputerName) | $($SystemInfo.ScanDate)</p>
     </header>
-    
+
     <main class="container">
         <section class="card risk-card">
             <h2>Livello di rischio</h2>
@@ -680,7 +774,7 @@ function New-DVReportHTML {
             <p class="hash-line">Hash verifica dati (SHA-256): <code>$ContentHash</code> | $($ThreatScore.Timestamp)</p>
             <p class="hash-line" style="font-size:0.75rem;opacity:0.8;">L'hash SHA-256 del report e il registro a catena sono in <code>chain_of_custody.jsonl</code> nella stessa cartella. Il meccanismo e' <em>tamper-evident</em>: rende rilevabile un'alterazione accidentale o non esperta del report. Non e' una marcatura temporale certificata da terza parte (RFC 3161) e non impedisce a un soggetto tecnicamente competente di rigenerare l'intera catena: per finalita' probatorie e' necessaria un'acquisizione forense eseguita da un perito qualificato.</p>
         </section>
-        
+
         $elevationBox
 
         $alertBox
@@ -695,78 +789,84 @@ function New-DVReportHTML {
             <h2>&#x1F4DD; COSA DEVI FARE ORA</h2>
             $cosaFareHtml
         </section>
-        
+
         <section class="card">
             <h2>Riepilogo riscontri</h2>
             <ul class="findings-list">$findingsHtml</ul>
         </section>
-        
+
         <section class="card">
             <h2>&#x1F310; CHI E' COLLEGATO AL TUO PC ORA</h2>
             <table class="data-table"><thead><tr><th>IP Remoto</th><th>Host</th><th>Porta</th><th>Processo</th><th>PID</th><th>Stato</th></tr></thead><tbody>$activeConnHtml</tbody></table>
         </section>
-        
+
         <section class="card">
             <h2>&#x1F4BB; Informazioni Sistema</h2>
             <div class="info-grid">$infoGrid</div>
         </section>
-        
+
         <section class="card">
             <h2>&#x1F50C; Porte sospette in ascolto</h2>
             <table class="data-table"><thead><tr><th>Porta</th><th>Servizio</th><th>Rischio</th><th>Descrizione</th></tr></thead><tbody>$portsHtml</tbody></table>
         </section>
-        
+
         <section class="card">
             <h2>&#x2699;&#xFE0F; Processi rilevati</h2>
             <p style="font-size:0.85rem;opacity:0.8;">La colonna Firma indica se l'eseguibile ha una firma digitale (Authenticode) valida. L'assenza di firma non dimostra da sola malevolenza, ne' la presenza di firma dimostra un uso autorizzato: e' un elemento a supporto, non una prova (vedi DISCLAIMER.md).</p>
             <table class="data-table"><thead><tr><th>Processo</th><th>PID</th><th>Percorso</th><th>Memoria</th><th>Rischio</th><th>Tipo</th><th>Firma</th></tr></thead><tbody>$processHtml</tbody></table>
         </section>
-        
+
         <section class="card">
             <h2>&#x1F310; Connessioni Esterne Attive</h2>
             <table class="data-table"><thead><tr><th>IP Remoto</th><th>Porta</th><th>Processo</th><th>PID</th></tr></thead><tbody>$extConnHtml</tbody></table>
         </section>
-        
+
         <section class="card">
             <h2>&#x1F510; Servizi sospetti</h2>
             <table class="data-table"><thead><tr><th>Servizio</th><th>Rischio</th><th>Stato</th></tr></thead><tbody>$servicesHtml</tbody></table>
         </section>
-        
+
         $surveillanceSection
 
         $persistenceSection
+
+        $modulesSection
+
+        $eventLogSection
 
         <section class="card">
             <h2>&#x1F4E6; Software Installato (controllo remoto)</h2>
             <table class="data-table"><thead><tr><th>Nome</th><th>Versione</th><th>Editore</th><th>Rischio</th></tr></thead><tbody>$softwareHtml</tbody></table>
         </section>
-        
+
         <section class="card">
             <h2>&#x1F680; Programmi Avvio Automatico</h2>
             <table class="data-table"><thead><tr><th>Nome</th><th>Comando</th><th>Posizione</th><th>Nota</th></tr></thead><tbody>$startupHtml</tbody></table>
         </section>
-        
+
         <section class="card">
             <h2>&#x1F525; Firewall</h2>
             <table class="data-table"><thead><tr><th>Profilo</th><th>Stato</th><th>Traffico In</th><th>Traffico Out</th></tr></thead><tbody>$fwRows</tbody></table>
         </section>
-        
+
         <section class="card">
             <h2>&#x1F6E1;&#xFE0F; Antivirus</h2>
             <table class="data-table"><thead><tr><th>Nome</th><th>Stato</th><th>Aggiornamenti</th><th>Percorso</th></tr></thead><tbody>$avHtml</tbody></table>
         </section>
-        
+
+        $rulesSection
+
         <section class="card template-card">
             <h2>&#x1F4C4; MODELLO RICHIESTA AL DPO (copia e personalizza)</h2>
             $dpoLetterHtml
         </section>
-        
+
         $legalHtml
-        
+
         $jsonSection
-        
+
         $actionButtons
-        
+
         <footer class="footer-signature">
             <div class="author-badge">
                 <strong>$($cfg.Author)</strong><br>
@@ -780,7 +880,7 @@ function New-DVReportHTML {
 </body>
 </html>
 "@
-    
+
     $outDir = Split-Path -Parent $OutputPath
     if (-not (Test-Path $outDir)) { New-Item -ItemType Directory -Path $outDir -Force | Out-Null }
     [System.IO.File]::WriteAllText($OutputPath, $html, [System.Text.Encoding]::UTF8)

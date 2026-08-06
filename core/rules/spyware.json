@@ -1,0 +1,242 @@
+[
+    {
+        "id":  "DV-SPY-0001",
+        "name":  "Ardamax Keylogger",
+        "description":  "Rilevamento di Ardamax Keylogger tramite nome del processo.",
+        "author":  "DigitalValut",
+        "type":  "process",
+        "category":  "Spyware",
+        "risk":  "CRITICAL",
+        "alert":  true,
+        "match":  {
+                      "nameContains":  [
+                                           "ardamax"
+                                       ]
+                  },
+        "falsePositiveNote":  "Puo\u0027 essere legittimo se installato e autorizzato dal reparto IT della tua organizzazione."
+    },
+    {
+        "id":  "DV-SPY-0002",
+        "name":  "Cocospy",
+        "description":  "Rilevamento di Cocospy tramite nome del processo.",
+        "author":  "DigitalValut",
+        "type":  "process",
+        "category":  "Spyware",
+        "risk":  "CRITICAL",
+        "alert":  true,
+        "match":  {
+                      "nameContains":  [
+                                           "cocospy"
+                                       ]
+                  },
+        "falsePositiveNote":  "Puo\u0027 essere legittimo se installato e autorizzato dal reparto IT della tua organizzazione."
+    },
+    {
+        "id":  "DV-SPY-0003",
+        "name":  "FlexiSpy",
+        "description":  "Rilevamento di FlexiSpy tramite nome del processo.",
+        "author":  "DigitalValut",
+        "type":  "process",
+        "category":  "Spyware",
+        "risk":  "CRITICAL",
+        "alert":  true,
+        "match":  {
+                      "nameContains":  [
+                                           "flexispy"
+                                       ]
+                  },
+        "falsePositiveNote":  "Puo\u0027 essere legittimo se installato e autorizzato dal reparto IT della tua organizzazione."
+    },
+    {
+        "id":  "DV-SPY-0004",
+        "name":  "Hook Keyboard",
+        "description":  "Rilevamento di Hook Keyboard tramite nome del processo.",
+        "author":  "DigitalValut",
+        "type":  "process",
+        "category":  "Spyware",
+        "risk":  "CRITICAL",
+        "alert":  true,
+        "match":  {
+                      "nameContains":  [
+                                           "hookexe"
+                                       ]
+                  },
+        "falsePositiveNote":  "Puo\u0027 essere legittimo se installato e autorizzato dal reparto IT della tua organizzazione."
+    },
+    {
+        "id":  "DV-SPY-0005",
+        "name":  "HoverWatch",
+        "description":  "Rilevamento di HoverWatch tramite nome del processo.",
+        "author":  "DigitalValut",
+        "type":  "process",
+        "category":  "Spyware",
+        "risk":  "CRITICAL",
+        "alert":  true,
+        "match":  {
+                      "nameContains":  [
+                                           "hoverwatch"
+                                       ]
+                  },
+        "falsePositiveNote":  "Puo\u0027 essere legittimo se installato e autorizzato dal reparto IT della tua organizzazione."
+    },
+    {
+        "id":  "DV-SPY-0006",
+        "name":  "Generic Keylogger",
+        "description":  "Rilevamento di Generic Keylogger tramite nome del processo.",
+        "author":  "DigitalValut",
+        "type":  "process",
+        "category":  "Spyware",
+        "risk":  "CRITICAL",
+        "alert":  true,
+        "match":  {
+                      "nameContains":  [
+                                           "keylogger"
+                                       ]
+                  },
+        "falsePositiveNote":  "Puo\u0027 essere legittimo se installato e autorizzato dal reparto IT della tua organizzazione."
+    },
+    {
+        "id":  "DV-SPY-0007",
+        "name":  "KeySniff",
+        "description":  "Rilevamento di KeySniff tramite nome del processo.",
+        "author":  "DigitalValut",
+        "type":  "process",
+        "category":  "Spyware",
+        "risk":  "CRITICAL",
+        "alert":  true,
+        "match":  {
+                      "nameContains":  [
+                                           "keysniff"
+                                       ]
+                  },
+        "falsePositiveNote":  "Puo\u0027 essere legittimo se installato e autorizzato dal reparto IT della tua organizzazione."
+    },
+    {
+        "id":  "DV-SPY-0008",
+        "name":  "mSpy",
+        "description":  "Rilevamento di mSpy tramite nome del processo.",
+        "author":  "DigitalValut",
+        "type":  "process",
+        "category":  "Spyware",
+        "risk":  "CRITICAL",
+        "alert":  true,
+        "match":  {
+                      "nameContains":  [
+                                           "mspy"
+                                       ]
+                  },
+        "falsePositiveNote":  "Puo\u0027 essere legittimo se installato e autorizzato dal reparto IT della tua organizzazione."
+    },
+    {
+        "id":  "DV-SPY-0009",
+        "name":  "NeoSpy",
+        "description":  "Rilevamento di NeoSpy tramite nome del processo.",
+        "author":  "DigitalValut",
+        "type":  "process",
+        "category":  "Spyware",
+        "risk":  "CRITICAL",
+        "alert":  true,
+        "match":  {
+                      "nameContains":  [
+                                           "neospy"
+                                       ]
+                  },
+        "falsePositiveNote":  "Puo\u0027 essere legittimo se installato e autorizzato dal reparto IT della tua organizzazione."
+    },
+    {
+        "id":  "DV-SPY-0010",
+        "name":  "RealSpy",
+        "description":  "Rilevamento di RealSpy tramite nome del processo.",
+        "author":  "DigitalValut",
+        "type":  "process",
+        "category":  "Spyware",
+        "risk":  "CRITICAL",
+        "alert":  true,
+        "match":  {
+                      "nameContains":  [
+                                           "realspy"
+                                       ]
+                  },
+        "falsePositiveNote":  "Puo\u0027 essere legittimo se installato e autorizzato dal reparto IT della tua organizzazione."
+    },
+    {
+        "id":  "DV-SPY-0011",
+        "name":  "Refog Monitor",
+        "description":  "Rilevamento di Refog Monitor tramite nome del processo.",
+        "author":  "DigitalValut",
+        "type":  "process",
+        "category":  "Spyware",
+        "risk":  "CRITICAL",
+        "alert":  true,
+        "match":  {
+                      "nameContains":  [
+                                           "refog"
+                                       ]
+                  },
+        "falsePositiveNote":  "Puo\u0027 essere legittimo se installato e autorizzato dal reparto IT della tua organizzazione."
+    },
+    {
+        "id":  "DV-SPY-0012",
+        "name":  "Revealer Keylogger",
+        "description":  "Rilevamento di Revealer Keylogger tramite nome del processo.",
+        "author":  "DigitalValut",
+        "type":  "process",
+        "category":  "Spyware",
+        "risk":  "CRITICAL",
+        "alert":  true,
+        "match":  {
+                      "nameContains":  [
+                                           "revealer"
+                                       ]
+                  },
+        "falsePositiveNote":  "Puo\u0027 essere legittimo se installato e autorizzato dal reparto IT della tua organizzazione."
+    },
+    {
+        "id":  "DV-SPY-0013",
+        "name":  "Spyrix",
+        "description":  "Rilevamento di Spyrix tramite nome del processo.",
+        "author":  "DigitalValut",
+        "type":  "process",
+        "category":  "Spyware",
+        "risk":  "CRITICAL",
+        "alert":  true,
+        "match":  {
+                      "nameContains":  [
+                                           "spyrix"
+                                       ]
+                  },
+        "falsePositiveNote":  "Puo\u0027 essere legittimo se installato e autorizzato dal reparto IT della tua organizzazione."
+    },
+    {
+        "id":  "DV-SPY-0014",
+        "name":  "SpyTech",
+        "description":  "Rilevamento di SpyTech tramite nome del processo.",
+        "author":  "DigitalValut",
+        "type":  "process",
+        "category":  "Spyware",
+        "risk":  "CRITICAL",
+        "alert":  true,
+        "match":  {
+                      "nameContains":  [
+                                           "spytech"
+                                       ]
+                  },
+        "falsePositiveNote":  "Puo\u0027 essere legittimo se installato e autorizzato dal reparto IT della tua organizzazione."
+    },
+    {
+        "id":  "DV-SPY-0015",
+        "name":  "Generic Spyware",
+        "description":  "Rilevamento di Generic Spyware tramite nome del processo.",
+        "author":  "DigitalValut",
+        "type":  "process",
+        "category":  "Spyware",
+        "risk":  "CRITICAL",
+        "alert":  true,
+        "match":  {
+                      "nameContains":  [
+                                           "spyware"
+                                       ]
+                  },
+        "falsePositiveNote":  "Puo\u0027 essere legittimo se installato e autorizzato dal reparto IT della tua organizzazione."
+    }
+]
