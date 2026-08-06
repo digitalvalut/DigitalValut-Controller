@@ -1,0 +1,11 @@
+blank_issues_enabled: false
+contact_links:
+  - name: 🔐 Vulnerabilità di sicurezza
+    url: https://github.com/digitalvalut/DigitalValut-Controller/blob/master/SECURITY.md
+    about: NON aprire una issue pubblica. Scrivi a info@digitalvalut.com seguendo la policy.
+  - name: ⚖️ Domande legali sul mio caso personale
+    url: https://www.garanteprivacy.it
+    about: Non forniamo consulenza legale. Rivolgiti a un avvocato o, per segnalazioni, al Garante Privacy.
+  - name: 📄 Limiti dello strumento e del report
+    url: https://github.com/digitalvalut/DigitalValut-Controller/blob/master/DISCLAIMER.md
+    about: Prima di segnalare, verifica se rientra nei limiti già dichiarati nel DISCLAIMER.

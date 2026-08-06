@@ -21,8 +21,24 @@ echo  ║                                                                  ║
 echo  ║              CONTROLLER v4.0 - TUTELA PRIVACY                    ║
 echo  ║         Strumento di Difesa per Lavoratori PA                    ║
 echo  ║                                                                  ║
-echo  ║   Autore: Dr. Giuseppe Falsone - CEO DigitalValut                ║
+echo  ║   Autore: DigitalValut - www.digitalvalut.it                     ║
+echo  ║   Sviluppo: Dott. Giuseppe Falsone e il team DigitalValut        ║
+echo  ║   Licenza: GNU GPL v3.0 - Software libero e gratuito             ║
 echo  ╚══════════════════════════════════════════════════════════════════╝
+echo.
+echo  ------------------------------------------------------------------
+echo   AVVERTENZA - Leggere prima dell'uso
+echo  ------------------------------------------------------------------
+echo   Software fornito COSI' COM'E', senza garanzie, a titolo gratuito.
+echo   Il report prodotto e' una SEGNALAZIONE TECNICA di primo livello:
+echo   NON e' una perizia forense e NON e' una prova legale. Puo'
+echo   contenere falsi positivi e falsi negativi.
+echo   Usalo solo su dispositivi tuoi o su cui hai legittimo accesso, e
+echo   verifica i regolamenti informatici della tua organizzazione.
+echo   Prima di azioni legali o disciplinari: consulta un avvocato e un
+echo   perito informatico forense.
+echo   Avvertenza completa: file DISCLAIMER.md
+echo  ------------------------------------------------------------------
 echo.
 
 :: Verifica presenza PowerShell
@@ -49,7 +65,7 @@ echo.
 
 :MENU
 echo  Seleziona modalita':
-echo   [1] Scansione COMPLETA  ^(consigliata per prova documentale^)
+echo   [1] Scansione COMPLETA  ^(consigliata - analisi approfondita^)
 echo   [2] Scansione RAPIDA    ^(controlli essenziali, piu' veloce^)
 echo   [3] Verifica catena di custodia dei report gia' generati
 echo   [4] Esci

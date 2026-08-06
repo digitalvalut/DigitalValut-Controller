@@ -1,0 +1,75 @@
+name: 🐛 Segnalazione bug
+description: Segnala un malfunzionamento del Software
+labels: ["bug"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Grazie per la segnalazione.
+
+        ⚠️ **Non allegare report generati contenenti dati reali.** I report includono
+        nome macchina, nome utente, dominio, indirizzi IP ed elenco dei processi.
+        Anonimizza sempre prima di condividere qualsiasi output.
+
+  - type: checkboxes
+    id: conferme
+    attributes:
+      label: Verifiche preliminari
+      options:
+        - label: Ho letto il [DISCLAIMER](../blob/master/DISCLAIMER.md) e il problema non rientra nei limiti già dichiarati
+          required: true
+        - label: Non allegherò dati personali o report non anonimizzati
+          required: true
+
+  - type: textarea
+    id: descrizione
+    attributes:
+      label: Descrizione del problema
+      description: Cosa è successo e cosa ti aspettavi accadesse?
+    validations:
+      required: true
+
+  - type: textarea
+    id: riproduzione
+    attributes:
+      label: Passaggi per riprodurre
+      placeholder: |
+        1. Eseguito AVVIA_CONTROLLO.bat
+        2. ...
+    validations:
+      required: true
+
+  - type: input
+    id: windows
+    attributes:
+      label: Versione di Windows
+      placeholder: "Windows 11 23H2 / Windows 10 22H2"
+    validations:
+      required: true
+
+  - type: input
+    id: powershell
+    attributes:
+      label: Versione di PowerShell
+      description: "Esegui: $PSVersionTable.PSVersion"
+      placeholder: "5.1.19041.4291"
+    validations:
+      required: true
+
+  - type: dropdown
+    id: admin
+    attributes:
+      label: Eseguito con privilegi di amministratore?
+      options:
+        - "Sì"
+        - "No"
+        - "Non lo so"
+    validations:
+      required: true
+
+  - type: textarea
+    id: errori
+    attributes:
+      label: Messaggi di errore
+      description: Incolla eventuali errori, rimuovendo percorsi e nomi utente reali.
+      render: text

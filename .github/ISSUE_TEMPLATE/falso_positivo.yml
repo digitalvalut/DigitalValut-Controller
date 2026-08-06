@@ -1,0 +1,48 @@
+name: ⚠️ Falso positivo o falso negativo
+description: Segnala un software classificato in modo errato
+labels: ["detection"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Le segnalazioni di classificazione errata sono tra i contributi più utili:
+        migliorano l'accuratezza dello strumento per tutti.
+
+        ⚠️ **Non allegare report contenenti dati reali.** Descrivi solo il software
+        interessato, senza nomi macchina, nomi utente o indirizzi IP.
+
+  - type: dropdown
+    id: tipo
+    attributes:
+      label: Tipo di segnalazione
+      options:
+        - "Falso positivo (software legittimo segnalato come sospetto)"
+        - "Falso negativo (strumento di controllo non rilevato)"
+    validations:
+      required: true
+
+  - type: input
+    id: software
+    attributes:
+      label: Nome del software / processo / servizio
+      placeholder: "es. nomeprocesso.exe — Nome Prodotto, Produttore"
+    validations:
+      required: true
+
+  - type: textarea
+    id: motivazione
+    attributes:
+      label: Perché la classificazione è errata
+      description: |
+        Per un falso positivo: a cosa serve realmente il software e perché la sua
+        presenza non indica controllo non autorizzato.
+        Per un falso negativo: come funziona lo strumento non rilevato e come
+        potrebbe essere individuato.
+    validations:
+      required: true
+
+  - type: textarea
+    id: riferimenti
+    attributes:
+      label: Riferimenti (opzionale)
+      description: Sito del produttore, documentazione tecnica, altre fonti.

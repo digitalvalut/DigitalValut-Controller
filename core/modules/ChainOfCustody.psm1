@@ -1,6 +1,28 @@
 # DigitalValut Controller v4.0 - ChainOfCustody Module
-# Integrita' forense: hash reale del contenuto + registro a catena (append-only)
-# per rendere i report utilizzabili come prova documentale (manomissione-evidente).
+# Copyright (C) 2024-2026 DigitalValut - www.digitalvalut.it
+# Sviluppatore: Dott. Giuseppe Falsone e il team DigitalValut
+#
+# Questo file e' parte di DigitalValut Controller.
+# Software libero: puoi ridistribuirlo e/o modificarlo secondo i termini della
+# GNU General Public License v3.0 o (a tua scelta) qualsiasi versione successiva,
+# come pubblicata dalla Free Software Foundation.
+# Distribuito SENZA ALCUNA GARANZIA; senza neppure la garanzia implicita di
+# COMMERCIABILITA' o IDONEITA' PER UNO SCOPO PARTICOLARE. Vedi la GNU GPL v3.
+# Copia della licenza nel file LICENSE. Avvertenze e limiti: DISCLAIMER.md
+
+# Integrita' dei report: hash SHA-256 reale del contenuto + registro a catena
+# (append-only) per rendere EVIDENTE un'eventuale manomissione (tamper-evident).
+#
+# LIMITI NOTI (dichiarati esplicitamente, vedi DISCLAIMER.md):
+# - Il registro risiede sulla stessa macchina ed e' scrivibile dallo stesso utente
+#   che genera i report; l'algoritmo e' pubblico (software open source). Un soggetto
+#   tecnicamente competente puo' quindi rigenerare l'intera catena da zero.
+# - Non esiste marcatura temporale certificata da terza parte (RFC 3161) ne'
+#   notarizzazione esterna: i timestamp provengono dall'orologio di sistema locale.
+# - Il meccanismo rileva alterazioni accidentali o manomissioni non esperte.
+#   NON costituisce acquisizione forense ai sensi della L. 48/2008 e non e'
+#   di per se' opponibile in giudizio: per finalita' probatorie e' necessaria
+#   una perizia eseguita da un tecnico forense qualificato.
 
 function Get-DVContentHash {
     <#

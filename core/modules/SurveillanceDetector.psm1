@@ -1,5 +1,15 @@
 # DigitalValut Controller v4.0 - SurveillanceDetector Module
-# Modulo rilevamento sorveglianza audio/video - Dr. Giuseppe Falsone - CEO DigitalValut
+# Modulo rilevamento sorveglianza audio/video
+# Copyright (C) 2024-2026 DigitalValut - www.digitalvalut.it
+# Sviluppatore: Dott. Giuseppe Falsone e il team DigitalValut
+#
+# Questo file e' parte di DigitalValut Controller.
+# Software libero: puoi ridistribuirlo e/o modificarlo secondo i termini della
+# GNU General Public License v3.0 o (a tua scelta) qualsiasi versione successiva,
+# come pubblicata dalla Free Software Foundation.
+# Distribuito SENZA ALCUNA GARANZIA; senza neppure la garanzia implicita di
+# COMMERCIABILITA' o IDONEITA' PER UNO SCOPO PARTICOLARE. Vedi la GNU GPL v3.
+# Copia della licenza nel file LICENSE. Avvertenze e limiti: DISCLAIMER.md
 
 $script:SurveillanceWhitelist = @(
     'teams.exe', 'zoom.exe', 'skype.exe', 'discord.exe',

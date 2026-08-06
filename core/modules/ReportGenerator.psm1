@@ -1,5 +1,15 @@
 # DigitalValut Controller v4.0 - ReportGenerator Module
-# Dr. Giuseppe Falsone - CEO DigitalValut - Strumento Tutela Privacy Lavoratori PA
+# Strumento Tutela Privacy Lavoratori PA
+# Copyright (C) 2024-2026 DigitalValut - www.digitalvalut.it
+# Sviluppatore: Dott. Giuseppe Falsone e il team DigitalValut
+#
+# Questo file e' parte di DigitalValut Controller.
+# Software libero: puoi ridistribuirlo e/o modificarlo secondo i termini della
+# GNU General Public License v3.0 o (a tua scelta) qualsiasi versione successiva,
+# come pubblicata dalla Free Software Foundation.
+# Distribuito SENZA ALCUNA GARANZIA; senza neppure la garanzia implicita di
+# COMMERCIABILITA' o IDONEITA' PER UNO SCOPO PARTICOLARE. Vedi la GNU GPL v3.
+# Copia della licenza nel file LICENSE. Avvertenze e limiti: DISCLAIMER.md
 
 function Get-DVThreatScore {
     param(
@@ -131,7 +141,7 @@ function Get-DVLegalSectionHTML {
     <article class="law-article">
         <h3>GDPR - Art. 13 (Informazioni da fornire)</h3>
         <blockquote>Il titolare del trattamento fornisce all'interessato, nel momento in cui i dati personali sono ottenuti, le seguenti informazioni: [...] le finalit&agrave; del trattamento [...] i destinatari o le categorie di destinatari dei dati personali.</blockquote>
-        <p class="law-note"><strong>TRADUZIONE:</strong> Il datore di lavoro DEVE dirti che ha installato software di controllo, perch&eacute; lo usa e chi pu&ograve; accedere. Se non lo ha fatto, viola il GDPR.</p>
+        <p class="law-note"><strong>IN PRATICA:</strong> il datore di lavoro deve informarti se ha installato software di controllo, perch&eacute; lo usa e chi pu&ograve; accedervi. Se non hai ricevuto tale informativa, hai diritto a chiederla. L'eventuale illegittimit&agrave; del trattamento pu&ograve; essere accertata solo caso per caso: potrebbero esistere un accordo sindacale, un'autorizzazione INL o un'informativa che non ti sono stati notificati.</p>
     </article>
     <article class="law-article">
         <h3>CODICE PRIVACY - Art. 171 (Sanzioni penali)</h3>
@@ -143,8 +153,16 @@ function Get-DVLegalSectionHTML {
         <p>Il Garante ha chiarito che software come VNC, TeamViewer, ecc. sono strumenti di controllo a distanza e NON rientrano negli &quot;strumenti di lavoro&quot; esclusi dall'Art. 4 comma 2. Richiedono SEMPRE accordo sindacale o autorizzazione INL.</p>
     </article>
     <div class="sanctions-box">
-        <h3>&#x1F6A8; SANZIONI PER IL DATORE DI LAVORO</h3>
-        <table class="data-table"><tr><td>GDPR - Art. 83</td><td>Fino a <strong>20.000.000 &euro;</strong> o 4% del fatturato</td></tr><tr><td>Codice Privacy - Art. 171</td><td>Ammenda + arresto fino a <strong>1 anno</strong></td></tr><tr><td>Conseguenza processuale</td><td>Dati raccolti <strong>INUTILIZZABILI</strong> in sede disciplinare</td></tr></table>
+        <h3>&#x1F6A8; SANZIONI ASTRATTAMENTE PREVISTE PER IL DATORE DI LAVORO</h3>
+        <p style="font-size:0.85rem;">Massimi edittali previsti dalla legge in caso di violazione accertata. Non costituiscono una previsione dell'esito di un caso concreto.</p>
+        <table class="data-table"><tr><td>GDPR - Art. 83</td><td>Fino a <strong>20.000.000 &euro;</strong> o 4% del fatturato</td></tr><tr><td>Codice Privacy - Art. 171</td><td>Ammenda + arresto fino a <strong>1 anno</strong></td></tr><tr><td>Conseguenza processuale</td><td>Dati raccolti in violazione dell'Art. 4 possono essere ritenuti <strong>inutilizzabili</strong> in sede disciplinare</td></tr></table>
+    </div>
+    <div class="sanctions-box" style="border-color:#888;">
+        <h3>&#x26A0;&#xFE0F; AVVERTENZA - LIMITI DI QUESTO DOCUMENTO</h3>
+        <p style="font-size:0.9rem;">I riferimenti normativi riportati hanno <strong>finalit&agrave; esclusivamente informativa e divulgativa</strong> e non costituiscono consulenza legale, parere pro veritate n&eacute; assistenza professionale.</p>
+        <p style="font-size:0.9rem;">Questo report &egrave; il risultato di un'analisi tecnica <strong>automatizzata</strong>: pu&ograve; produrre <strong>falsi positivi</strong> (software legittimo segnalato come sospetto) e <strong>falsi negativi</strong> (strumenti di controllo non rilevati). La presenza di un software in elenco <strong>non dimostra</strong> di per s&eacute; un uso illecito, cos&igrave; come la sua assenza non dimostra l'assenza di controllo.</p>
+        <p style="font-size:0.9rem;">Prima di assumere qualsiasi iniziativa disciplinare, sindacale, amministrativa o giudiziaria fondata su questo documento, &egrave; <strong>necessario</strong> rivolgersi a un avvocato e, per gli aspetti tecnici, a un perito informatico forense.</p>
+        <p style="font-size:0.9rem;">L'autore del software declina ogni responsabilit&agrave; per l'interpretazione dei risultati e per le conseguenze di qualsiasi azione intrapresa sulla base di questo report. Vedi il file <code>DISCLAIMER.md</code> e la licenza GNU GPLv3 (sezioni 15-17).</p>
     </div>
 </div>
 "@
@@ -337,8 +355,8 @@ function New-DVReportHTML {
     }
     
     $cosaFareHtml = @"
-<div class="step"><div class="step-number">1</div><div class="step-content"><h3>CONSERVA QUESTO REPORT</h3><p>Salva il file HTML e stampalo. E' una <strong>prova documentale</strong> con valore legale (contiene timestamp e hash di verifica).</p></div></div>
-<div class="step"><div class="step-number">2</div><div class="step-content"><h3>NON MODIFICARE NULLA SUL PC</h3><p>Non disinstallare software, non cambiare impostazioni. Potrebbe servire per un'eventuale perizia tecnica.</p></div></div>
+<div class="step"><div class="step-number">1</div><div class="step-content"><h3>CONSERVA QUESTO REPORT</h3><p>Salva il file HTML e stampalo. E' una <strong>segnalazione tecnica documentata</strong> con data, ora e hash SHA-256 di verifica: utile a supportare una richiesta al DPO o una successiva analisi forense. <strong>Non sostituisce una perizia informatica forense</strong> e non ha di per se' valore di prova legale.</p></div></div>
+<div class="step"><div class="step-number">2</div><div class="step-content"><h3>NON MODIFICARE NULLA SUL PC</h3><p>Non disinstallare software, non cambiare impostazioni. Se intendi far valere quanto rilevato, rivolgiti a un perito informatico forense: solo un'acquisizione forense eseguita da un tecnico qualificato ha piena spendibilita' probatoria.</p></div></div>
 <div class="step"><div class="step-number">3</div><div class="step-content"><h3>RICHIEDI INFORMAZIONI AL DPO</h3><p>Invia una <strong>richiesta scritta</strong> (PEC o raccomandata) al Data Protection Officer chiedendo: copia dell'informativa, base giuridica, accordo sindacale o autorizzazione INL, elenco soggetti autorizzati.</p></div></div>
 <div class="step"><div class="step-number">4</div><div class="step-content"><h3>CONTATTA IL SINDACATO</h3><p>RSU, RSA o sindacato di categoria. L'Art. 4 prevede accordo sindacale PRIMA dell'installazione.</p></div></div>
 <div class="step"><div class="step-number">5</div><div class="step-content"><h3>SEGNALA AL GARANTE PRIVACY</h3><p>Se non ottieni risposte, puoi segnalare al <a href=`"https://www.garanteprivacy.it`" target=`"_blank`">Garante per la Protezione dei Dati Personali</a>.</p></div></div>
@@ -539,7 +557,7 @@ function New-DVReportHTML {
             <div class="risk-score" style="color: $($level.Color)">$($ThreatScore.Score)</div>
             <p class="risk-level" style="color: $($level.Color)">$($level.Icon) $($level.Text)</p>
             <p class="hash-line">Hash verifica dati (SHA-256): <code>$ContentHash</code> | $($ThreatScore.Timestamp)</p>
-            <p class="hash-line" style="font-size:0.75rem;opacity:0.8;">L'hash del file di report definitivo e la catena di custodia sono registrati in <code>chain_of_custody.jsonl</code> nella stessa cartella del report. Usalo per dimostrare che il file non e' stato alterato dopo la generazione.</p>
+            <p class="hash-line" style="font-size:0.75rem;opacity:0.8;">L'hash SHA-256 del report e il registro a catena sono in <code>chain_of_custody.jsonl</code> nella stessa cartella. Il meccanismo e' <em>tamper-evident</em>: rende rilevabile un'alterazione accidentale o non esperta del report. Non e' una marcatura temporale certificata da terza parte (RFC 3161) e non impedisce a un soggetto tecnicamente competente di rigenerare l'intera catena: per finalita' probatorie e' necessaria un'acquisizione forense eseguita da un perito qualificato.</p>
         </section>
         
         $elevationBox

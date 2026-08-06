@@ -136,7 +136,7 @@ processi e le app segnalate e richiedere spiegazioni se non riconosciuti.
 
 7. COSA FARE IN CASO DI RISCHIO
 ──────────────────────────────
-- Conservare il report (prova documentale con hash e timestamp)
+- Conservare il report (contiene data, ora e hash SHA-256 di verifica)
 - Non modificare o disinstallare nulla senza aver consultato il datore di lavoro/IT
 - Richiedere spiegazioni formali (anche scritte) sull'uso di software di
   controllo, monitoraggio o accesso a microfono/webcam
@@ -145,6 +145,23 @@ processi e le app segnalate e richiedere spiegazioni se non riconosciuti.
   (copia e personalizza)
 - I riferimenti legali nel report sono informativi; per consulenza legale
   rivolgersi a un professionista
+
+  LIMITI DEL REPORT (IMPORTANTE)
+  Il report e' una segnalazione tecnica di primo livello prodotta da un'analisi
+  automatizzata. NON e' una perizia informatica forense e NON ha di per se'
+  valore di prova legale:
+  - puo' generare FALSI POSITIVI (software legittimo segnalato come sospetto,
+    es. strumenti di assistenza IT autorizzati e regolarmente concordati);
+  - puo' generare FALSI NEGATIVI (strumenti di controllo non rilevati, in
+    particolare se progettati per eludere l'analisi);
+  - la catena di custodia integrata e' "tamper-evident": rende rilevabile
+    un'alterazione accidentale o non esperta, ma non e' una marca temporale
+    certificata da terza parte (RFC 3161) e non e' opponibile come tale;
+  - la presenza di un software in elenco non dimostra un uso illecito, cosi'
+    come la sua assenza non dimostra l'assenza di controllo.
+  Per far valere quanto rilevato e' necessaria un'acquisizione forense eseguita
+  da un perito qualificato e l'assistenza di un avvocato.
+  Vedi il file DISCLAIMER.md per l'avvertenza completa.
 
 
 8. PORTABILITA' E PRIVACY

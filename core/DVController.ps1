@@ -7,7 +7,8 @@
     Strumento per la verifica di software di controllo remoto non autorizzato.
     Progettato per dipendenti pubblici (PA) che accedono a dati sensibili (sanita',
     PEC, email). Rileva VNC, TeamViewer, RDP; mostra chi e' collegato e cosa possono
-    fare; genera report legale con riferimenti Art. 4 Statuto Lavoratori, GDPR.
+    fare; genera un report tecnico con riferimenti informativi ad Art. 4 Statuto
+    Lavoratori e GDPR. Il report NON e' una perizia forense: vedi DISCLAIMER.md.
 
 .AUTHOR
     DigitalValut - www.digitalvalut.it

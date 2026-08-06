@@ -43,13 +43,38 @@ USO RESPONSABILE
 ────────────────
 L'utente si impegna a utilizzare questo strumento solo su dispositivi di cui
 ha legittimo accesso o proprieta'. L'utilizzo su sistemi altrui senza
-autorizzazione potrebbe violare le leggi vigenti.
+autorizzazione potrebbe violare le leggi vigenti (cfr. art. 615-ter c.p.).
+Su postazioni aziendali o della PA, l'utente e' tenuto a verificare
+preventivamente la conformita' ai regolamenti informatici interni.
+
+ESCLUSIONE DI RESPONSABILITA' (SINTESI)
+───────────────────────────────────────
+Il software e' fornito COSI' COM'E', a titolo gratuito e senza corrispettivo.
+Nella misura massima consentita dalla legge, l'autore NON risponde di alcun
+danno diretto o indiretto derivante dall'uso del software o dei suoi report,
+ne' di conseguenze disciplinari, amministrative, civili o penali di azioni
+intraprese sulla base di essi. Restano ferme le responsabilita' inderogabili
+per dolo o colpa grave (art. 1229 c.c.) e i diritti inderogabili dei
+consumatori. L'utente e' unico responsabile dell'uso che fa dello strumento.
+
+LIMITI DEL REPORT
+─────────────────
+Il report prodotto e' una SEGNALAZIONE TECNICA di primo livello, generata da
+analisi automatizzata. NON e' una perizia informatica forense, NON e' una
+acquisizione forense ai sensi della L. 48/2008 e NON ha di per se' valore di
+prova legale. Puo' contenere falsi positivi e falsi negativi: la presenza di
+un elemento non dimostra un illecito, la sua assenza non dimostra l'assenza
+di controllo. Per far valere quanto rilevato occorre rivolgersi a un perito
+informatico forense e a un avvocato.
 
 NOTA LEGALE
 ───────────
 I riferimenti normativi contenuti nei report sono forniti a solo scopo
 informativo e non costituiscono consulenza legale. Per questioni specifiche,
 rivolgersi a un professionista qualificato.
+
+>>> AVVERTENZA COMPLETA E VINCOLANTE: vedere il file DISCLAIMER.md, che
+>>> costituisce parte integrante delle condizioni d'uso del software.
 
 CONTATTI
 ────────

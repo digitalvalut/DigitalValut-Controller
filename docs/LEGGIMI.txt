@@ -8,8 +8,12 @@ COSA FA QUESTO STRUMENTO:
   TeamViewer, RDP) installati dal CED senza informativa. Mostra CHI e' collegato
   e COSA possono fare. Inoltre rileva SORVEGLIANZA AUDIO/VIDEO: chi usa
   microfono o webcam, dispositivi audio virtuali, permessi privacy e indicatori
-  di spyware audio. Genera un report con valore documentale per richieste al DPO,
-  sindacato o Garante Privacy.
+  di spyware audio. Genera un report tecnico documentato, utile a supportare una
+  richiesta al DPO, al sindacato o una segnalazione al Garante Privacy.
+
+  ATTENZIONE: il report NON e' una perizia informatica forense e non ha di per
+  se' valore di prova legale. E' una segnalazione tecnica di primo livello, che
+  puo' contenere falsi positivi e falsi negativi. Vedi DISCLAIMER.md.
 
 
 COME SI USA (3 PASSI):
@@ -43,11 +47,14 @@ LIVELLI DI RISCHIO:
 
 SE TROVI SOFTWARE DI CONTROLLO REMOTO O SORVEGLIANZA:
 
-  1. CONSERVA il report (e' una prova documentale con hash e timestamp)
-  2. NON MODIFICARE nulla sul PC (puo' servire per perizia)
+  1. CONSERVA il report (contiene data, ora e hash SHA-256 di verifica)
+  2. NON MODIFICARE nulla sul PC (serve per un'eventuale perizia forense)
   3. Richiedi per iscritto al DPO: informativa, base giuridica, accordo sindacale
   4. Contatta RSU/sindacato (Art. 4 richiede accordo PRIMA dell'installazione)
   5. Se non ottieni risposte: segnala al Garante Privacy (garanteprivacy.it)
+  6. Prima di qualsiasi azione legale o disciplinare: rivolgiti a un AVVOCATO e,
+     per la parte tecnica, a un PERITO INFORMATICO FORENSE. Il report da solo
+     non basta a dimostrare alcunche' in giudizio.
 
 
 QUESTO STRUMENTO:
