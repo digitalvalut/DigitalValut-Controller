@@ -1,6 +1,6 @@
 ════════════════════════════════════════════════════════════════════════════════
                         RIFERIMENTI NORMATIVI
-        DigitalValut Controller v3.0 - Dr. Giuseppe Falsone
+        DigitalValut Controller v4.0 - www.digitalvalut.it
 ════════════════════════════════════════════════════════════════════════════════
 
   GDPR - REGOLAMENTO UE 2016/679

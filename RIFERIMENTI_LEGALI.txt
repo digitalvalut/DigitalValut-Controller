@@ -1,7 +1,7 @@
 ════════════════════════════════════════════════════════════════════════════════
                     RIFERIMENTI NORMATIVI COMPLETI
         DigitalValut Controller v4.0 - Tutela Privacy Lavoratori PA
-        Dr. Giuseppe Falsone - CEO DigitalValut
+        DigitalValut - Sviluppatore: Dott. Giuseppe Falsone e il team
 ════════════════════════════════════════════════════════════════════════════════
 
   STATUTO DEI LAVORATORI - Art. 4 (Legge 300/1970)
@@ -64,5 +64,6 @@
   Le informazioni sopra sono a solo scopo informativo e non costituiscono
   consulenza legale. Per questioni specifiche rivolgersi a un professionista
   qualificato.
-  DigitalValut Association - Dr. Giuseppe Falsone - CEO DigitalValut
+  DigitalValut Association - www.digitalvalut.it
+  Sviluppatore: Dott. Giuseppe Falsone e il team DigitalValut
 ════════════════════════════════════════════════════════════════════════════════

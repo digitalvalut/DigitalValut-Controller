@@ -1,6 +1,6 @@
 ════════════════════════════════════════════════════════════════════════════════
         DIGITALVALUT CONTROLLER v3.0 - QUICK GUIDE (EN)
-        Author: Dr. Giuseppe Falsone - CEO DigitalValut
+        Author: DigitalValut - www.digitalvalut.it
 ════════════════════════════════════════════════════════════════════════════════
 
 HOW TO USE (3 STEPS):
@@ -44,6 +44,6 @@ THIS TOOL:
 
 ════════════════════════════════════════════════════════════════════════════════
              DigitalValut Controller v3.0
-             Dr. Giuseppe Falsone - CEO DigitalValut
+             DigitalValut - Sviluppatore: Dott. Giuseppe Falsone e il team
              Open Source - For workers' protection
 ════════════════════════════════════════════════════════════════════════════════

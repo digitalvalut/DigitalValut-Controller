@@ -5,14 +5,22 @@
 
 AUTORE E TITOLARE DEI DIRITTI
 ─────────────────────────────
-Dr. Giuseppe Falsone
-CEO & Founder - DigitalValut Association
+DigitalValut - www.digitalvalut.it
+Sviluppatore: Dott. Giuseppe Falsone e il team DigitalValut
 
 ORGANIZZAZIONE
 ──────────────
 DigitalValut Association
 Associazione no-profit specializzata in sicurezza informatica,
 crypto-forensics e tutela dei lavoratori.
+
+DONO ALLA COLLETTIVITA'
+────────────────────────
+Questo software e' offerto gratuitamente, come dono, a tutti gli uffici
+pubblici e privati e a chiunque voglia usarlo per tutelare la privacy dei
+lavoratori. La titolarita' dei diritti d'autore e la paternita' dell'opera
+(DigitalValut - Dott. Giuseppe Falsone e il team) restano sempre in capo
+all'autore originale, come previsto dalla licenza GPLv3.
 
 TIPO DI LICENZA
 ───────────────
@@ -45,10 +53,11 @@ rivolgersi a un professionista qualificato.
 
 CONTATTI
 ────────
-Website: https://digitalvalut.com
+Website: https://www.digitalvalut.it
 Email: info@digitalvalut.com
 
 ════════════════════════════════════════════════════════════════════════════════
-© 2024-2026 Dr. Giuseppe Falsone - DigitalValut Association
+© 2024-2026 DigitalValut - www.digitalvalut.it
+Sviluppatore: Dott. Giuseppe Falsone e il team DigitalValut
 Rilasciato sotto licenza GNU GPL v3.0+ — vedi il file LICENSE
 ════════════════════════════════════════════════════════════════════════════════

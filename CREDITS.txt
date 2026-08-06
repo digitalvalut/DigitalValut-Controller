@@ -3,10 +3,13 @@
                            CREDITI
 ════════════════════════════════════════════════════════════════════════════════
 
-AUTORE E SVILUPPO
-────────────────
-Dr. Giuseppe Falsone
-CEO & Founder - DigitalValut Association
+AUTORE
+──────
+DigitalValut - www.digitalvalut.it
+
+SVILUPPO
+────────
+Dott. Giuseppe Falsone, sviluppatore, e il team DigitalValut
 Crypto-Forensics & Blockchain Security Expert
 
 ORGANIZZAZIONE
@@ -28,11 +31,11 @@ TECNOLOGIE
 
 CONTATTI
 ────────
-Website: https://digitalvalut.com
+Website: https://www.digitalvalut.it
 Email: info@digitalvalut.com
 
 ════════════════════════════════════════════════════════════════════════════════
-             DigitalValut Controller v3.0 - Open Source
-             © 2024-2026 DigitalValut Association
-             Dr. Giuseppe Falsone - CEO DigitalValut
+             DigitalValut Controller v4.0 - Open Source, gratuito per sempre
+             © 2024-2026 DigitalValut Association - www.digitalvalut.it
+             Sviluppatore: Dott. Giuseppe Falsone e il team DigitalValut
 ════════════════════════════════════════════════════════════════════════════════

@@ -1,6 +1,6 @@
 ════════════════════════════════════════════════════════════════════════════════
         DIGITALVALUT CONTROLLER v4.0 - TUTELA PRIVACY LAVORATORI PA
-        (VETSEC Scanner) - Autore: Dr. Giuseppe Falsone - CEO DigitalValut
+        (VETSEC Scanner) - Autore: DigitalValut - www.digitalvalut.it
 ════════════════════════════════════════════════════════════════════════════════
 
 COSA FA QUESTO STRUMENTO:
@@ -63,6 +63,6 @@ QUESTO STRUMENTO:
 
 ════════════════════════════════════════════════════════════════════════════════
              DigitalValut Controller v4.0 - Tutela Privacy Lavoratori PA
-             Dr. Giuseppe Falsone - CEO DigitalValut
+             DigitalValut - Sviluppatore: Dott. Giuseppe Falsone e il team
              Open Source - DigitalValut Association
 ════════════════════════════════════════════════════════════════════════════════

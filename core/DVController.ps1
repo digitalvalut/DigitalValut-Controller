@@ -10,12 +10,13 @@
     fare; genera report legale con riferimenti Art. 4 Statuto Lavoratori, GDPR.
 
 .AUTHOR
-    Dr. Giuseppe Falsone - CEO DigitalValut
+    DigitalValut - www.digitalvalut.it
+    Sviluppatore: Dott. Giuseppe Falsone e il team DigitalValut
     DigitalValut Association - Crypto-Forensics & Blockchain Security
 
 .LICENSE
     GNU General Public License v3.0 or later (GPLv3+)
-    Copyright (C) 2024-2026 Dr. Giuseppe Falsone - DigitalValut Association
+    Copyright (C) 2024-2026 DigitalValut - www.digitalvalut.it
     This program comes with ABSOLUTELY NO WARRANTY. This is free software,
     and you are welcome to redistribute it under the terms of the GPLv3.
     See the LICENSE file for details.
@@ -24,7 +25,7 @@
     4.0.0
 
 .LINK
-    https://digitalvalut.com
+    https://www.digitalvalut.it
 #>
 
 param(
@@ -42,14 +43,14 @@ $ErrorActionPreference = "Continue"
 # === CONFIGURAZIONE GLOBALE ===
 $Global:DVConfig = @{
     Version         = "4.0.0"
-    Author          = "Dr. Giuseppe Falsone"
-    AuthorTitle     = "CEO DigitalValut"
+    Author          = "DigitalValut"
+    AuthorTitle     = "Sviluppatore: Dott. Giuseppe Falsone e il team DigitalValut"
     Organization    = "DigitalValut Association"
     Specialty       = "Crypto-Forensics & Blockchain Security"
-    License         = "Open Source - DigitalValut Proprietary License"
-    Website         = "https://digitalvalut.com"
+    License         = "Open Source - GNU GPL v3.0 (gratuito per sempre)"
+    Website         = "https://www.digitalvalut.it"
     Email           = "info@digitalvalut.com"
-    Copyright       = "&copy; 2024-2026 DigitalValut Association. All Rights Reserved."
+    Copyright       = "&copy; 2024-2026 DigitalValut - www.digitalvalut.it. Rilasciato sotto licenza GPLv3."
     Language        = "it"
     AutoOpenReport  = $true
     # Nota: la cartella dei report NON e' configurabile. E' sempre "DigitalValut_Reports"

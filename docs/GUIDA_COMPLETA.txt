@@ -1,6 +1,6 @@
 ════════════════════════════════════════════════════════════════════════════════
         DIGITALVALUT CONTROLLER v4.0 - GUIDA COMPLETA
-        Manuale utente - Dr. Giuseppe Falsone - CEO DigitalValut
+        Manuale utente - DigitalValut - Sviluppatore: Dott. Giuseppe Falsone e il team
         (VETSEC Scanner - Strumento Tutela Privacy Lavoratori PA)
 ════════════════════════════════════════════════════════════════════════════════
 
@@ -189,11 +189,11 @@ In core\config\settings.json puoi impostare (se presente):
 
 11. LICENZA E CREDITI
 ────────────────────
-Autore: Dr. Giuseppe Falsone - CEO DigitalValut
+Autore: DigitalValut (www.digitalvalut.it) - Sviluppatore: Dott. Giuseppe Falsone e il team
 Organizzazione: DigitalValut Association
 Specialty: Crypto-Forensics & Blockchain Security
 Licenza: Open Source - DigitalValut Proprietary License
-Sito: https://digitalvalut.com
+Sito: https://www.digitalvalut.it
 Email: info@digitalvalut.com
 
 Vedi LICENZA.txt e CREDITS.txt per dettagli.
@@ -203,6 +203,6 @@ Codice Privacy, Provvedimento Garante 13/07/2016).
 
 ════════════════════════════════════════════════════════════════════════════════
              DigitalValut Controller v4.0 - VETSEC Scanner
-             Dr. Giuseppe Falsone - CEO DigitalValut
-             https://digitalvalut.com - info@digitalvalut.com
+             DigitalValut - Sviluppatore: Dott. Giuseppe Falsone e il team
+             https://www.digitalvalut.it - info@digitalvalut.com
 ════════════════════════════════════════════════════════════════════════════════

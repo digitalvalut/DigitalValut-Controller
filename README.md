@@ -1,5 +1,10 @@
 # DigitalValut Controller v4.0
 
+> **Gratuito per sempre.** Un dono di [DigitalValut](https://www.digitalvalut.it)
+> a tutti gli uffici pubblici e privati, ai lavoratori e a chiunque voglia
+> tutelare la propria privacy digitale. Libero da scaricare e usare, per
+> neofiti e professionisti.
+
 Strumento portabile per la verifica di software di controllo remoto, spyware,
 keylogger e sorveglianza audio/video non autorizzati su PC Windows.
 
@@ -30,16 +35,34 @@ riferimenti normativi e un modello di lettera per il DPO.
 
 ## Download e uso
 
-1. Scarica o clona questo repository (gratuito, nessuna registrazione):
-   ```bash
-   git clone https://github.com/<tuo-utente>/DigitalValut-Controller.git
-   ```
-   oppure scarica lo ZIP da GitHub ("Code" → "Download ZIP").
-2. Copia la cartella su USB o Desktop.
+Nessuna registrazione, nessun account, nessun costo: chiunque può scaricarlo
+e usarlo, sia chi non ha mai usato GitHub sia chi lavora con Git ogni giorno.
+
+### Se non conosci GitHub / Git (metodo più semplice)
+
+1. Vai alla pagina **[Release](../../releases/latest)** di questo repository
+   e scarica il file `.zip` in cima alla pagina (oppure in alto su questa
+   pagina clicca il pulsante verde **"Code" → "Download ZIP"**).
+2. Estrai lo ZIP su una chiavetta USB o sul Desktop.
 3. Doppio clic su `AVVIA_CONTROLLO.bat` (consigliato) o `AVVIA_SCANSIONE.bat`.
 4. Attendi 30–90 secondi: il report si apre automaticamente nel browser.
 
+### Se usi Git (metodo per professionisti/IT)
+
+```bash
+git clone https://github.com/digitalvalut/DigitalValut-Controller.git
+```
+
+Poi come sopra: doppio clic su `AVVIA_CONTROLLO.bat`.
+
 I report generati vengono salvati in `Desktop\DigitalValut_Reports`.
+
+### Per uffici pubblici e privati
+
+Lo strumento è pensato anche per un utilizzo su larga scala (PA, aziende,
+RSU/sindacati, DPO): può essere distribuito su USB o rete interna a più
+postazioni senza bisogno di installazione né privilegi particolari, e senza
+alcun costo di licenza.
 
 ## Struttura del progetto
 
@@ -96,13 +119,16 @@ Distribuito sotto **GNU General Public License v3.0 (o successiva)** — vedi
 [`LICENSE`](LICENSE) per il testo integrale e [`LICENZA.txt`](LICENZA.txt)
 per una sintesi in italiano.
 
-Copyright © 2024–2026 Dr. Giuseppe Falsone — DigitalValut Association.
+Copyright © 2024–2026 DigitalValut. Tutti i diritti d'autore e la paternità
+dell'opera restano sempre in capo all'autore originale, come previsto dalla
+licenza GPLv3: il software è donato all'uso libero di tutti, non ceduto.
 
 ## Autore
 
-**Dr. Giuseppe Falsone** — CEO & Founder, DigitalValut Association
+**DigitalValut** — [www.digitalvalut.it](https://www.digitalvalut.it)
+Sviluppatore: **Dott. Giuseppe Falsone** e il team DigitalValut
 Crypto-Forensics & Blockchain Security
-[digitalvalut.com](https://digitalvalut.com) · info@digitalvalut.com
+info@digitalvalut.com
 
 ## Disclaimer
 
