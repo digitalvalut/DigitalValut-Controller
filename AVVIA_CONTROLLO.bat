@@ -1,7 +1,7 @@
 @echo off
 chcp 65001 >nul 2>&1
 setlocal EnableExtensions EnableDelayedExpansion
-title DigitalValut Controller v4.1 - Tutela Privacy Lavoratori
+title DigitalValut Controller v5.0 - Tutela Privacy Lavoratori
 cd /d "%~dp0"
 
 set "LOGDIR=%~dp0DigitalValut_Reports"
@@ -18,7 +18,7 @@ echo  ║     ██║  ██║██║██║   ██║██║   █�
 echo  ║     ██████╔╝██║╚██████╔╝██║   ██║   ██║  ██║███████╗             ║
 echo  ║     ╚═════╝ ╚═╝ ╚═════╝ ╚═╝   ╚═╝   ╚═╝  ╚═╝╚══════╝             ║
 echo  ║                                                                  ║
-echo  ║              CONTROLLER v4.1 - TUTELA PRIVACY                    ║
+echo  ║              CONTROLLER v5.0 - TUTELA PRIVACY                    ║
 echo  ║         Strumento di Difesa per Lavoratori PA                    ║
 echo  ║                                                                  ║
 echo  ║   Autore: DigitalValut - www.digitalvalut.it                     ║

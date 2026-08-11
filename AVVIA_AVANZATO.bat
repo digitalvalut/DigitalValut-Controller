@@ -1,7 +1,7 @@
 @echo off
 chcp 65001 >nul 2>&1
 setlocal EnableExtensions EnableDelayedExpansion
-title DigitalValut Controller v4.1 - Modalita' avanzata
+title DigitalValut Controller v5.0 - Modalita' avanzata
 cd /d "%~dp0"
 
 set "LOGDIR=%~dp0DigitalValut_Reports"
@@ -10,7 +10,7 @@ set "LOGFILE=%LOGDIR%\launcher_log.txt"
 
 echo.
 echo  ╔══════════════════════════════════════════════════════════════════╗
-echo  ║   DIGITALVALUT CONTROLLER v4.1 - Modalita' avanzata               ║
+echo  ║   DIGITALVALUT CONTROLLER v5.0 - Modalita' avanzata               ║
 echo  ║   Per un controllo semplice e veloce usa invece                   ║
 echo  ║   AVVIA_CONTROLLO.bat (nessuna scelta richiesta).                 ║
 echo  ╚══════════════════════════════════════════════════════════════════╝

@@ -1,4 +1,4 @@
-﻿# DigitalValut Controller v4.2 - EventLogAnalyzer Module
+﻿# DigitalValut Controller v5.0 - EventLogAnalyzer Module
 # Copyright (C) 2024-2026 DigitalValut - www.digitalvalut.it
 # Sviluppatore: Dott. Giuseppe Falsone e il team DigitalValut
 #

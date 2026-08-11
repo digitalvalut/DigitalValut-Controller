@@ -1,4 +1,4 @@
-﻿# DigitalValut Controller v4.2 - ModuleAnalyzer Module
+﻿# DigitalValut Controller v5.0 - ModuleAnalyzer Module
 # Copyright (C) 2024-2026 DigitalValut - www.digitalvalut.it
 # Sviluppatore: Dott. Giuseppe Falsone e il team DigitalValut
 #

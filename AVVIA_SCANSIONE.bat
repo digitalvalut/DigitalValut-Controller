@@ -1,6 +1,6 @@
 @echo off
 chcp 65001 >nul 2>&1
-title DigitalValut Controller v4.1 - Scansione Rapida
+title DigitalValut Controller v5.0 - Scansione Rapida
 cd /d "%~dp0"
 
 set "LOGDIR=%~dp0DigitalValut_Reports"
@@ -9,7 +9,7 @@ set "LOGFILE=%LOGDIR%\launcher_log.txt"
 
 echo.
 echo  ╔══════════════════════════════════════════════════════════════════╗
-echo  ║   DIGITALVALUT CONTROLLER v4.1 - Scansione Rapida                ║
+echo  ║   DIGITALVALUT CONTROLLER v5.0 - Scansione Rapida                ║
 echo  ║   Un solo click: controlli essenziali, nessun menu               ║
 echo  ║   Per la scansione completa usa AVVIA_CONTROLLO.bat               ║
 echo  ║   Per la catena di custodia e altre opzioni usa                  ║

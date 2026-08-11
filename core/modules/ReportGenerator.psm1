@@ -1,4 +1,4 @@
-# DigitalValut Controller v4.2 - ReportGenerator Module
+# DigitalValut Controller v5.0 - ReportGenerator Module
 # Strumento Tutela Privacy Lavoratori PA
 # Copyright (C) 2024-2026 DigitalValut - www.digitalvalut.it
 # Sviluppatore: Dott. Giuseppe Falsone e il team DigitalValut
@@ -232,6 +232,7 @@ function New-DVReportHTML {
         [object]$ModuleFindings = $null,
         [object]$EventLogFindings = $null,
         [object]$RulesInfo = $null,
+        [object]$SentinelSummary = $null,
         [string]$ControllerRoot,
         [string]$OutputPath,
         [string]$JsonData = "",
@@ -663,6 +664,60 @@ function New-DVReportHTML {
 "@
     }
 
+    # === SENTINELLA: EVENTI REGISTRATI NEL TEMPO ===
+    # E' la sezione con il maggiore peso documentale: non descrive uno stato, ma
+    # fatti datati (sessione X, dalle ore Y alle ore Z, dall'indirizzo W).
+    $sentinelSection = ""
+    if ($SentinelSummary -and $SentinelSummary.Presente) {
+        $sessRows = ""
+        foreach ($s in @($SentinelSummary.SessioniRemote)) {
+            $durataMin = if ($s.DurataSecondi) { [math]::Round([double]$s.DurataSecondi / 60, 1) } else { 0 }
+            $notaTxt = if ($s.Nota) { " <em>($([System.Net.WebUtility]::HtmlEncode([string]$s.Nota)))</em>" } else { "" }
+            $sessRows += "<tr><td>$([System.Net.WebUtility]::HtmlEncode([string]$s.Inizio))</td><td>$([System.Net.WebUtility]::HtmlEncode([string]$s.Fine))</td><td><strong>$($s.DurataSecondi) s</strong> ($durataMin min)</td><td>$([System.Net.WebUtility]::HtmlEncode([string]$s.IPRemoto))</td><td>$([System.Net.WebUtility]::HtmlEncode([string]$s.Software))$notaTxt</td><td>$($s.PortaLocale)</td></tr>`n"
+        }
+        if (-not $sessRows) { $sessRows = "<tr><td colspan=`"6`" style=`"text-align:center;color:#7eb8e8;`">Nessuna sessione di controllo remoto osservata durante i periodi di sorveglianza.</td></tr>" }
+
+        $periodRows = ""
+        foreach ($p in @($SentinelSummary.PeriodiSorveglianza)) {
+            $min = if ($null -ne $p.Minuti) { "$($p.Minuti) min" } else { "in corso" }
+            $periodRows += "<tr><td>$([System.Net.WebUtility]::HtmlEncode([string]$p.Inizio))</td><td>$([System.Net.WebUtility]::HtmlEncode([string]$p.Fine))</td><td>$min</td></tr>`n"
+        }
+        if (-not $periodRows) { $periodRows = "<tr><td colspan=`"3`">-</td></tr>" }
+
+        $mediaRows = ""
+        foreach ($m in @($SentinelSummary.UsiPeriferiche)) {
+            $mediaRows += "<tr><td>$([System.Net.WebUtility]::HtmlEncode([string]$m.Periferica))</td><td>$([System.Net.WebUtility]::HtmlEncode([string]$m.Processo))</td><td>$([System.Net.WebUtility]::HtmlEncode([string]$m.Inizio))</td><td>$($m.DurataSecondi) s</td></tr>`n"
+        }
+        $mediaBlock = if ($mediaRows) {
+            "<h3>Uso di microfono e webcam osservato</h3><table class=`"data-table`"><thead><tr><th>Periferica</th><th>Processo</th><th>Inizio</th><th>Durata</th></tr></thead><tbody>$mediaRows</tbody></table>"
+        } else { "" }
+
+        $chainBadge = if ($SentinelSummary.ChainValid) {
+            "<span class=`"badge badge-low`">Registro integro</span>"
+        } else {
+            "<span class=`"badge badge-critical`">REGISTRO MANOMESSO</span>"
+        }
+
+        $sentinelSection = @"
+<section class="card danger-card">
+    <h2>&#x1F6E1;&#xFE0F; SENTINELLA - Eventi registrati nel tempo</h2>
+    <p style="font-size:0.9rem;">Questa sezione non descrive lo stato attuale del computer: elenca <strong>fatti datati</strong>, osservati mentre accadevano durante i periodi di sorveglianza. $chainBadge</p>
+    <p style="font-size:0.85rem;opacity:0.85;">Minuti totali di sorveglianza: <strong>$([math]::Round($SentinelSummary.MinutiSorvegliati,1))</strong> &middot; Eventi registrati: <strong>$($SentinelSummary.TotaleEventi)</strong> &middot; Sessioni remote osservate: <strong>$(@($SentinelSummary.SessioniRemote).Count)</strong></p>
+
+    <h3>Sessioni di controllo remoto osservate</h3>
+    <table class="data-table"><thead><tr><th>Inizio</th><th>Fine</th><th>Durata</th><th>IP remoto</th><th>Software</th><th>Porta</th></tr></thead><tbody>$sessRows</tbody></table>
+
+    $mediaBlock
+
+    <h3>Periodi in cui la Sentinella era attiva</h3>
+    <p style="font-size:0.85rem;opacity:0.8;">Fuori da questi intervalli non e' stato osservato nulla, perche' la Sentinella non era in esecuzione: l'assenza di eventi in un dato momento NON significa che non sia accaduto nulla.</p>
+    <table class="data-table"><thead><tr><th>Inizio sorveglianza</th><th>Fine</th><th>Durata</th></tr></thead><tbody>$periodRows</tbody></table>
+
+    <p style="font-size:0.85rem;opacity:0.8;"><strong>Limiti:</strong> la Sentinella campiona a intervalli, quindi una sessione piu' breve dell'intervallo puo' non essere stata osservata. Registra l'esistenza, l'origine e la durata delle connessioni, <strong>non il loro contenuto</strong>. Gli orari provengono dall'orologio di questo computer: per una data attestata da terzi occorre la marca temporale del pacchetto prova (vedi DISCLAIMER.md).</p>
+</section>
+"@
+    }
+
     # === DLL CARICATE DA PERCORSI ANOMALI ===
     $modulesSection = ""
     if ($ModuleFindings) {
@@ -756,13 +811,13 @@ function New-DVReportHTML {
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="author" content="$($cfg.Author) - $($cfg.AuthorTitle)">
     <meta name="generator" content="DigitalValut Controller $($cfg.Version)">
-    <title>$titleEmoji Report Sicurezza - DigitalValut Controller v4.2</title>
+    <title>$titleEmoji Report Sicurezza - DigitalValut Controller v5.0</title>
     $cssContent
 </head>
 <body>
     <header class="header">
         <div class="logo"><span class="digi">Digital</span><span class="valut">Valut</span></div>
-        <p class="tagline">Controller v4.2 - Strumento di Tutela Privacy Lavoratori PA</p>
+        <p class="tagline">Controller v5.0 - Strumento di Tutela Privacy Lavoratori PA</p>
         <p class="meta">$($SystemInfo.ComputerName) | $($SystemInfo.ScanDate)</p>
     </header>
 
@@ -778,6 +833,8 @@ function New-DVReportHTML {
         $elevationBox
 
         $alertBox
+
+        $sentinelSection
 
         $scanDiffSection
 

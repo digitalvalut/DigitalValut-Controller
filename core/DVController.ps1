@@ -1,7 +1,7 @@
 #Requires -Version 5.1
 <#
 .SYNOPSIS
-    DigitalValut Controller v4.2 - Strumento di Tutela Privacy Lavoratori PA
+    DigitalValut Controller v5.0 - Strumento di Tutela Privacy Lavoratori PA
 
 .DESCRIPTION
     Strumento per la verifica di software di controllo remoto non autorizzato.
@@ -23,7 +23,7 @@
     See the LICENSE file for details.
 
 .VERSION
-    4.2.0
+    5.0.0
 
 .LINK
     https://www.digitalvalut.it
@@ -43,14 +43,46 @@ param(
     # una spiegazione in linguaggio naturale dei risultati. Se Ollama non e' installato
     # il modulo e' comunque no-op: questo switch serve solo a chi lo ha installato ma
     # non vuole usarlo per questa scansione.
-    [switch]$DisableAI
+    [switch]$DisableAI,
+
+    # Avvia il monitoraggio continuo (Sentinella) invece della scansione singola:
+    # registra le sessioni di controllo remoto MENTRE accadono, con orario di
+    # inizio, fine e durata. Vedi SentinelMonitor.psm1.
+    [switch]$Sentinel,
+
+    # Sentinella: intervallo di campionamento in secondi.
+    [int]$SentinelInterval = 30,
+
+    # Sentinella: durata massima in minuti (0 = fino all'arresto manuale).
+    [double]$SentinelMinutes = 0,
+
+    # Sentinella: sorveglia anche l'uso di microfono e webcam.
+    [switch]$SentinelMedia,
+
+    # Al termine della scansione crea il PACCHETTO PROVA sigillato: un unico file
+    # .zip con report, dati grezzi, catena di custodia e verificatore autonomo,
+    # da consegnare a un avvocato o a un perito.
+    [switch]$EvidencePackage,
+
+    # Richiede la marca temporale RFC 3161 a un'autorita' terza. Alla TSA viene
+    # inviato SOLO l'hash SHA-256 del manifesto, mai i dati. Richiede connessione
+    # a Internet: e' l'UNICA funzione dello strumento che contatta l'esterno, ed
+    # e' opt-in esplicita proprio per questo.
+    [switch]$Timestamp,
+
+    # URL di una TSA scelta dall'utente (es. una TSA qualificata eIDAS a pagamento).
+    [string]$TsaUrl = "",
+
+    # Salta la raccolta dei dati grezzi di sistema (piu' veloce, ma il materiale
+    # risulta meno utile a un perito).
+    [switch]$NoRawEvidence
 )
 
 $ErrorActionPreference = "Continue"
 
 # === CONFIGURAZIONE GLOBALE ===
 $Global:DVConfig = @{
-    Version         = "4.2.0"
+    Version         = "5.0.0"
     Author          = "DigitalValut"
     AuthorTitle     = "Sviluppatore: Dott. Giuseppe Falsone e il team DigitalValut"
     Organization    = "DigitalValut Association"
@@ -99,7 +131,11 @@ $modules = @(
     "EventLogAnalyzer",
     "OllamaAssistant",
     "ReportGenerator",
-    "ChainOfCustody"
+    "ChainOfCustody",
+    "SentinelMonitor",
+    "TimestampAuthority",
+    "RawEvidence",
+    "EvidencePackage"
 )
 foreach ($mod in $modules) {
     $modPath = Join-Path $modulesPath "$mod.psm1"
@@ -161,6 +197,28 @@ if ($VerifyChain) {
     Write-Host "  Registro: $ledgerPath"
     Write-Host ""
     exit $(if ($chainResult.Valid) { 0 } else { 1 })
+}
+
+# === MODALITA' SENTINELLA (monitoraggio continuo, nessuna scansione singola) ===
+if ($Sentinel) {
+    Write-Host "  [*] Caricamento regole di rilevamento..." -ForegroundColor Cyan
+    $rulesPathS = Join-Path $PSScriptRoot "rules"
+    $rulesInfoS = Initialize-DVThreatData -RulesPath $rulesPathS
+    if (-not $rulesInfoS.UsedFallback) {
+        Write-Host "  [OK] $($rulesInfoS.Loaded) regole caricate." -ForegroundColor Green
+    }
+    $sentinelResult = Start-DVSentinel -ReportDir $reportDir -IntervalSeconds $SentinelInterval `
+        -MaxMinutes $SentinelMinutes -IncludeMedia:$SentinelMedia `
+        -PortsDb (Get-RemotePortsDatabase) -ProcessDb (Get-SuspiciousProcessesDatabase)
+
+    $sentinelLog = Get-DVSentinelLogPath -ReportDir $reportDir
+    $summary = Get-DVSentinelSummary -LogPath $sentinelLog
+    Write-Host "  Sessioni remote registrate in totale: $(@($summary.SessioniRemote).Count)" -ForegroundColor $(if (@($summary.SessioniRemote).Count -gt 0) { "Yellow" } else { "Green" })
+    Write-Host "  Integrita' del registro: $($summary.ChainMessage)"
+    Write-Host ""
+    Write-Host "  Per includere questi eventi in un report, esegui ora una scansione normale." -ForegroundColor DarkGray
+    Write-Host ""
+    exit 0
 }
 
 # === ESECUZIONE SCANSIONE ===
@@ -251,6 +309,20 @@ if (-not $QuickScan) {
     Write-Host "  [i] Saltati (modalita' rapida): sorveglianza audio/video, avvio automatico, antivirus, persistenza avanzata, DLL iniettate, analisi storica." -ForegroundColor DarkGray
 }
 
+# Registro della Sentinella: se in passato e' stato eseguito il monitoraggio
+# continuo, i suoi eventi (sessioni remote con orario e durata) confluiscono nel
+# report. E' la parte piu' significativa sul piano documentale.
+$sentinelSummary = $null
+$sentinelLogPath = Get-DVSentinelLogPath -ReportDir $reportDir
+if (Test-Path $sentinelLogPath) {
+    Write-Host "  [*] Lettura registro Sentinella (monitoraggio continuo)..." -ForegroundColor Cyan
+    $sentinelSummary = Get-DVSentinelSummary -LogPath $sentinelLogPath
+    Write-Host "  [i] Sentinella: $(@($sentinelSummary.SessioniRemote).Count) sessioni remote registrate su $([math]::Round($sentinelSummary.MinutiSorvegliati,1)) minuti di sorveglianza." -ForegroundColor DarkGray
+    if (-not $sentinelSummary.ChainValid) {
+        Write-Host "  [ALLARME] Registro Sentinella manomesso: $($sentinelSummary.ChainMessage)" -ForegroundColor Red
+    }
+}
+
 Write-Host "  [*] Calcolo punteggio di rischio..." -ForegroundColor Cyan
 $threatScore = Get-DVThreatScore -PortAnalysis $portAnalysis -ProcessAnalysis $processAnalysis `
     -ServiceAnalysis $serviceAnalysis -SoftwareAnalysis $softwareAnalysis `
@@ -299,10 +371,20 @@ $exportData = @{
     ModuleFindings           = $moduleFindings
     EventLogFindings         = $eventLogFindings
     RulesInfo                = $rulesInfo
+    SentinelSummary          = $sentinelSummary
     ScanDiff                 = $scanDiff
 }
 $jsonDataString = $exportData | ConvertTo-Json -Depth 10
 $findingsHash = Get-DVContentHash -Content $jsonDataString
+
+# Dati grezzi: output non interpretati dei comandi di sistema, indispensabili
+# perche' un perito possa rifare l'analisi in modo indipendente.
+$rawEvidence = $null
+if (-not $NoRawEvidence -and -not $QuickScan) {
+    Write-Host "  [*] Conservazione dati grezzi di sistema (per verifica peritale)..." -ForegroundColor Cyan
+    $rawEvidence = Save-DVRawEvidence -ReportDir $reportDir
+    Write-Host "  [OK] $($rawEvidence.Count) file di dati grezzi salvati in '$(Split-Path -Leaf $rawEvidence.Directory)'." -ForegroundColor Green
+}
 
 Write-Host "  [*] Generazione report HTML..." -ForegroundColor Cyan
 try {
@@ -314,6 +396,7 @@ try {
         -SurveillanceCapabilities $surveillanceCapabilities `
         -PersistenceFindings $persistenceFindings -ScanDiff $scanDiff -OllamaExplanation $ollamaExplanation `
         -ModuleFindings $moduleFindings -EventLogFindings $eventLogFindings -RulesInfo $rulesInfo `
+        -SentinelSummary $sentinelSummary `
         -ControllerRoot $controllerRoot -OutputPath $reportFullPath -JsonData $jsonDataString `
         -ContentHash $findingsHash -IsElevated $isElevated
 } catch {
@@ -357,6 +440,36 @@ try {
     Write-Host "  [!] Impossibile aggiornare la catena di custodia: $($_.Exception.Message)" -ForegroundColor Yellow
 }
 Write-Host ""
+
+# === PACCHETTO PROVA SIGILLATO (opzionale) ===
+# Un unico file da consegnare a un avvocato o a un perito, con verificatore
+# autonomo incluso e, se richiesta, marca temporale di un'autorita' terza.
+if ($EvidencePackage -or $Timestamp) {
+    Write-Host "  [*] Creazione del pacchetto prova sigillato..." -ForegroundColor Cyan
+    if ($Timestamp) {
+        Write-Host "  [i] Richiesta marca temporale: alla TSA viene inviato SOLO l'hash del manifesto," -ForegroundColor DarkGray
+        Write-Host "      mai i dati del report. E' l'unica connessione esterna dello strumento." -ForegroundColor DarkGray
+    }
+    $pkg = New-DVEvidencePackage -ReportDir $reportDir -RequestTimestamp:$Timestamp `
+        -ControllerRoot $controllerRoot -CustomTsaUrl $TsaUrl
+
+    if ($pkg.Success) {
+        Write-Host "  [OK] Pacchetto prova: $($pkg.PackagePath)" -ForegroundColor Green
+        Write-Host "  [OK] File sigillati: $($pkg.FileCount) | Hash manifesto: $($pkg.ManifestHash)" -ForegroundColor Green
+        if ($pkg.Timestamped) {
+            Write-Host "  [OK] DATA CERTIFICATA DA TERZI: $($pkg.CertifiedTime) UTC (autorita': $($pkg.TsaName))" -ForegroundColor Green
+        } elseif ($Timestamp) {
+            Write-Host "  [!] Marca temporale NON ottenuta: $($pkg.TimestampError)" -ForegroundColor Yellow
+            Write-Host "      Il pacchetto resta valido, ma la data non e' attestata da terzi." -ForegroundColor Yellow
+        }
+        Write-Host ""
+        Write-Host "  Consegna quel singolo file .zip al tuo avvocato o al perito:" -ForegroundColor Cyan
+        Write-Host "  contiene tutto il materiale e un verificatore che chiunque puo' eseguire." -ForegroundColor Cyan
+    } else {
+        Write-Host "  [!] Creazione del pacchetto fallita: $($pkg.Error)" -ForegroundColor Yellow
+    }
+    Write-Host ""
+}
 
 if ($Global:DVConfig.AutoOpenReport -and $reportPath -and (Test-Path $reportPath)) {
     Start-Process $reportPath

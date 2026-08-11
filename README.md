@@ -1,4 +1,4 @@
-# DigitalValut Controller v4.2
+# DigitalValut Controller v5.0
 
 [![CI](https://github.com/digitalvalut/DigitalValut-Controller/actions/workflows/ci.yml/badge.svg)](https://github.com/digitalvalut/DigitalValut-Controller/actions/workflows/ci.yml)
 [![Licenza: GPL v3](https://img.shields.io/badge/Licenza-GPLv3-blue.svg)](LICENSE)
@@ -24,6 +24,12 @@ modifica il sistema, non invia dati in rete: funziona anche da chiavetta USB.
 > Può generare falsi positivi e falsi negativi. Prima di qualsiasi azione
 > disciplinare, sindacale o giudiziaria, rivolgiti a un avvocato e a un perito
 > informatico forense. Avvertenza integrale: **[DISCLAIMER.md](DISCLAIMER.md)**.
+
+> [!TIP]
+> **Devi documentare una situazione seria?** Leggi la
+> **[Guida alla raccolta di documentazione](GUIDA_PROVE.md)**: spiega in tre
+> livelli come passare da "ho un sospetto" a materiale datato da un'autorità
+> terza e verificabile da chiunque.
 
 ## Cosa rileva
 
@@ -60,6 +66,49 @@ modifica il sistema, non invia dati in rete: funziona anche da chiavetta USB.
 
 Il risultato è un report HTML/JSON con punteggio di rischio (SICURO → CRITICO),
 riferimenti normativi e un fac-simile di richiesta al DPO.
+
+## 🛡️ Sentinella: registra gli eventi mentre accadono
+
+Una scansione è una fotografia: se la connessione remota avviene alle 3 di
+notte, una fotografia scattata di giorno non la vedrà mai.
+
+**`AVVIA_SENTINELLA.bat`** resta in ascolto e registra le sessioni di controllo
+remoto nel momento in cui si verificano, con orario di inizio, di fine e durata.
+
+Si passa così da *"sul PC è installato un software di controllo remoto"*
+(circostanza che ammette molte spiegazioni) a *"il 14 marzo, dalle 03:12 alle
+03:59, sessione attiva dall'indirizzo 10.x.x.x, durata 47 minuti"* — un fatto
+circostanziato.
+
+Il registro usa hash concatenati: cancellare o modificare un evento passato
+rompe la catena e viene rilevato.
+
+## 🔒 Pacchetto prova con data certificata da terzi
+
+**`CREA_PACCHETTO_PROVA.bat`** produce **un solo file .zip** da consegnare a un
+avvocato o a un perito, contenente report, dati grezzi di sistema, registro
+della Sentinella, catena di custodia — e due elementi che cambiano il peso del
+materiale:
+
+**Marca temporale RFC 3161.** Un'autorità terza certifica crittograficamente che
+quel materiale esisteva già a quella data. Serve perché l'orologio del computer
+è modificabile: senza certificazione esterna, la data vale quanto la parola di
+chi la presenta. Il Regolamento eIDAS (UE 910/2014, art. 41) attribuisce alle
+marche temporali *qualificate* una presunzione legale di accuratezza della data.
+
+> **Privacy:** alla marcatrice temporale viene inviato **solo un hash SHA-256 di
+> 32 byte**, da cui è computazionalmente impossibile risalire al contenuto.
+> Nessun nome, nessun IP, nessun processo lascia il dispositivo. È l'unica
+> funzione dello strumento che si collega a Internet, ed è **opt-in esplicita**.
+
+**Verificatore autonomo.** Nel pacchetto c'è `VERIFICA_PROVA.bat`: chiunque lo
+riceva — il legale della controparte, il consulente tecnico d'ufficio — può
+verificare integrità e data **senza installare nulla e senza fidarsi di chi ha
+prodotto il materiale**. Finora la verifica la faceva lo stesso programma che
+aveva creato i file: un cerchio che si chiude su sé stesso e che in
+contraddittorio non regge.
+
+📖 Guida pratica completa: **[GUIDA_PROVE.md](GUIDA_PROVE.md)**
 
 ## Estendibile da chiunque, senza toccare il codice
 
@@ -106,6 +155,18 @@ essere già stati sovrascritti legittimamente, e senza privilegi di
 amministratore il registro di sicurezza non è leggibile affatto (il report lo
 dichiara apertamente quando succede).
 
+Sulla **Sentinella**: campiona a intervalli, quindi una sessione più breve
+dell'intervallo può non essere osservata; registra l'esistenza, l'origine e la
+durata delle connessioni, **non il loro contenuto**; e quando non è in
+esecuzione non vede nulla — i periodi scoperti sono dichiarati esplicitamente
+nel report, senza fingere una copertura continua.
+
+Sul **pacchetto prova**: non è un'acquisizione forense. I dati sono raccolti
+dall'interno del sistema tramite le API di Windows; se il sistema fosse
+compromesso a livello kernel, quelle stesse API potrebbero restituire dati
+falsati. Un'acquisizione forense vera si esegue a sistema spento, con
+write-blocker, da un perito qualificato.
+
 **Un esito "SICURO" non dimostra l'assenza di sorveglianza**, così come la
 segnalazione di un software non dimostra un uso illecito: gli strumenti di
 assistenza remota possono essere legittimi, autorizzati e regolarmente
@@ -133,10 +194,19 @@ e usarlo, sia chi non ha mai usato GitHub sia chi lavora con Git ogni giorno.
    scansione parte da sola.
 4. Attendi 30–90 secondi: il report si apre automaticamente nel browser.
 
-Vuoi solo un controllo veloce, o vuoi scegliere tu tra scansione rapida,
-completa e verifica della catena di custodia? Usa rispettivamente
-`AVVIA_SCANSIONE.bat` o `AVVIA_AVANZATO.bat` — entrambi opzionali, per chi
-vuole più controllo.
+### I quattro pulsanti, in ordine di potenza
+
+| File | Cosa fa | Quando usarlo |
+|---|---|---|
+| **`AVVIA_CONTROLLO.bat`** | Scansione completa, nessuna scelta da fare | Sempre, per iniziare |
+| **`AVVIA_SENTINELLA.bat`** | Registra le connessioni remote **mentre accadono** | Se sospetti qualcosa: lascialo attivo per giorni |
+| **`CREA_PACCHETTO_PROVA.bat`** | Un solo .zip sigillato e datato da terzi, da consegnare a un avvocato | Quando hai raccolto abbastanza |
+| **`VERIFICA_PROVA.bat`** | Verifica un pacchetto ricevuto, senza fidarsi di chi l'ha creato | Lo usa il destinatario |
+
+Restano disponibili `AVVIA_SCANSIONE.bat` (rapida, un click) e
+`AVVIA_AVANZATO.bat` (menu con opzioni) per chi vuole più controllo.
+
+📖 Non sai da dove partire in una situazione seria? **[GUIDA_PROVE.md](GUIDA_PROVE.md)**
 
 ### Se usi Git (metodo per professionisti/IT)
 
@@ -229,6 +299,9 @@ semplice dei risultati, generata da un modello che gira **in locale**.
 ```
 DigitalValut-Controller/
 ├── AVVIA_CONTROLLO.bat       # Avvio principale: doppio clic, nessuna scelta
+├── AVVIA_SENTINELLA.bat      # ⭐ Monitoraggio continuo: registra gli eventi
+├── CREA_PACCHETTO_PROVA.bat  # ⭐ Pacchetto sigillato + marca temporale
+├── VERIFICA_PROVA.bat/.ps1   # ⭐ Verificatore autonomo (per chi riceve)
 ├── AVVIA_SCANSIONE.bat       # Scansione rapida, un solo click
 ├── AVVIA_AVANZATO.bat        # Menu con opzioni (per chi vuole scegliere)
 ├── core/
@@ -245,6 +318,7 @@ DigitalValut-Controller/
 ├── docs/                     # Guida completa, riferimenti legali, quick guide
 ├── templates/                # Template HTML/CSS del report
 ├── DISCLAIMER.md             # Avvertenze e limiti (da leggere)
+├── GUIDA_PROVE.md            # Come raccogliere documentazione utilizzabile
 ├── RULES.md                  # Come scrivere le tue regole di rilevamento
 ├── SECURITY.md               # Segnalazione vulnerabilità
 ├── CONTRIBUTING.md           # Linee guida per i contributi

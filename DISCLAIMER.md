@@ -66,7 +66,37 @@ saltata (il report lo dichiara). L'installazione di un servizio è inoltre
 un'operazione ordinaria — driver, aggiornamenti e software aziendale ne
 installano di continuo — e **non costituisce di per sé indice di un problema**.
 
-**j) Spiegazione generata da intelligenza artificiale (opzionale).** Se disponibile in locale tramite Ollama, il report può includere una spiegazione dei risultati generata da un modello linguistico. Questo testo è generato automaticamente, **può contenere imprecisioni o omissioni** (fenomeno noto come "allucinazione" nei modelli linguistici), non è stato validato da una persona e **non sostituisce in alcun modo** le sezioni tecniche del report né un parere legale. È fornito unicamente a scopo di leggibilità.
+**j) Modalità Sentinella (monitoraggio continuo).** La Sentinella campiona lo
+stato del sistema a intervalli: **una sessione di durata inferiore all'intervallo
+di campionamento può non essere osservata affatto**. Quando non è in esecuzione
+(computer spento, programma chiuso, riavvio) non registra nulla: i periodi
+scoperti sono dichiarati nel report e **l'assenza di eventi in un dato momento
+non significa che non sia accaduto nulla**. Registra l'esistenza, l'origine e la
+durata delle connessioni, **mai il loro contenuto**: non è uno strumento di
+intercettazione. Gli orari provengono dall'orologio del computer analizzato.
+
+**k) Marca temporale RFC 3161.** Le autorità di marcatura temporale gratuite
+preconfigurate **non sono necessariamente qualificate** ai sensi del Regolamento
+eIDAS (UE 910/2014): producono una prova crittografica solida e verificabile da
+chiunque, ma la **presunzione legale** di accuratezza della data prevista
+dall'art. 41 eIDAS opera solo per le validazioni temporali *qualificate*, che
+richiedono un prestatore qualificato (di norma a pagamento, elenco consultabile
+sui registri di fiducia europei). La marca temporale attesta che un determinato
+hash esisteva a una certa data: **non attesta in alcun modo la veridicità, la
+correttezza o il significato dei dati sottostanti**. Lo strumento verifica la
+firma del token ma **non** valida la catena di certificazione fino a una CA
+radice attendibile: quella verifica va eseguita con strumenti standard (OpenSSL),
+come indicato nelle istruzioni incluse nel pacchetto.
+
+**l) Pacchetto prova e verificatore.** Il pacchetto **non è un'acquisizione
+forense** e il verificatore incluso accerta esclusivamente **integrità e data**
+del materiale: non esprime alcuna valutazione di merito, non attesta che i
+riscontri siano corretti e non ne certifica il significato. I dati sono raccolti
+dall'interno del sistema in esame tramite le API di Windows: qualora il sistema
+fosse compromesso a livello di kernel, tali API potrebbero restituire
+informazioni falsate senza che ciò sia rilevabile.
+
+**m) Spiegazione generata da intelligenza artificiale (opzionale).** Se disponibile in locale tramite Ollama, il report può includere una spiegazione dei risultati generata da un modello linguistico. Questo testo è generato automaticamente, **può contenere imprecisioni o omissioni** (fenomeno noto come "allucinazione" nei modelli linguistici), non è stato validato da una persona e **non sostituisce in alcun modo** le sezioni tecniche del report né un parere legale. È fornito unicamente a scopo di leggibilità.
 
 ## 4. LIMITI PROBATORI DEL REPORT
 

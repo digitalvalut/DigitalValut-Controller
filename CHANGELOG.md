@@ -5,6 +5,75 @@ Tutte le modifiche rilevanti a questo progetto sono documentate in questo file.
 Il formato si ispira a [Keep a Changelog](https://keepachangelog.com/it/1.1.0/)
 e il progetto adotta il [Versionamento Semantico](https://semver.org/lang/it/).
 
+## [5.0.0] — 2026-08-11
+
+Versione dedicata a un unico obiettivo: rendere il materiale prodotto
+**utilizzabile davanti a un professionista**. Non trasforma lo strumento in una
+perizia forense — quella la redige un perito iscritto all'albo — ma colma le tre
+lacune che rendevano il materiale precedente facilmente contestabile: la data
+non attestata, la fotografia istantanea, e la verifica affidata allo stesso
+programma che aveva creato i file.
+
+### Aggiunto
+
+- **Modalità Sentinella** (`SentinelMonitor.psm1`, `AVVIA_SENTINELLA.bat`):
+  monitoraggio continuo che registra le sessioni di controllo remoto **mentre
+  accadono**, con orario di inizio, fine e durata, e l'uso di microfono e webcam.
+  - Deduplicazione a sessioni: una connessione continuativa genera due soli
+    eventi (apertura e chiusura), non una riga per ciclo di campionamento.
+  - Registro append-only con hash concatenati: cancellare o modificare un evento
+    passato rompe la catena ed è rilevabile.
+  - I periodi non coperti dalla sorveglianza sono dichiarati esplicitamente:
+    l'assenza di eventi non viene spacciata per assenza di fatti.
+- **Marca temporale RFC 3161** (`TimestampAuthority.psm1`): richiesta a
+  un'autorità terza che certifica crittograficamente la data di esistenza del
+  materiale. Implementazione completa in PowerShell puro — costruzione della
+  richiesta DER/ASN.1, invio, verifica della firma CMS ed estrazione della data
+  certificata — senza alcuna dipendenza esterna.
+  - **Privacy**: viene inviato esclusivamente l'hash SHA-256 (32 byte), mai i
+    dati. È l'unica funzione dello strumento che si collega a Internet ed è
+    **opt-in esplicita**.
+  - Tre autorità gratuite preconfigurate, con possibilità di indicarne una
+    propria (es. una TSA qualificata eIDAS).
+- **Pacchetto prova sigillato** (`EvidencePackage.psm1`,
+  `CREA_PACCHETTO_PROVA.bat`): un unico `.zip` da consegnare a un avvocato, con
+  manifesto degli hash di ogni file, marca temporale e istruzioni per il
+  destinatario.
+- **Verificatore autonomo** (`VERIFICA_PROVA.ps1` / `.bat`): incluso nel
+  pacchetto, **non importa alcun modulo del progetto** e non richiede
+  installazioni. Chiunque riceva il materiale può verificarne integrità e data
+  senza riporre fiducia in chi lo ha prodotto. Risolve il problema strutturale
+  per cui la verifica era finora affidata allo stesso programma che aveva
+  generato i file.
+- **Conservazione dei dati grezzi** (`RawEvidence.psm1`): salva l'output non
+  interpretato di dieci comandi di sistema (connessioni, processi, servizi,
+  chiavi di avvio, task pianificati, stato RDP…), ciascuno accompagnato dal
+  comando esatto che lo ha prodotto, perché un perito possa rifare l'analisi da
+  zero senza fidarsi delle conclusioni dello strumento.
+- **[`GUIDA_PROVE.md`](GUIDA_PROVE.md)**: guida pratica in tre livelli per chi
+  deve documentare una situazione seria.
+- Nuova sezione nel report dedicata agli eventi registrati dalla Sentinella.
+- 54 nuovi test automatici (da 93 a **147 totali**), inclusa la verifica che il
+  verificatore autonomo rilevi effettivamente una manomissione e che non dipenda
+  da moduli del progetto.
+
+### Corretto
+
+- `Read-DVDerTlv` sollevava un'eccezione di binding su un array di byte vuoto
+  anziché restituire `$null` come previsto per un parser difensivo. Corretto
+  anche nella copia inclusa nel verificatore autonomo.
+- Il parametro `MaxMinutes` della Sentinella era tipizzato come intero, quindi
+  qualunque durata inferiore al minuto veniva troncata a 0 e interpretata come
+  "esegui senza limite". Ora è un valore decimale.
+- L'attesa tra i cicli della Sentinella era un unico `Start-Sleep` lungo: una
+  richiesta di arresto poteva restare inascoltata per l'intero intervallo. Ora
+  l'attesa è suddivisa in intervalli di un secondo.
+
+### Sicurezza
+
+- La CI verifica sintassi e lint anche di `VERIFICA_PROVA.ps1`: è lo script che
+  eseguiranno terze parti, quindi non può mai essere rotto.
+
 ## [4.2.0] — 2026-08-06
 
 ### Aggiunto
@@ -161,6 +230,7 @@ e il progetto adotta il [Versionamento Semantico](https://semver.org/lang/it/).
 - Modalità `-QuickScan` per un controllo rapido.
 - Funzionamento portabile: nessuna installazione, nessuna connessione di rete.
 
+[5.0.0]: https://github.com/digitalvalut/DigitalValut-Controller/releases/tag/v5.0.0
 [4.2.0]: https://github.com/digitalvalut/DigitalValut-Controller/releases/tag/v4.2.0
 [4.1.1]: https://github.com/digitalvalut/DigitalValut-Controller/releases/tag/v4.1.1
 [4.1.0]: https://github.com/digitalvalut/DigitalValut-Controller/releases/tag/v4.1.0
