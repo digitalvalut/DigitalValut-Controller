@@ -1,12 +1,12 @@
 ════════════════════════════════════════════════════════════════════════════════
-        DIGITALVALUT CONTROLLER v4.2 - GUIDA COMPLETA
+        DIGITALVALUT CONTROLLER - GUIDA COMPLETA (aggiornata alla 5.4)
         Manuale utente - DigitalValut - Sviluppatore: Dott. Giuseppe Falsone e il team
-        (VETSEC Scanner - Strumento Tutela Privacy Lavoratori PA)
+        (Strumento per la tutela della privacy dei lavoratori - Digital Valut APS)
 ════════════════════════════════════════════════════════════════════════════════
 
 1. COS'E' DIGITALVALUT CONTROLLER
 ────────────────────────────────
-DigitalValut Controller (VETSEC Scanner v4.2) e' uno strumento professionale per
+DigitalValut Controller e' uno strumento professionale per
 la verifica di software di controllo remoto, spyware, keylogger e sorveglianza
 audio/video sul PC. E' progettato per la tutela dei lavoratori secondo GDPR e
 Statuto dei Lavoratori (Art. 4, L. 300/1970).
@@ -96,10 +96,10 @@ Garanzie:
 ────────────────────────
 Punteggio di rischio complessivo:
   - 0:        SICURO   - Nessun elemento sospetto
-  - 1-29:     BASSO    - Situazione normale
-  - 30-59:    MEDIO    - Verificare i componenti segnalati
-  - 60-99:    ALTO     - Software di controllo remoto o monitoraggio rilevato
-  - 100+:     CRITICO  - Rischio elevato (spyware, controllo remoto o sorveglianza)
+  - 1-24:     BASSO    - Situazione normale
+  - 25-49:    MEDIO    - Verificare i componenti segnalati
+  - 50-79:    ALTO     - Software di controllo remoto o monitoraggio rilevato
+  - 80+:      CRITICO  - Rischio elevato (spyware, sessione remota attiva o sorveglianza)
 
 Il punteggio include anche i punti per la sorveglianza audio/video (microfono in
 uso da processo sconosciuto, webcam, virtual audio cable, file sospetti, ecc.).
@@ -225,7 +225,7 @@ processi e le app segnalate e richiedere spiegazioni se non riconosciuti.
     scripts\               → Strumenti di release (pacchetto + checksum)
     docs\
       GUIDA_COMPLETA.txt   → Questa guida
-      LEGGIMI.txt          → Istruzioni rapide
+      LEGGIMI.txt (in radice) → Istruzioni rapide
       README.txt           → Quick guide (EN)
       LEGAL_REFERENCES.txt → Riferimenti normativi
     templates\             → Modello report HTML
@@ -260,7 +260,7 @@ Codice Privacy, Linee guida Garante 1 marzo 2007).
 
 
 ════════════════════════════════════════════════════════════════════════════════
-             DigitalValut Controller v4.2 - VETSEC Scanner
+             DigitalValut Controller - Digital Valut APS
              DigitalValut - Sviluppatore: Dott. Giuseppe Falsone e il team
              https://www.digitalvalut.it - info@digitalvalut.com
 ════════════════════════════════════════════════════════════════════════════════

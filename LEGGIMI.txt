@@ -1,0 +1,78 @@
+================================================================================
+  DIGITALVALUT CONTROLLER - LEGGIMI (versione 5.4)
+  Digital Valut APS - www.digitalvalut.it - Licenza Apache 2.0
+================================================================================
+
+COSA FA
+  Controlla il TUO computer di lavoro e ti dice se ci sono programmi di
+  controllo remoto o di sorveglianza (per esempio UltraVNC, TeamViewer, Desktop
+  remoto), chi li ha usati in passato (se il programma li registra) e come sono
+  configurati: per esempio se ti chiedono il permesso quando qualcuno si
+  collega. Poi ti aiuta a chiedere spiegazioni a chi di dovere (DPO,
+  sindacato, Garante) con le scadenze di legge.
+
+COSA NON FA
+  - Non installa nulla, non modifica il PC, non cancella niente.
+  - Non invia nessun dato in rete. Le lettere le invii tu.
+  - NON e' una perizia e non prova da solo un illecito. E' una segnalazione
+    tecnica di primo livello. Puo' sbagliare (falsi positivi e negativi).
+  - Un programma di assistenza remota puo' essere del tutto legittimo.
+
+REQUISITI
+  Windows 10 o 11. Non serve installare niente. Non servono i diritti di
+  amministratore (con i diritti i controlli sono piu' completi).
+
+COME SI USA (3 PASSI)
+  1. Scompatta lo zip sul Desktop o su una chiavetta.
+     (Se Windows mostra "Windows ha protetto il PC": clic su "Ulteriori
+     informazioni" e poi "Esegui comunque".)
+  2. Doppio clic su  AVVIA_CONTROLLO.bat   - non devi scegliere niente.
+  3. Aspetta da 30 a 90 secondi: il report si apre da solo nel browser.
+     Lo trovi anche in  Desktop\DigitalValut_Reports  (file .html e .json).
+
+COME LEGGERE IL RISULTATO
+  Il punteggio non misura una violazione: conta quanti indicatori sono stati
+  trovati. Ogni punto e' spiegato riga per riga nella sezione
+  "Come e' stato calcolato il punteggio".
+     0       SICURO
+     1-24    BASSO
+     25-49   MEDIO
+     50-79   ALTO
+     80+     CRITICO
+  Leggi sempre la frase sotto il punteggio e le sezioni "Cosa e' stato
+  controllato" e "Limiti": un controllo non riuscito NON significa
+  "nessun problema".
+
+E POI? (SE IL REPORT SEGNALA UN PROGRAMMA DI CONTROLLO REMOTO)
+  1. Conserva il report (HTML e JSON). Non cambiare niente sul PC e non
+     disinstallare nulla.
+  2. Doppio clic su  AVVIA_RICHIESTE.bat : prepara la lettera al DPO e tiene
+     il conto delle scadenze (un mese per la risposta, art. 12 GDPR).
+     Rileggi e completa ogni parte tra parentesi quadre PRIMA di inviare, e
+     scrivi solo cio' che e' vero per te.
+  3. Se non ricevi risposta, passa a sindacato (RSU) e poi al Garante.
+  4. Per usi legali o disciplinari serve un avvocato e un perito informatico
+     forense: il report da solo non basta.
+
+ALTRI PULSANTI
+  AVVIA_SENTINELLA.bat        registra le connessioni remote mentre accadono
+  CREA_PACCHETTO_PROVA.bat    un solo zip sigillato, da dare a un avvocato
+  VERIFICA_PROVA.bat          verifica un pacchetto ricevuto
+  AVVIA_SCANSIONE.bat         scansione rapida, un clic
+  AVVIA_AVANZATO.bat          menu con piu' opzioni
+
+PER ENTI E PUBBLICA AMMINISTRAZIONE
+  Vedi docs\PUBBLICA_AMMINISTRAZIONE.md.
+
+DOVE LEGGERE DI PIU'
+  README.md                   guida completa
+  GUIDA_PROVE.md              come raccogliere documentazione seria
+  docs\GUIDA_COMPLETA.txt     descrizione dettagliata dei controlli
+  RIFERIMENTI_LEGALI.txt      normativa citata
+  DISCLAIMER.md               limiti e esclusione di responsabilita'
+  LICENSE / NOTICE            licenza Apache 2.0 e titolare
+
+DIGITAL VALUT APS - CF 90036980846 - info@digitalvalut.com
+Gardone Val Trompia (BS), via G. Matteotti - Canicatti' (AG), Piazza Palermo 4 -
+Caltanissetta, Via della Regione 4 (sede commerciale)
+================================================================================
