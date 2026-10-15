@@ -1,266 +1,214 @@
-════════════════════════════════════════════════════════════════════════════════
-        DIGITALVALUT CONTROLLER - GUIDA COMPLETA (aggiornata alla 5.4)
-        Manuale utente - DigitalValut - Sviluppatore: Dott. Giuseppe Falsone e il team
-        (Strumento per la tutela della privacy dei lavoratori - Digital Valut APS)
-════════════════════════════════════════════════════════════════════════════════
+================================================================================
+  DIGITALVALUT CONTROLLER - GUIDA SEMPLICE
+  (versione 5.4) - Digital Valut APS - www.digitalvalut.it - Licenza Apache 2.0
+================================================================================
 
-1. COS'E' DIGITALVALUT CONTROLLER
-────────────────────────────────
-DigitalValut Controller e' uno strumento professionale per
-la verifica di software di controllo remoto, spyware, keylogger e sorveglianza
-audio/video sul PC. E' progettato per la tutela dei lavoratori secondo GDPR e
-Statuto dei Lavoratori (Art. 4, L. 300/1970).
+IN UNA FRASE
+  Un programma gratuito che controlla il TUO computer di lavoro e ti dice se
+  ci sono programmi di controllo remoto o di sorveglianza, e ti aiuta a
+  chiedere spiegazioni per iscritto a chi di dovere.
 
-Cosa rileva:
-  - Connessioni remote attive (RDP, VNC, TeamViewer, ecc.)
-  - Porte in ascolto sospette
-  - Processi e servizi di controllo remoto o monitoraggio
-  - Firma digitale (Authenticode) dei processi sospetti rilevati
-  - Persistenza avanzata: sottoscrizioni WMI, AppInit_DLLs, debugger IFEO,
-    task pianificati sospetti
-  - Programmi in avvio automatico
-  - Stato antivirus e firewall
-  - SORVEGLIANZA AUDIO/VIDEO: chi usa microfono o webcam, dispositivi audio
-    virtuali, permessi privacy Windows, indicatori di spyware audio
-  - DLL caricate da percorsi anomali (iniezione in processi legittimi)
-  - Analisi storica: cosa e' SUCCESSO sul PC (servizi installati di recente,
-    cancellazioni del registro di sicurezza, accessi remoti RDP)
-  - Confronto automatico con l'ultima scansione: cosa e' cambiato
-  - Spiegazione in linguaggio semplice generata da AI locale (opzionale, solo
-    se e' installato Ollama sulla stessa macchina; nessun dato in rete)
-
-Non installa nulla, non modifica il sistema, funziona da USB.
+  Non e' una perizia e non accusa nessuno: da' fatti verificabili e ti dice
+  anche cosa NON ha potuto controllare.
 
 
-1-bis. REGOLE DI RILEVAMENTO PERSONALIZZABILI (dalla v4.2)
-──────────────────────────────────────────────────────────
-Le firme di rilevamento NON sono scritte dentro il programma: sono file .json
-nella cartella core\rules. Chiunque puo' aggiungere i propri rilevamenti
-creando un file, senza saper programmare e senza modificare il codice.
-
-  - Le tue regole vanno in: core\rules\custom\
-    (questa cartella non viene sovrascritta dagli aggiornamenti)
-  - Guida completa con esempi copia-incolla: file RULES.md
-  - Un modello pronto: core\rules\custom\ESEMPIO.json.txt
-
-Garanzie:
-  - Le regole sono SOLO dati, mai codice eseguibile: un file di regole
-    scaricato da terzi non puo' eseguire comandi sul tuo PC.
-  - Una regola scritta male viene ignorata senza bloccare la scansione; il
-    report indica quale file e perche'.
-  - Se la cartella regole manca o e' danneggiata, il programma continua a
-    funzionare con il database interno di riserva.
+--------------------------------------------------------------------------------
+1. COSA SERVE
+--------------------------------------------------------------------------------
+  - Un PC con Windows 10 o 11.
+  - Niente da installare. Non servono diritti di amministratore.
+  - Se il PC e' di un ufficio: controlla che il regolamento informatico
+    interno ti permetta di eseguire programmi. Se non sei sicuro, chiedi.
+  - Usalo solo su computer tuoi o che hai il diritto di usare.
 
 
-2. REQUISITI
-────────────
-- Windows 10 (build 19042 o superiore) o Windows 11
-- PowerShell 5.1 (incluso in Windows)
-- Nessuna installazione richiesta
-- Opzionale: esecuzione come amministratore per analisi piu' complete
-  (es. connessioni di rete di audiodg.exe, hook DLL)
+--------------------------------------------------------------------------------
+2. COME SI USA (3 PASSI)
+--------------------------------------------------------------------------------
+  PASSO 1  Scompatta lo zip sul Desktop (o su una chiavetta USB).
+           Se Windows dice "Windows ha protetto il PC": clic su
+           "Ulteriori informazioni" e poi "Esegui comunque".
+
+  PASSO 2  Doppio clic su  AVVIA_CONTROLLO.bat
+           Non devi scegliere niente. Parte da solo.
+
+  PASSO 3  Aspetta da 30 a 90 secondi. Il report si apre da solo nel
+           browser.
+
+  Dove trovo il report dopo?
+           Desktop  ->  cartella  DigitalValut_Reports
+           Sono due file con lo stesso nome: .html (da leggere e stampare)
+           e .json (gli stessi dati, per i tecnici).
 
 
-3. INSTALLAZIONE / USO DA USB
-────────────────────────────
-- Copia l'intera cartella "controller 4" (o DigitalValut_Controller) su
-  chiavetta USB o sul Desktop.
-- Non e' necessaria alcuna installazione.
-- Esegui con doppio clic:
-  · AVVIA_CONTROLLO.bat   (consigliato)
-  · oppure AVVIA_SCANSIONE.bat (se presente)
+--------------------------------------------------------------------------------
+3. COME LEGGERE IL REPORT
+--------------------------------------------------------------------------------
+  IN CIMA: il punteggio.
+      0        SICURO     nessun indicatore trovato
+      1-24     BASSO
+      25-49    MEDIO
+      50-79    ALTO
+      80+      CRITICO
+
+  ATTENZIONE: il punteggio NON dice che sei stato spiato. Conta quanti
+  indicatori sono stati trovati e quanto pesano. Un programma di assistenza
+  remota, anche se installato dall'ufficio informatico per aiutarti, fa
+  salire il punteggio: puo' essere del tutto normale.
+
+  Subito sotto leggi sempre la frase che spiega il livello e il
+  "Riepilogo riscontri": e' l'elenco di cio' che e' stato trovato.
+
+  LE SEZIONI, IN PAROLE SEMPLICI
+    Come e' stato calcolato il punteggio
+        Ogni punto ha un numero (R-01, R-02...), la fonte tecnica e la
+        regola. La somma e' il punteggio. Un fatto non e' contato due volte.
+    Come e' configurato l'accesso remoto
+        Per UltraVNC: ti viene chiesto il permesso quando qualcuno si
+        collega? L'icona e' visibile? Si possono prendere file o oscurare lo
+        schermo? Se il programma non lo permette di capire, scrive "Non
+        determinabile": va chiesto al servizio informatico.
+    Registro dello strumento - accessi passati
+        Se il programma tiene un registro, mostra quante sessioni remote ci
+        sono state, da quali indirizzi e quando. Un registro vuoto NON prova
+        che nessuno si sia collegato.
+    Chi e' collegato al tuo PC ora
+        Le connessioni attive in questo momento.
+    Porte in ascolto
+        Le "porte" sono come porte di casa: se aperta, il PC puo' accettare
+        collegamenti. Non vuol dire che qualcuno li stia usando.
+    Processi, software installato, servizi, avvio automatico
+        Cosa gira e cosa parte da solo all'accensione.
+    Sorveglianza audio/video
+        Chi usa microfono e webcam.
+    Cosa e' successo su questo PC (ultimi 30 giorni)
+        Letture dei registri di Windows. Senza amministratore alcuni non si
+        possono leggere: il report lo dice.
+    Metodo e perimetro della verifica
+        Cosa e' stato controllato e cosa no. Un controllo "PARZIALE" o non
+        riuscito NON significa "nessun problema".
+    Modello di richiesta al DPO
+        Una lettera pronta da completare.
+
+  SE HAI USATO IL PROGRAMMA SENZA DIRITTI DI AMMINISTRATORE
+    Il report lo scrive. Alcune informazioni (per esempio il percorso dei
+    programmi o il registro di sicurezza di Windows) non si vedono. Il
+    report dichiara che sei utente standard solo se il programma ha potuto
+    verificarlo.
 
 
-4. COME SI USA
-─────────────
-1) Doppio clic su AVVIA_CONTROLLO.bat (o AVVIA_SCANSIONE.bat)
-2) Attendi 30-90 secondi. La scansione analizza:
-   - informazioni di sistema
-   - porte di rete e connessioni
-   - processi e servizi sospetti
-   - software installato (controllo remoto)
-   - connessioni remote attive (chi e' collegato)
-   - capacita' di controllo remoto (cosa possono fare)
-   - SORVEGLIANZA: microfono, webcam, cronologia accessi, dispositivi audio
-     virtuali, permessi privacy, indicatori spyware audio
-   - programmi in avvio automatico
-   - stato antivirus e firewall
-   - calcolo del punteggio di rischio
-3) Il report HTML si apre automaticamente nel browser (se abilitato in impostazioni)
-4) Report e file JSON sono salvati in:
-   - Desktop\DigitalValut_Reports (se scrivibile)
-   - oppure nella cartella DigitalValut_Reports dentro la cartella del programma
+--------------------------------------------------------------------------------
+4. E ADESSO? (SE IL REPORT SEGNALA UN PROGRAMMA DI CONTROLLO REMOTO)
+--------------------------------------------------------------------------------
+  1. NON TOCCARE NIENTE. Non disinstallare, non cancellare, non cambiare
+     impostazioni. Serve cosi' com'e' per un eventuale controllo successivo.
+  2. CONSERVA il report (.html e .json). Stampalo.
+  3. Doppio clic su  AVVIA_RICHIESTE.bat
+     - prepara la lettera al DPO con i dati del tuo report;
+     - tiene il conto delle scadenze: l'ente deve rispondere entro UN MESE
+       (art. 12 GDPR, prorogabile di due mesi con motivazione).
+  4. RILEGGI la lettera e completa ogni parte tra parentesi quadre.
+     Scrivi SOLO cio' che e' vero per te (per esempio "non ho ricevuto
+     informativa": scrivilo solo se e' cosi').
+  5. INVIA la lettera tu, per PEC o raccomandata. Il programma non invia
+     niente. Conserva la ricevuta.
+  6. Nessuna risposta, o risposta insufficiente?
+        -> sollecito (lo prepara AVVIA_RICHIESTE.bat)
+        -> sindacato (RSU)
+        -> Garante per la protezione dei dati personali.
+  7. Prima di qualsiasi azione legale o disciplinare, parla con un
+     AVVOCATO e, per la parte tecnica, con un PERITO INFORMATICO FORENSE. Il
+     report da solo non basta a dimostrare qualcosa in giudizio.
 
 
-5. INTERPRETARE IL REPORT
-────────────────────────
-Punteggio di rischio complessivo:
-  - 0:        SICURO   - Nessun elemento sospetto
-  - 1-24:     BASSO    - Situazione normale
-  - 25-49:    MEDIO    - Verificare i componenti segnalati
-  - 50-79:    ALTO     - Software di controllo remoto o monitoraggio rilevato
-  - 80+:      CRITICO  - Rischio elevato (spyware, sessione remota attiva o sorveglianza)
-
-Il punteggio include anche i punti per la sorveglianza audio/video (microfono in
-uso da processo sconosciuto, webcam, virtual audio cable, file sospetti, ecc.).
-
-Sezioni del report:
-  - Livello di rischio: punteggio, livello e hash di verifica
-  - Riepilogo riscontri: elenco testuale di tutti i problemi (inclusi alert
-    microfono/webcam e virtual audio)
-  - Chi e' collegato al tuo PC ora: IP remoto, porta, processo, stato
-  - Informazioni sistema: computer, utente, OS, IP, ecc.
-  - Porte sospette: porte di rete in ascolto (RDP, VNC, TeamViewer, ecc.)
-  - Processi rilevati: processi attivi riconducibili a controllo remoto o spyware
-  - Connessioni esterne attive
-  - Servizi sospetti: servizi Windows associati a software di monitoraggio
-  - SORVEGLIANZA AUDIO/VIDEO:
-    · Rischio complessivo audio/video (score e livello)
-    · Microfono: in uso, processi con accesso, permesso sistema, cronologia
-    · Webcam: in uso, processi con accesso, permesso sistema, virtual camera
-    · Dispositivi audio virtuali a rischio (Virtual Audio Cable, VB-Audio,
-      Voicemeeter, Stereo Mix: possono redirigere l'audio a software nascosti)
-    · Indicatori spyware audio (file sospetti, audiodg con connessioni esterne)
-  - Processi rilevati: include ora la colonna Firma digitale (Authenticode)
-  - Persistenza avanzata: sottoscrizioni WMI non riconosciute, AppInit_DLLs,
-    debugger IFEO, task pianificati sospetti
-  - DLL caricate da percorsi anomali (possibile iniezione in processi legittimi)
-  - Cosa e' successo su questo PC: analisi storica dei registri eventi
-  - Regole di rilevamento caricate (con eventuali scarti e relativo motivo)
-  - Cosa e' cambiato dall'ultima scansione (se disponibile una scansione precedente)
-  - Spiegazione in linguaggio semplice (AI locale, se disponibile Ollama)
-  - Software installato (controllo remoto)
-  - Programmi avvio automatico
-  - Firewall: stato per dominio, rete privata, rete pubblica
-  - Antivirus: stato e aggiornamenti
-  - Modello richiesta al DPO (copia e personalizza)
-  - Riferimenti normativi: GDPR, Art. 4 Statuto Lavoratori, Codice Privacy
-  - Dati grezzi (JSON): espandibile per verifica tecnica
+--------------------------------------------------------------------------------
+5. GLI ALTRI PULSANTI
+--------------------------------------------------------------------------------
+  AVVIA_CONTROLLO.bat        la scansione completa. Inizia sempre da qui.
+  AVVIA_RICHIESTE.bat        lettere di chiarimento e scadenze.
+  AVVIA_SENTINELLA.bat       resta in ascolto e registra le connessioni
+                             remote mentre accadono, con ora di inizio, fine
+                             e durata. Utile se sospetti accessi di notte.
+  CREA_PACCHETTO_PROVA.bat   un solo zip sigillato da dare a un avvocato o a
+                             un perito. La data puo' essere certificata da
+                             una terza parte: in quel caso parte SOLO
+                             un'impronta (hash) di 32 byte, mai i tuoi dati.
+                             E' l'unica funzione che usa Internet, e solo se
+                             lo scegli tu.
+  VERIFICA_PROVA.bat         chi riceve un pacchetto lo controlla da solo.
+  AVVIA_SCANSIONE.bat        scansione rapida, un clic.
+  AVVIA_AVANZATO.bat         menu con piu' opzioni.
 
 
-6. SORVEGLIANZA AUDIO/VIDEO - DETTAGLIO
-───────────────────────────────────────
-Il modulo di rilevamento sorveglianza verifica:
+--------------------------------------------------------------------------------
+6. DOMANDE FREQUENTI
+--------------------------------------------------------------------------------
+  Il mio PC e' spiato?
+      Il report non puo' dirlo. Dice cosa e' presente, come e' configurato e,
+      se c'e' un registro, se ci sono stati collegamenti. Chi si e' collegato
+      e perche' lo sa solo l'ente: per questo si chiede per iscritto.
 
-  a) MICROFONO
-     - Quali processi stanno usando il microfono in tempo reale
-     - Processi "noti" (Teams, Zoom, browser, Discord, ecc.) non sono segnalati
-     - Processi sconosciuti con accesso al microfono → segnalati come sospetti
-     - Cronologia accessi dal registro Windows (ultimo utilizzo per app)
-     - Permesso globale "Consenti alle app di accedere al microfono"
+  Un programma di assistenza remota e' illegale?
+      No, di per se'. Puo' essere legittimo se l'ente ha informato i
+      lavoratori, ha una base giuridica e, quando serve, un accordo
+      sindacale o l'autorizzazione dell'Ispettorato (art. 4 L. 300/1970 e
+      GDPR). La domanda giusta e': chi, perche', con quale autorizzazione.
 
-  b) WEBCAM
-     - Se la webcam e' in uso e da quale processo
-     - Virtual camera (OBS Virtual Cam, ManyCam, ecc.) rilevate
-     - Permesso globale "Consenti alle app di accedere alla fotocamera"
+  Il programma manda i miei dati a qualcuno?
+      No. Lavora solo sul tuo PC e non invia niente.
 
-  c) DISPOSITIVI AUDIO VIRTUALI
-     - Virtual Audio Cable, VB-Audio, Voicemeeter, Stereo Mix
-     - Consentono di redirigere l'audio a software di registrazione nascosti
-     - Segnalati come rischio ALTO
+  Windows o l'antivirus lo blocca.
+      Il programma non e' firmato digitalmente e viene da Internet:
+      Windows o l'antivirus possono avvisare. Il codice e' pubblico e leggibile. Verifica l'impronta del
+      download se vuoi (vedi il README). Se l'ufficio vieta i programmi
+      esterni, chiedi prima il permesso.
 
-  d) INDICATORI SPYWARE AUDIO
-     - File sospetti in AppData (nomi con record, audio, capture, spy, monitor)
-     - audiodg.exe (servizio audio Windows) con connessioni di rete esterne
-       (anomalo e possibile intercettazione)
+  Il report dice "Non determinabile" o "PARZIALE".
+      Vuol dire che quella cosa non si e' potuta controllare (di solito per
+      mancanza di diritti di amministratore). Non significa "va tutto bene".
 
-  e) PERMESSI PRIVACY
-     - Quali app hanno il permesso esplicito per microfono e fotocamera
+  Posso mandarlo a un avvocato?
+      Si'. Manda il file .html e il .json e, se vuoi, il pacchetto prova.
 
-In caso di rischio ALTO o CRITICO nella sezione Sorveglianza, verificare i
-processi e le app segnalate e richiedere spiegazioni se non riconosciuti.
-
-
-7. COSA FARE IN CASO DI RISCHIO
-──────────────────────────────
-- Conservare il report (contiene data, ora e hash SHA-256 di verifica)
-- Non modificare o disinstallare nulla senza aver consultato il datore di lavoro/IT
-- Richiedere spiegazioni formali (anche scritte) sull'uso di software di
-  controllo, monitoraggio o accesso a microfono/webcam
-- In caso di dubbi, contattare il DPO (Data Protection Officer) o il sindacato
-- Nel report e' incluso un modello di lettera per la richiesta al DPO
-  (copia e personalizza)
-- I riferimenti legali nel report sono informativi; per consulenza legale
-  rivolgersi a un professionista
-
-  LIMITI DEL REPORT (IMPORTANTE)
-  Il report e' una segnalazione tecnica di primo livello prodotta da un'analisi
-  automatizzata. NON e' una perizia informatica forense e NON ha di per se'
-  valore di prova legale:
-  - puo' generare FALSI POSITIVI (software legittimo segnalato come sospetto,
-    es. strumenti di assistenza IT autorizzati e regolarmente concordati);
-  - puo' generare FALSI NEGATIVI (strumenti di controllo non rilevati, in
-    particolare se progettati per eludere l'analisi);
-  - la catena di custodia integrata e' "tamper-evident": rende rilevabile
-    un'alterazione accidentale o non esperta, ma non e' una marca temporale
-    certificata da terza parte (RFC 3161) e non e' opponibile come tale;
-  - la presenza di un software in elenco non dimostra un uso illecito, cosi'
-    come la sua assenza non dimostra l'assenza di controllo.
-  Per far valere quanto rilevato e' necessaria un'acquisizione forense eseguita
-  da un perito qualificato e l'assistenza di un avvocato.
-  Vedi il file DISCLAIMER.md per l'avvertenza completa.
+  Posso usarlo su piu' computer?
+      Si'. Copia la cartella su una chiavetta e lancia il controllo su
+      ciascun PC. Per gli enti: vedi docs\PUBBLICA_AMMINISTRAZIONE.md.
 
 
-8. PORTABILITA' E PRIVACY
-─────────────────────────
-- Lo strumento non invia dati in rete
-- Tutti i dati restano sul PC; il report e' salvato in locale
-- Puo' essere eseguito senza connessione internet
-- Non richiede account o registrazione
-- Non installa componenti e non modifica il sistema
+--------------------------------------------------------------------------------
+7. REGOLE PERSONALIZZATE (PER CHI VUOLE)
+--------------------------------------------------------------------------------
+  Le regole di rilevamento sono file di testo nella cartella  core\rules .
+  Puoi aggiungere le tue in  core\rules\custom  senza saper programmare.
+  Una regola scritta male viene ignorata e il report lo dice. Guida con
+  esempi: RULES.md.
 
 
-9. FILE E CARTELLE
-─────────────────
-  controller 4\
-    AVVIA_CONTROLLO.bat    → Avvio principale: doppio clic, nessuna scelta richiesta
-    AVVIA_SCANSIONE.bat    → Alternativa: scansione rapida, un solo click
-    AVVIA_AVANZATO.bat     → Menu con opzioni (rapida/completa/verifica catena)
-    core\
-      DVController.ps1     → Script principale
-      config\settings.json → Lingua, percorso report, apertura automatica
-      modules\             → Moduli (rete, processi, report, sorveglianza,
-                              persistenza, firma digitale, AI locale, ecc.)
-    tests\                 → Suite di test automatici (Pester)
-    scripts\               → Strumenti di release (pacchetto + checksum)
-    docs\
-      GUIDA_COMPLETA.txt   → Questa guida
-      LEGGIMI.txt (in radice) → Istruzioni rapide
-      README.txt           → Quick guide (EN)
-      LEGAL_REFERENCES.txt → Riferimenti normativi
-    templates\             → Modello report HTML
-    LICENZA.txt, CREDITS.txt, RIFERIMENTI_LEGALI.txt, DISCLAIMER.md
-
-  Report generati:
-    Desktop\DigitalValut_Reports\   (o nella cartella del programma)
-      DV_Report_[NOMEPC]_[DATA-ORA].html
-      DV_Report_[NOMEPC]_[DATA-ORA].json
+--------------------------------------------------------------------------------
+8. LIMITI
+--------------------------------------------------------------------------------
+  - E' una segnalazione tecnica di primo livello, NON una perizia forense.
+  - Puo' sbagliare: falsi positivi (segnala cose normali) e falsi negativi
+    (non vede tutto).
+  - I registri dei programmi sono file che qualcuno puo' modificare.
+  - Il programma non da' consulenza legale. I riferimenti alle leggi sono
+    informativi: verificali con un avvocato o con il sindacato.
+  - Digital Valut APS non e' responsabile dell'uso che ne fai: leggi
+    DISCLAIMER.md.
 
 
-10. CONFIGURAZIONE (OPZIONALE)
-─────────────────────────────
-In core\config\settings.json puoi impostare (se presente):
-  - "Language": "it" o "en"
-  - "ReportPath": percorso dove salvare i report (es. "Desktop\\DigitalValut_Reports")
-  - "AutoOpenReport": true/false → se aprire automaticamente il report nel browser
+--------------------------------------------------------------------------------
+DOVE LEGGERE ALTRO
+--------------------------------------------------------------------------------
+  LEGGIMI.txt                      riassunto in una pagina
+  README.md                        guida tecnica completa
+  GUIDA_PROVE.md                   come raccogliere documentazione seria
+  docs\PUBBLICA_AMMINISTRAZIONE.md  per enti, DPO, sindacati
+  RIFERIMENTI_LEGALI.txt           leggi citate
+  DISCLAIMER.md                    limiti e responsabilita'
+  LICENSE / NOTICE                 licenza Apache 2.0 e titolare
 
-
-11. LICENZA E CREDITI
-────────────────────
-Autore: DigitalValut (www.digitalvalut.it) - Sviluppatore: Dott. Giuseppe Falsone e il team
-Organizzazione: Digital Valut APS
-Specialty: Crypto-Forensics & Blockchain Security
-Licenza: Open Source - Apache License 2.0 (gratuito)
-Sito: https://www.digitalvalut.it
-Email: info@digitalvalut.com
-
-Vedi LICENZA.txt e CREDITS.txt per dettagli.
-Vedi RIFERIMENTI_LEGALI.txt per la normativa (Art. 4 Statuto Lavoratori, GDPR,
-Codice Privacy, Linee guida Garante 1 marzo 2007).
-
-
-════════════════════════════════════════════════════════════════════════════════
-             DigitalValut Controller - Digital Valut APS
-             DigitalValut - Sviluppatore: Dott. Giuseppe Falsone e il team
-             https://www.digitalvalut.it - info@digitalvalut.com
-════════════════════════════════════════════════════════════════════════════════
+DIGITAL VALUT APS - CF 90036980846 - info@digitalvalut.com
+Gardone Val Trompia (BS), via G. Matteotti - Canicatti' (AG), Piazza Palermo 4 -
+Caltanissetta, Via della Regione 4 (sede commerciale)
+================================================================================
