@@ -74,5 +74,5 @@ QUESTO STRUMENTO:
 ════════════════════════════════════════════════════════════════════════════════
              DigitalValut Controller v4.2 - Tutela Privacy Lavoratori PA
              DigitalValut - Sviluppatore: Dott. Giuseppe Falsone e il team
-             Open Source - DigitalValut Association
+             Open Source - Digital Valut APS
 ════════════════════════════════════════════════════════════════════════════════

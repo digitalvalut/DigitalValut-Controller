@@ -16,9 +16,8 @@
   periodo possono essere installati previa autorizzazione della sede
   territoriale dell'Ispettorato nazionale del lavoro."
 
-  NOTA: UltraVNC, TeamViewer, software di controllo remoto NON sono
-  "strumenti di lavoro" ma strumenti di CONTROLLO. Richiedono accordo
-  sindacale o autorizzazione INL PRIMA dell'installazione.
+  NOTA: se UltraVNC, TeamViewer o software analogo sia "strumento di lavoro"
+  o strumento di controllo dipende da funzioni e uso: valutare caso per caso.
 
 
   GDPR - Regolamento UE 2016/679
@@ -38,20 +37,23 @@
              da 15 giorni a 1 anno (violazione Art. 4 Statuto Lavoratori)
 
 
-  PROVVEDIMENTO GARANTE PRIVACY 13/07/2016
+  GARANTE PRIVACY - LINEE GUIDA SU POSTA ELETTRONICA E INTERNET (1 marzo 2007)
   -------------------------------------------------------------------------------
-  Il Garante ha chiarito che software come VNC, TeamViewer, AnyDesk sono
-  strumenti di controllo a distanza e NON rientrano negli "strumenti di
-  lavoro" esclusi dall'Art. 4 comma 2. Richiedono SEMPRE accordo sindacale
-  o autorizzazione dell'Ispettorato Nazionale del Lavoro.
+  Il Garante ha indicato che i controlli sui lavoratori devono rispettare i
+  principi di necessita', correttezza, pertinenza e non eccedenza, con adeguata
+  informativa preventiva. Per le pronunce specifiche sul software di assistenza
+  o controllo remoto consulta il sito del Garante o un legale: questo file non ne
+  riporta il contenuto. Se un software di accesso remoto sia "strumento di
+  lavoro" (art. 4, comma 2) o strumento di controllo (art. 4, comma 1) dipende
+  dalle sue funzioni effettive e dall'uso: va valutato caso per caso.
 
 
   CONSEGUENZE PER IL DATORE DI LAVORO
   -------------------------------------------------------------------------------
   - GDPR Art. 83: sanzioni fino a 20.000.000 EUR o 4% fatturato
   - Codice Privacy Art. 171: ammenda + arresto fino a 1 anno
-  - Dati raccolti con strumenti illegittimi: INUTILIZZABILI in sede
-    disciplinare e processuale
+  - Dati raccolti in violazione dell'art. 4: possono, secondo le circostanze,
+    risultare non utilizzabili in sede disciplinare (da valutare con un legale)
 
 
   CONTATTI UTILI
@@ -64,6 +66,6 @@
   Le informazioni sopra sono a solo scopo informativo e non costituiscono
   consulenza legale. Per questioni specifiche rivolgersi a un professionista
   qualificato.
-  DigitalValut Association - www.digitalvalut.it
+  Digital Valut APS - www.digitalvalut.it
   Sviluppatore: Dott. Giuseppe Falsone e il team DigitalValut
 ════════════════════════════════════════════════════════════════════════════════

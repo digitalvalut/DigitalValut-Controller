@@ -7,8 +7,9 @@ miglioramenti alla documentazione.
 ## Prima di iniziare
 
 Leggi [`DISCLAIMER.md`](DISCLAIMER.md) e [`LICENSE`](LICENSE). Contribuendo,
-accetti che il tuo contributo sia distribuito sotto **GNU GPL v3.0 o
-successiva**, alle stesse condizioni del resto del progetto.
+accetti che il tuo contributo sia distribuito sotto **Licenza Apache 2.0**,
+alle stesse condizioni del resto del progetto (sezione 5 della Licenza), e
+confermi di averne il diritto.
 
 Il progetto è mantenuto su base volontaria: le revisioni possono richiedere
 tempo e non c'è garanzia che ogni proposta venga accolta.

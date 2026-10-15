@@ -1,14 +1,15 @@
 # DigitalValut Controller v5.0 - ThreatDatabase Module
-# Copyright (C) 2024-2026 DigitalValut - www.digitalvalut.it
+# Copyright 2024-2026 Digital Valut APS - www.digitalvalut.it
 # Sviluppatore: Dott. Giuseppe Falsone e il team DigitalValut
 #
 # Questo file e' parte di DigitalValut Controller.
-# Software libero: puoi ridistribuirlo e/o modificarlo secondo i termini della
-# GNU General Public License v3.0 o (a tua scelta) qualsiasi versione successiva,
-# come pubblicata dalla Free Software Foundation.
-# Distribuito SENZA ALCUNA GARANZIA; senza neppure la garanzia implicita di
-# COMMERCIABILITA' o IDONEITA' PER UNO SCOPO PARTICOLARE. Vedi la GNU GPL v3.
-# Copia della licenza nel file LICENSE. Avvertenze e limiti: DISCLAIMER.md
+# Licenza Apache, Versione 2.0 (la "Licenza"): puoi usare questo file solo nel
+# rispetto della Licenza, di cui trovi copia nel file LICENSE e su
+# http://www.apache.org/licenses/LICENSE-2.0
+# Salvo diversa disposizione di legge o accordo scritto, il software e' distribuito
+# "COSI' COM'E'", SENZA GARANZIE O CONDIZIONI DI ALCUN TIPO, esplicite o implicite.
+# Avvertenze e limiti: DISCLAIMER.md
+# SPDX-License-Identifier: Apache-2.0
 
 # === PORTE DI CONTROLLO REMOTO ===
 $Global:RemotePorts = @{
@@ -47,9 +48,9 @@ $Global:RemotePorts = @{
     6783  = @{Name="Parsec"; Risk="MEDIUM"; Category="Gaming/Streaming"; Description="Parsec Gaming"}
 
     # Porte enterprise
-    135   = @{Name="RPC"; Risk="MEDIUM"; Category="Windows"; Description="Microsoft RPC"}
-    139   = @{Name="NetBIOS"; Risk="MEDIUM"; Category="Windows"; Description="NetBIOS Session"}
-    445   = @{Name="SMB"; Risk="MEDIUM"; Category="Windows"; Description="Server Message Block"}
+    135   = @{Name="RPC"; Risk="LOW"; Category="Windows"; Description="Microsoft RPC"}
+    139   = @{Name="NetBIOS"; Risk="LOW"; Category="Windows"; Description="NetBIOS Session"}
+    445   = @{Name="SMB"; Risk="LOW"; Category="Windows"; Description="Server Message Block"}
 }
 
 # === PROCESSI SOSPETTI ===

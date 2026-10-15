@@ -1,7 +1,7 @@
-# DigitalValut Controller v5.0
+# DigitalValut Controller v5.4.0
 
 [![CI](https://github.com/digitalvalut/DigitalValut-Controller/actions/workflows/ci.yml/badge.svg)](https://github.com/digitalvalut/DigitalValut-Controller/actions/workflows/ci.yml)
-[![Licenza: GPL v3](https://img.shields.io/badge/Licenza-GPLv3-blue.svg)](LICENSE)
+[![Licenza: Apache 2.0](https://img.shields.io/badge/Licenza-Apache%202.0-blue.svg)](LICENSE)
 [![PowerShell 5.1+](https://img.shields.io/badge/PowerShell-5.1%2B-5391FE.svg)](https://learn.microsoft.com/powershell/)
 [![Piattaforma: Windows](https://img.shields.io/badge/Piattaforma-Windows%2010%2F11-0078D6.svg)](#requisiti)
 [![Nessuna telemetria](https://img.shields.io/badge/Telemetria-nessuna-success.svg)](#privacy-e-trasparenza)
@@ -82,6 +82,38 @@ circostanziato.
 
 Il registro usa hash concatenati: cancellare o modificare un evento passato
 rompe la catena e viene rilevato.
+
+## 📨 Richieste di chiarimento e scadenzario
+
+Un report che segnala qualcosa è un punto di partenza, non una conclusione: il
+passo corretto è **chiedere per iscritto spiegazioni a chi di dovere**. Il
+titolare del trattamento ha l'obbligo di rispondere alle richieste
+dell'interessato senza ingiustificato ritardo e al più tardi entro **un mese**
+(art. 12, par. 3, GDPR; prorogabile solo con comunicazione motivata).
+
+**`AVVIA_RICHIESTE.bat`** prepara il *testo* delle lettere a partire dall'ultimo
+report e tiene il conto dei termini:
+
+| Tipo | A chi | Base |
+|---|---|---|
+| `DPO-ISTANZA` | DPO dell'Ente | artt. 12, 13, 15 GDPR; art. 4 L. 300/1970 |
+| `DPO-SOLLECITO` | DPO dell'Ente (10 giorni) | art. 12 GDPR |
+| `RSU` | RSU / organizzazioni sindacali | art. 4 L. 300/1970 |
+| `INL` | Ispettorato territoriale del lavoro | art. 4 L. 300/1970 (competenza da verificare per il pubblico impiego) |
+| `GARANTE-RECLAMO` | Garante privacy | art. 77 GDPR; artt. 140-bis e 142 D.Lgs. 196/2003 |
+
+Lo scadenzario ti dice cosa è **scaduto** e qual è il passo successivo
+(istanza scaduta → sollecito → reclamo), con un registro a hash concatenati.
+
+Scelte di progetto, volute:
+
+- **Non invia nulla.** PEC e raccomandata le invii tu: il programma resta
+  "offline" e nessuno può definirlo uno strumento di controllo.
+- **Non accusa nessuno.** I testi sono richieste di chiarimento e dichiarano che
+  il report è un segnale tecnico di primo livello, non una perizia.
+- **Non è consulenza legale.** I modelli vanno fatti rivedere da un avvocato
+  giuslavorista o dal sindacato. I punti da completare restano segnalati nel
+  testo (`[DA COMPILARE]`, `[SCEGLIERE]`) per non spedire lettere incomplete.
 
 ## 🔒 Pacchetto prova con data certificata da terzi
 
@@ -194,13 +226,14 @@ e usarlo, sia chi non ha mai usato GitHub sia chi lavora con Git ogni giorno.
    scansione parte da sola.
 4. Attendi 30–90 secondi: il report si apre automaticamente nel browser.
 
-### I quattro pulsanti, in ordine di potenza
+### I pulsanti, in ordine di potenza
 
 | File | Cosa fa | Quando usarlo |
 |---|---|---|
 | **`AVVIA_CONTROLLO.bat`** | Scansione completa, nessuna scelta da fare | Sempre, per iniziare |
 | **`AVVIA_SENTINELLA.bat`** | Registra le connessioni remote **mentre accadono** | Se sospetti qualcosa: lascialo attivo per giorni |
 | **`CREA_PACCHETTO_PROVA.bat`** | Un solo .zip sigillato e datato da terzi, da consegnare a un avvocato | Quando hai raccolto abbastanza |
+| **`AVVIA_RICHIESTE.bat`** | Prepara le lettere di chiarimento (DPO, RSU, Ispettorato, Garante) e tiene le scadenze | Dopo una segnalazione del report |
 | **`VERIFICA_PROVA.bat`** | Verifica un pacchetto ricevuto, senza fidarsi di chi l'ha creato | Lo usa il destinatario |
 
 Restano disponibili `AVVIA_SCANSIONE.bat` (rapida, un click) e
@@ -244,6 +277,13 @@ alcun costo di licenza.
 > organizzazione. L'esecuzione di software non autorizzato può costituire
 > violazione delle policy interne, con possibili conseguenze disciplinari.
 > È una responsabilità dell'utente, non dell'autore.
+
+### Per la Pubblica Amministrazione
+
+Una guida pensata per DPO, responsabili dei sistemi informativi, RSU e uffici
+del personale è in [`docs/PUBBLICA_AMMINISTRAZIONE.md`](docs/PUBBLICA_AMMINISTRAZIONE.md):
+come usare lo strumento per l'autoverifica dell'ente, come rispondere a una
+richiesta di un dipendente e quali documenti preparare.
 
 ## Verifica della catena di custodia
 
@@ -301,6 +341,7 @@ DigitalValut-Controller/
 ├── AVVIA_CONTROLLO.bat       # Avvio principale: doppio clic, nessuna scelta
 ├── AVVIA_SENTINELLA.bat      # ⭐ Monitoraggio continuo: registra gli eventi
 ├── CREA_PACCHETTO_PROVA.bat  # ⭐ Pacchetto sigillato + marca temporale
+├── AVVIA_RICHIESTE.bat       # ⭐ Lettere di chiarimento + scadenzario (non invia nulla)
 ├── VERIFICA_PROVA.bat/.ps1   # ⭐ Verificatore autonomo (per chi riceve)
 ├── AVVIA_SCANSIONE.bat       # Scansione rapida, un solo click
 ├── AVVIA_AVANZATO.bat        # Menu con opzioni (per chi vuole scegliere)
@@ -332,16 +373,113 @@ Guida dettagliata: [`docs/GUIDA_COMPLETA.txt`](docs/GUIDA_COMPLETA.txt).
 
 ## Interpretare il report
 
-| Punteggio | Livello  | Significato                                     |
-|-----------|----------|--------------------------------------------------|
-| 0         | SICURO   | Nessun elemento sospetto rilevato                 |
-| 1–29      | BASSO    | Situazione normale                                |
-| 30–59     | MEDIO    | Elementi da verificare                            |
-| 60–99     | ALTO     | Rilevato software di controllo remoto/monitoraggio|
-| 100+      | CRITICO  | Indicatori multipli di controllo o sorveglianza   |
+Modello di calcolo: **DV-SCORE-2** (dalla v5.1.2).
+
+| Punteggio | Livello  | Significato                                                                 |
+|-----------|----------|------------------------------------------------------------------------------|
+| 0         | SICURO   | Nessun indicatore rilevato dai controlli eseguiti                            |
+| 1–24      | BASSO    | Indicatori marginali, in genere configurazioni ordinarie                     |
+| 25–49     | MEDIO    | Elementi da verificare, nessun segno di accesso in corso                     |
+| 50–79     | ALTO     | Strumenti di accesso remoto presenti e/o esposti in rete, nessuna sessione attiva |
+| 80+       | CRITICO  | Sessione di accesso remoto attiva, oppure indicatori di sorveglianza         |
 
 Il punteggio è un **indicatore euristico**, non una misura oggettiva del rischio
 reale: va interpretato leggendo il dettaglio delle voci segnalate.
+
+### Perché il punteggio è verificabile
+
+Ogni report contiene la sezione **"Come è stato calcolato il punteggio"**: una riga
+per ogni punto attribuito, con la regola applicata, la fonte tecnica del dato
+(quale comando lo ha prodotto), lo stato del fatto e ciò che il rilievo **non**
+dimostra. La somma della colonna dei punti è esattamente il punteggio mostrato in
+testa al report, così un terzo (DPO, perito, giudice) può rifare il conto e
+contestare una singola riga invece del risultato nel suo complesso.
+
+Due principi del modello DV-SCORE-2:
+
+1. **Un fatto non si conta due volte.** Se la porta 5900 è tenuta aperta dallo
+   stesso software di controllo remoto già rilevato come processo, non è un
+   secondo fatto: è la conferma del primo e pesa solo per l'esposizione in rete
+   che aggiunge. Il doppio conteggio gonfia il risultato senza aggiungere prove
+   ed è il difetto più facile da contestare in un report tecnico.
+2. **La possibilità pesa meno dell'evento.** Un software installato pesa meno di
+   un processo in esecuzione, che pesa meno di una porta esposta, che pesa meno
+   di una sessione di accesso remoto in corso. Il livello CRITICO è riservato a
+   ciò che è avvenuto, non a ciò che potrebbe avvenire.
+
+Pesi e soglie sono definiti nel codice (`core/modules/ReportGenerator.psm1`,
+`$script:DVScoreWeights` e `$script:DVScoreThresholds`), riportati per esteso in
+fondo alla sezione del report e modificabili da chiunque (Apache 2.0).
+
+### Come è configurato l'accesso remoto (dalla v5.2.0)
+
+Sapere che un software di accesso remoto è installato dice poco. Cambia tutto
+sapere **come è configurato**: se all'utente compare una richiesta di consenso
+prima che qualcuno entri, se l'icona che segnala il server attivo è nascosta, se
+è possibile prelevare file, se il PC è configurato per contattare attivamente un
+indirizzo prestabilito (connessione inversa). Un'assistenza tecnica richiesta
+dall'utente e un accesso silenzioso sono due fatti giuridicamente diversi anche
+quando il programma è lo stesso.
+
+Questa lettura **non richiede privilegi di amministratore**, perché i file di
+configurazione in `Program Files` sono leggibili da qualunque utente. È quindi
+l'informazione più rilevante a cui un dipendente senza privilegi può arrivare da
+solo.
+
+Il report risponde alla domanda in chiaro — *quando qualcuno si collega, ti viene
+chiesto il consenso?* — con tre esiti possibili: previsto, non previsto, non
+determinabile. L'ultimo non è una resa: quando il file non consente di stabilirlo
+con certezza, il report lo dichiara e indica il punto da chiedere al servizio
+informatico, invece di affermare ciò che non può dimostrare.
+
+Ogni impostazione è riportata con il valore grezzo letto dal file, la sua
+funzione secondo la documentazione ufficiale del produttore e la conseguenza
+pratica. Pesano sul punteggio **solo** le impostazioni che indicano assenza di
+consenso od occultamento (nessuna richiesta all'utente, icona nascosta,
+connessione inversa): le altre caratteristiche sono riportate senza attribuire
+punti, perché descrivono quanto è invasivo uno strumento già conteggiato e non
+sono un fatto ulteriore. Un'installazione con impostazioni predefinite aggiunge
+**zero punti**.
+
+Attualmente interpretato: UltraVNC (semantiche da
+[uvnc.com](https://uvnc.com/docs/ultravnc-server/69-ultravnc-ini.html)). Per
+TightVNC, RealVNC, TeamViewer e AnyDesk i valori di configurazione sono riportati
+**senza interpretazione**, perché il significato di ciascuna chiave va verificato
+nella documentazione del rispettivo produttore.
+
+### Se non hai privilegi di amministratore
+
+Molti dipendenti non sono amministratori della postazione assegnata. Il registro
+di sicurezza di Windows, che documenta gli accessi remoti, richiede quei
+privilegi. Dalla v5.2.0 il programma tenta comunque i **registri operativi dei
+Servizi Desktop remoto**, che in molte configurazioni sono leggibili da utente
+standard e contengono lo stesso dato essenziale: chi si è collegato, quando e da
+quale indirizzo.
+
+| Canale | Eventi |
+|--------|--------|
+| `TerminalServices-RemoteConnectionManager/Operational` | 1149 (autenticazione riuscita, con indirizzo di origine) |
+| `TerminalServices-LocalSessionManager/Operational` | 21, 24, 25 (accesso, disconnessione, riconnessione) |
+
+Il report distingue tre casi, perché hanno significati opposti: canale letto e
+vuoto (dato positivo verificato), canale letto con eventi (cronologia degli
+accessi), canale non accessibile (il dato esiste ma è nella disponibilità
+esclusiva del titolare, e può essere richiesto formalmente).
+
+Il report include inoltre una sezione che spiega perché l'assenza di privilegi è
+**essa stessa un elemento di fatto rilevante**: esclude che l'utente possa aver
+installato lo strumento, colloca i log nella disponibilità esclusiva del
+titolare, ed esclude che la configurazione sia imputabile all'utente. Le stesse
+circostanze sono riportate nel modello di richiesta al DPO.
+
+### Metodo e perimetro
+
+Ogni report contiene la sezione **"Metodo e perimetro della verifica"**, che
+elenca tutti i controlli previsti con la fonte tecnica di ciascuno, l'esito
+(eseguito o parziale) e il limite dichiarato. Un controllo che non è stato
+possibile eseguire — tipicamente perché richiede privilegi di amministratore —
+viene **elencato come parziale, non omesso**: dichiarare per primi i limiti di
+una verifica è ciò che le toglie l'argomento più comodo per liquidarla.
 
 ## Privacy e trasparenza
 
@@ -358,8 +496,8 @@ reale: va interpretato leggendo il dettaglio delle voci segnalate.
 ## Riferimenti normativi
 
 Vedi [`RIFERIMENTI_LEGALI.txt`](RIFERIMENTI_LEGALI.txt): Art. 4 Statuto dei
-Lavoratori (L. 300/1970), GDPR, Codice Privacy (D.Lgs. 196/2003), Provvedimento
-del Garante Privacy 13/07/2016.
+Lavoratori (L. 300/1970), GDPR, Codice Privacy (D.Lgs. 196/2003), Linee guida
+del Garante Privacy su posta elettronica e Internet (1 marzo 2007).
 
 Le informazioni sono riportate a fine **esclusivamente informativo e
 divulgativo**, possono non essere aggiornate e **non costituiscono consulenza
@@ -374,25 +512,28 @@ documentazione. Vedi [`CONTRIBUTING.md`](CONTRIBUTING.md).
 Per le vulnerabilità di sicurezza **non aprire una issue pubblica**: segui la
 procedura in [`SECURITY.md`](SECURITY.md).
 
-Le versioni modificate e ridistribuite devono restare open source sotto la
-stessa licenza (GPLv3) e devono indicare chiaramente di essere state
-modificate.
+Le versioni modificate e ridistribuite devono conservare licenza e file
+`NOTICE` e indicare chiaramente le modifiche apportate (Apache 2.0, sezione 4).
 
 ## Licenza
 
-Distribuito sotto **GNU General Public License v3.0 (o successiva)** — vedi
-[`LICENSE`](LICENSE) per il testo integrale e [`LICENZA.txt`](LICENZA.txt)
-per una sintesi in italiano.
+Distribuito sotto **Licenza Apache, Versione 2.0** — vedi [`LICENSE`](LICENSE)
+per il testo integrale, [`NOTICE`](NOTICE) per titolare e sedi e
+[`LICENZA.txt`](LICENZA.txt) per una sintesi in italiano.
 
-Copyright © 2024–2026 DigitalValut. Tutti i diritti d'autore e la paternità
-dell'opera restano sempre in capo all'autore originale, come previsto dalla
-licenza GPLv3: il software è donato all'uso libero di tutti, non ceduto.
+Copyright © 2024–2026 **Digital Valut APS** (CF 90036980846). Uso, copia,
+modifica e ridistribuzione sono liberi, anche in uffici pubblici e aziende,
+senza costi di licenza. La licenza è permissiva: non obbliga a pubblicare le
+modifiche, ma richiede di conservare licenza e `NOTICE` e di indicare le
+modifiche. Le versioni fino alla 5.3.1 restano disponibili anche sotto GPLv3
+per chi le ha già ricevute.
 
 ## Autore
 
-**DigitalValut** — [www.digitalvalut.it](https://www.digitalvalut.it)
-Sviluppatore: **Dott. Giuseppe Falsone** e il team DigitalValut
-Crypto-Forensics & Blockchain Security
+**Digital Valut APS** — [www.digitalvalut.it](https://www.digitalvalut.it) · CF 90036980846
+Presidente e sviluppatore: **Dott. Giuseppe Falsone**
+Sedi: Gardone Val Trompia (BS), via G. Matteotti · Canicattì (AG), Piazza Palermo 4 ·
+Caltanissetta, Via della Regione 4 (sede commerciale)
 info@digitalvalut.com
 
 ## Disclaimer

@@ -1,7 +1,7 @@
 #Requires -Version 5.1
 <#
 .SYNOPSIS
-    DigitalValut Controller v5.0 - Strumento di Tutela Privacy Lavoratori PA
+    DigitalValut Controller v5.1 - Strumento di Tutela Privacy Lavoratori PA
 
 .DESCRIPTION
     Strumento per la verifica di software di controllo remoto non autorizzato.
@@ -13,17 +13,16 @@
 .AUTHOR
     DigitalValut - www.digitalvalut.it
     Sviluppatore: Dott. Giuseppe Falsone e il team DigitalValut
-    DigitalValut Association - Crypto-Forensics & Blockchain Security
+    Digital Valut APS - Crypto-Forensics & Blockchain Security
 
 .LICENSE
-    GNU General Public License v3.0 or later (GPLv3+)
-    Copyright (C) 2024-2026 DigitalValut - www.digitalvalut.it
-    This program comes with ABSOLUTELY NO WARRANTY. This is free software,
-    and you are welcome to redistribute it under the terms of the GPLv3.
-    See the LICENSE file for details.
+    Apache License, Version 2.0 (SPDX: Apache-2.0)
+    Copyright 2024-2026 Digital Valut APS - www.digitalvalut.it
+    Distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND.
+    See the LICENSE and NOTICE files for details.
 
 .VERSION
-    5.0.0
+    5.4.0
 
 .LINK
     https://www.digitalvalut.it
@@ -82,15 +81,15 @@ $ErrorActionPreference = "Continue"
 
 # === CONFIGURAZIONE GLOBALE ===
 $Global:DVConfig = @{
-    Version         = "5.0.0"
+    Version         = "5.4.0"
     Author          = "DigitalValut"
     AuthorTitle     = "Sviluppatore: Dott. Giuseppe Falsone e il team DigitalValut"
-    Organization    = "DigitalValut Association"
+    Organization    = "Digital Valut APS"
     Specialty       = "Crypto-Forensics & Blockchain Security"
-    License         = "Open Source - GNU GPL v3.0 (gratuito per sempre)"
+    License         = "Open Source - Apache License 2.0 (gratuito)"
     Website         = "https://www.digitalvalut.it"
     Email           = "info@digitalvalut.com"
-    Copyright       = "&copy; 2024-2026 DigitalValut - www.digitalvalut.it. Rilasciato sotto licenza GPLv3."
+    Copyright       = "&copy; 2024-2026 DigitalValut - www.digitalvalut.it. Rilasciato sotto licenza Apache 2.0."
     Language        = "it"
     AutoOpenReport  = $true
     # Nota: la cartella dei report NON e' configurabile. E' sempre "DigitalValut_Reports"
@@ -129,6 +128,8 @@ $modules = @(
     "PersistenceAnalyzer",
     "ModuleAnalyzer",
     "EventLogAnalyzer",
+    "RemoteToolConfig",
+    "UltraVncLogAnalyzer",
     "OllamaAssistant",
     "ReportGenerator",
     "ChainOfCustody",
@@ -153,6 +154,13 @@ try {
     $currentPrincipal = New-Object Security.Principal.WindowsPrincipal($currentIdentity)
     $isElevated = $currentPrincipal.IsInRole([Security.Principal.WindowsBuiltInRole]::Administrator)
 } catch { }
+# Appartenenza al gruppo Amministratori: distinta dall'elevazione (UAC). Determina
+# se il report puo' affermare che l'utente non dispone di privilegi amministrativi.
+$adminMember = Get-DVAdminMembership
+if (-not $isElevated -and $adminMember -eq 'Si') {
+    Write-Host "  [!] Il tuo account APPARTIENE al gruppo Amministratori: stai usando un token ridotto (UAC)." -ForegroundColor Yellow
+    Write-Host "      Rilancia con 'Esegui come amministratore' per una scansione completa." -ForegroundColor Yellow
+}
 if (-not $isElevated) {
     Write-Host "  [!] Eseguito SENZA privilegi di amministratore: alcuni dati potrebbero essere incompleti." -ForegroundColor Yellow
     Write-Host "      Per una scansione completa: tasto destro sul launcher -> Esegui come amministratore." -ForegroundColor Yellow
@@ -284,6 +292,7 @@ $antivirusStatus = @()
 $persistenceFindings = $null
 $moduleFindings = $null
 $eventLogFindings = $null
+$remoteToolConfig = $null
 if (-not $QuickScan) {
     Write-Host "  [*] Rilevamento sorveglianza audio/video (microfono, webcam)..." -ForegroundColor Cyan
     $surveillanceCapabilities = Get-DVSurveillanceCapabilities
@@ -303,7 +312,29 @@ if (-not $QuickScan) {
     Write-Host "  [*] Analisi storica registri eventi (cosa e' successo su questo PC)..." -ForegroundColor Cyan
     $eventLogFindings = Get-DVEventLogFindings -DaysBack 30 -ProcessDb $processDb
     if (-not $eventLogFindings.SecurityLogReadable) {
-        Write-Host "  [i] Registro Security non leggibile senza privilegi di amministratore: parte dell'analisi storica e' stata saltata." -ForegroundColor DarkGray
+        Write-Host "  [i] Registro Security non leggibile senza privilegi di amministratore." -ForegroundColor DarkGray
+        if ($eventLogFindings.RdpOperational -and $eventLogFindings.RdpOperational.Readable) {
+            Write-Host "  [i] Letti invece i registri operativi dei Servizi Desktop remoto: $(@($eventLogFindings.RdpOperational.Events).Count) eventi." -ForegroundColor DarkGray
+        }
+    }
+
+    Write-Host "  [*] Configurazione degli strumenti di accesso remoto (consenso, avvisi, log)..." -ForegroundColor Cyan
+    $remoteToolConfig = Get-DVRemoteToolConfigFindings
+
+    Write-Host "  [*] Lettura del registro locale dello strumento (solo lettura; accessi passati)..." -ForegroundColor Cyan
+    $ultraVncLog = $null
+    try {
+        $ultraVncLog = Get-DVUltraVncLogFindings -UltraVncConfig $remoteToolConfig.UltraVNC
+        if ($ultraVncLog.RemoteConnectionCount -gt 0) {
+            Write-Host "  [i] Il registro riporta $($ultraVncLog.RemoteSessionCount) sessioni remote da $(@($ultraVncLog.DistinctRemoteAddresses).Count) indirizzi." -ForegroundColor DarkGray
+        } elseif ($ultraVncLog.AnyFileRead) {
+            Write-Host "  [i] Registro letto: nessuna connessione remota riconosciuta (non prova l'assenza di accessi)." -ForegroundColor DarkGray
+        }
+    } catch {
+        Write-Host "  [i] Registro dello strumento non analizzabile: $($_.Exception.Message)" -ForegroundColor DarkGray
+    }
+    if ($remoteToolConfig.UltraVNC -and $remoteToolConfig.UltraVNC.Found) {
+        Write-Host "  [i] UltraVNC: richiesta di consenso all'utente -> $($remoteToolConfig.UltraVNC.Consent.Outcome)" -ForegroundColor DarkGray
     }
 } else {
     Write-Host "  [i] Saltati (modalita' rapida): sorveglianza audio/video, avvio automatico, antivirus, persistenza avanzata, DLL iniettate, analisi storica." -ForegroundColor DarkGray
@@ -328,7 +359,8 @@ $threatScore = Get-DVThreatScore -PortAnalysis $portAnalysis -ProcessAnalysis $p
     -ServiceAnalysis $serviceAnalysis -SoftwareAnalysis $softwareAnalysis `
     -FirewallStatus $firewallStatus -NetworkConnections $networkConnections -PortsDb $portDb `
     -SurveillanceCapabilities $surveillanceCapabilities -PersistenceFindings $persistenceFindings `
-    -ModuleFindings $moduleFindings -EventLogFindings $eventLogFindings
+    -ModuleFindings $moduleFindings -EventLogFindings $eventLogFindings `
+    -ActiveRemoteConnections $activeRemoteConnections -RemoteToolConfig $remoteToolConfig -UltraVncLog $ultraVncLog
 
 Write-Host "  [*] Confronto con l'ultima scansione registrata..." -ForegroundColor Cyan
 $scanDiff = Compare-DVScanFindings -LedgerPath $ledgerPath -ReportDir $reportDir `
@@ -370,6 +402,10 @@ $exportData = @{
     PersistenceFindings      = $persistenceFindings
     ModuleFindings           = $moduleFindings
     EventLogFindings         = $eventLogFindings
+    RemoteToolConfig         = $remoteToolConfig
+    UltraVncLog              = $ultraVncLog
+    IsElevated               = $isElevated
+    AdminGroupMember         = $adminMember
     RulesInfo                = $rulesInfo
     SentinelSummary          = $sentinelSummary
     ScanDiff                 = $scanDiff
@@ -396,9 +432,11 @@ try {
         -SurveillanceCapabilities $surveillanceCapabilities `
         -PersistenceFindings $persistenceFindings -ScanDiff $scanDiff -OllamaExplanation $ollamaExplanation `
         -ModuleFindings $moduleFindings -EventLogFindings $eventLogFindings -RulesInfo $rulesInfo `
+        -RemoteToolConfig $remoteToolConfig `
+        -UltraVncLog $ultraVncLog `
         -SentinelSummary $sentinelSummary `
         -ControllerRoot $controllerRoot -OutputPath $reportFullPath -JsonData $jsonDataString `
-        -ContentHash $findingsHash -IsElevated $isElevated
+        -ContentHash $findingsHash -IsElevated $isElevated -AdminGroupMember $adminMember
 } catch {
     Write-Host ""
     Write-Host "  [ERRORE] Generazione report fallita: $($_.Exception.Message)" -ForegroundColor Red
@@ -416,6 +454,12 @@ Write-Host ""
 Write-Host "  [OK] Report salvato: $reportPath" -ForegroundColor Green
 Write-Host "  [OK] Punteggio rischio: $($threatScore.Score) - $($threatScore.Level.Text)" -ForegroundColor $(if ($threatScore.Score -gt 59) { "Yellow" } else { "Green" })
 Write-Host ""
+if ($threatScore.Score -gt 0) {
+    Write-Host "  [i] Se vuoi chiedere chiarimenti formali (DPO, sindacato, Garante):" -ForegroundColor Cyan
+    Write-Host "      AVVIA_RICHIESTE.bat prepara le lettere dai dati di questo report e tiene le scadenze." -ForegroundColor Cyan
+    Write-Host "      Una segnalazione del report NON prova un illecito: e' un motivo per chiedere spiegazioni." -ForegroundColor DarkGray
+    Write-Host ""
+}
 
 # === CATENA DI CUSTODIA: hash reali dei file scritti su disco + registro a catena ===
 Write-Host "  [*] Registrazione catena di custodia..." -ForegroundColor Cyan

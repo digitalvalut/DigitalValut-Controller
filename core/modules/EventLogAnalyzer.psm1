@@ -1,14 +1,15 @@
 ﻿# DigitalValut Controller v5.0 - EventLogAnalyzer Module
-# Copyright (C) 2024-2026 DigitalValut - www.digitalvalut.it
+# Copyright 2024-2026 Digital Valut APS - www.digitalvalut.it
 # Sviluppatore: Dott. Giuseppe Falsone e il team DigitalValut
 #
 # Questo file e' parte di DigitalValut Controller.
-# Software libero: puoi ridistribuirlo e/o modificarlo secondo i termini della
-# GNU General Public License v3.0 o (a tua scelta) qualsiasi versione successiva,
-# come pubblicata dalla Free Software Foundation.
-# Distribuito SENZA ALCUNA GARANZIA; senza neppure la garanzia implicita di
-# COMMERCIABILITA' o IDONEITA' PER UNO SCOPO PARTICOLARE. Vedi la GNU GPL v3.
-# Copia della licenza nel file LICENSE. Avvertenze e limiti: DISCLAIMER.md
+# Licenza Apache, Versione 2.0 (la "Licenza"): puoi usare questo file solo nel
+# rispetto della Licenza, di cui trovi copia nel file LICENSE e su
+# http://www.apache.org/licenses/LICENSE-2.0
+# Salvo diversa disposizione di legge o accordo scritto, il software e' distribuito
+# "COSI' COM'E'", SENZA GARANZIE O CONDIZIONI DI ALCUN TIPO, esplicite o implicite.
+# Avvertenze e limiti: DISCLAIMER.md
+# SPDX-License-Identifier: Apache-2.0
 #
 # ANALISI STORICA DEI REGISTRI EVENTI DI WINDOWS
 #
@@ -165,6 +166,148 @@ function Get-DVRemoteLogonEvents {
     return $results
 }
 
+function Test-DVLocalSessionAddress {
+    <#
+    .SYNOPSIS
+        Indica se l'indirizzo di origine di una sessione corrisponde alla console locale.
+    .DESCRIPTION
+        Nei registri dei Servizi Desktop remoto il campo indirizzo vale "LOCAL" (o la
+        sua traduzione, es. "LOCALE") per gli accessi effettuati sulla console fisica
+        del PC, e un indirizzo IP per gli accessi remoti. Un campo vuoto non permette
+        di stabilire l'origine: in quel caso NON si considera locale, per non
+        nascondere un possibile accesso remoto.
+    #>
+    param([string]$Address)
+    if ([string]::IsNullOrWhiteSpace($Address)) { return $false }
+    $a = $Address.Trim()
+    if ($a -match '^(?i)(LOCAL|LOCALE|LOCALHOST|LOKAL|LOCAL\s*SESSION)$') { return $true }
+    if ($a -match '^127\.') { return $true }
+    if ($a -eq '::1') { return $true }
+    return $false
+}
+
+function Get-DVRdpOperationalEvents {
+    <#
+    .SYNOPSIS
+        Ricostruisce la cronologia degli accessi RDP dai registri operativi dei
+        Servizi Desktop remoto, che in molte configurazioni sono leggibili anche
+        SENZA privilegi di amministratore.
+    .DESCRIPTION
+        Il registro Security (evento 4624) richiede privilegi elevati, che un
+        dipendente normalmente non ha sulla postazione assegnata. Questi due
+        registri operativi contengono però lo stesso dato essenziale - chi si e'
+        collegato, quando e da quale indirizzo - e sono spesso accessibili:
+
+          Microsoft-Windows-TerminalServices-RemoteConnectionManager/Operational
+            1149  autenticazione utente riuscita (Param1 utente, Param2 dominio,
+                  Param3 indirizzo di origine)
+
+          Microsoft-Windows-TerminalServices-LocalSessionManager/Operational
+            21    accesso alla sessione riuscito (User, SessionID, Address)
+            24    sessione disconnessa
+            25    riconnessione alla sessione riuscita
+
+        Per un lavoratore senza privilegi questa e' spesso l'unica strada per
+        sapere se qualcuno si e' effettivamente collegato in passato. Se nemmeno
+        questi registri sono leggibili, il risultato lo dichiara: il dato esiste
+        ma e' nella disponibilita' esclusiva del titolare del trattamento, che
+        puo' essere chiamato a produrlo.
+    .OUTPUTS
+        Hashtable con Readable, Events, ChannelsRead, ChannelsDenied.
+    #>
+    param(
+        [int]$DaysBack = 30,
+        [int]$MaxEvents = 200
+    )
+
+    $since = (Get-Date).AddDays(-$DaysBack)
+    $events = @()
+    $read = @()
+    $denied = @()
+
+    $channels = @(
+        @{ Name = 'Microsoft-Windows-TerminalServices-RemoteConnectionManager/Operational'; Ids = @(1149) }
+        @{ Name = 'Microsoft-Windows-TerminalServices-LocalSessionManager/Operational';      Ids = @(21, 24, 25) }
+    )
+
+    foreach ($ch in $channels) {
+        $raw = @()
+        try {
+            $raw = @(Get-WinEvent -FilterHashtable @{ LogName = $ch.Name; Id = $ch.Ids; StartTime = $since } -MaxEvents $MaxEvents -ErrorAction Stop)
+            $read += [string]$ch.Name
+        } catch {
+            # "No events were found" non e' un errore di accesso: il registro e'
+            # leggibile ma vuoto. Distinguere i due casi e' essenziale, perche' un
+            # registro vuoto e un registro inaccessibile hanno significati opposti.
+            $msg = [string]$_.Exception.Message
+            if ($msg -match 'No events were found|Nessun evento') {
+                $read += [string]$ch.Name
+            } else {
+                $denied += [PSCustomObject]@{ Channel = [string]$ch.Name; Reason = $msg }
+            }
+            continue
+        }
+
+        foreach ($ev in $raw) {
+            try {
+                $xml = [xml]$ev.ToXml()
+                $user = ''
+                $address = ''
+                $domain = ''
+
+                $ud = $xml.Event.UserData
+                if ($ud) {
+                    $node = $ud.FirstChild
+                    if ($node) {
+                        foreach ($c in $node.ChildNodes) {
+                            switch ($c.Name) {
+                                'Param1' { $user = [string]$c.InnerText }
+                                'Param2' { $domain = [string]$c.InnerText }
+                                'Param3' { $address = [string]$c.InnerText }
+                                'User'    { $user = [string]$c.InnerText }
+                                'Address' { $address = [string]$c.InnerText }
+                                default { }
+                            }
+                        }
+                    }
+                }
+                if ($domain -and $user -and $user -notmatch '\\') { $user = "$domain\$user" }
+
+                $kind = switch ([int]$ev.Id) {
+                    1149 { 'Autenticazione riuscita' }
+                    21   { 'Accesso alla sessione' }
+                    24   { 'Sessione disconnessa' }
+                    25   { 'Riconnessione alla sessione' }
+                    default { "Evento $($ev.Id)" }
+                }
+
+                # Un indirizzo "LOCALE"/"LOCAL"/loopback indica la sessione sulla console del
+                # PC (l'utente che accede alla propria postazione), NON un accesso remoto.
+                # Contarla come remota darebbe un falso positivo clamoroso: le righe del
+                # LocalSessionManager (eventi 21/24/25) registrano ANCHE gli accessi locali.
+                $isLocal = Test-DVLocalSessionAddress -Address $address
+
+                $events += [PSCustomObject]@{
+                    TimeCreated = $ev.TimeCreated
+                    EventId     = [int]$ev.Id
+                    Kind        = $(if ($isLocal -and $ev.Id -eq 21) { 'Accesso locale (console)' } elseif ($isLocal -and $ev.Id -eq 24) { 'Disconnessione locale' } elseif ($isLocal -and $ev.Id -eq 25) { 'Riconnessione locale' } else { $kind })
+                    Account     = $user
+                    SourceIP    = $address
+                    IsLocal     = $isLocal
+                    Channel     = [string]$ch.Name
+                }
+            } catch { continue }
+        }
+    }
+
+    return @{
+        Readable       = (@($read).Count -gt 0)
+        Events         = @($events | Sort-Object TimeCreated -Descending)
+        ChannelsRead   = $read
+        ChannelsDenied = $denied
+    }
+}
+
 function Get-DVEventLogFindings {
     <#
     .SYNOPSIS
@@ -187,6 +330,10 @@ function Get-DVEventLogFindings {
         $remoteLogons = Get-DVRemoteLogonEvents -DaysBack $DaysBack
     }
 
+    # Tentata comunque: questi registri non richiedono di norma privilegi elevati
+    # e sono spesso l'unica fonte disponibile a chi non e' amministratore.
+    $rdpOperational = Get-DVRdpOperationalEvents -DaysBack $DaysBack
+
     $score = 0
     $textFindings = @()
 
@@ -203,16 +350,31 @@ function Get-DVEventLogFindings {
         $textFindings += "[STORICO] $(@($remoteLogons).Count) accessi remoti (RDP) negli ultimi $DaysBack giorni"
     }
 
+    # Gli accessi dai registri operativi sono gli stessi che comparirebbero nel
+    # registro Security: si conteggiano solo se quello non era leggibile, per non
+    # attribuire punti due volte al medesimo fatto.
+    $rdpSessions = @($rdpOperational.Events | Where-Object { ($_.EventId -eq 1149 -or $_.EventId -eq 21) -and -not $_.IsLocal })
+    $localSessions = @($rdpOperational.Events | Where-Object { $_.IsLocal -and $_.EventId -eq 21 })
+    if (@($rdpSessions).Count -gt 0 -and @($remoteLogons).Count -eq 0) {
+        $score += 15
+        $sources = @($rdpSessions | Where-Object { $_.SourceIP } | ForEach-Object { $_.SourceIP } | Select-Object -Unique)
+        $srcText = if (@($sources).Count -gt 0) { " da $(@($sources).Count) indirizzo/i di origine" } else { '' }
+        $textFindings += "[STORICO] $(@($rdpSessions).Count) accessi remoti (Desktop remoto) negli ultimi $DaysBack giorni$srcText, rilevati dai registri operativi dei Servizi Desktop remoto"
+    }
+
     return @{
         SecurityLogReadable = $securityReadable
         ServiceInstalls     = $serviceEvents
         SecurityLogCleared  = $clearedEvents
         RemoteLogons        = $remoteLogons
+        RdpOperational      = $rdpOperational
+        LocalSessionCount   = @($localSessions).Count
         DaysAnalyzed        = $DaysBack
         Score               = $score
         Findings            = $textFindings
     }
 }
 
-Export-ModuleMember -Function Test-DVCanReadSecurityLog, Get-DVServiceInstallEvents, `
-    Get-DVSecurityLogClearedEvents, Get-DVRemoteLogonEvents, Get-DVEventLogFindings
+Export-ModuleMember -Function Test-DVCanReadSecurityLog, Test-DVLocalSessionAddress, Get-DVServiceInstallEvents, `
+    Get-DVSecurityLogClearedEvents, Get-DVRemoteLogonEvents, Get-DVRdpOperationalEvents, `
+    Get-DVEventLogFindings

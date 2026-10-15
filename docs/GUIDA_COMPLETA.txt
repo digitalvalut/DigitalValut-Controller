@@ -248,15 +248,15 @@ In core\config\settings.json puoi impostare (se presente):
 11. LICENZA E CREDITI
 ────────────────────
 Autore: DigitalValut (www.digitalvalut.it) - Sviluppatore: Dott. Giuseppe Falsone e il team
-Organizzazione: DigitalValut Association
+Organizzazione: Digital Valut APS
 Specialty: Crypto-Forensics & Blockchain Security
-Licenza: Open Source - GNU GPL v3.0 (gratuito per sempre)
+Licenza: Open Source - Apache License 2.0 (gratuito)
 Sito: https://www.digitalvalut.it
 Email: info@digitalvalut.com
 
 Vedi LICENZA.txt e CREDITS.txt per dettagli.
 Vedi RIFERIMENTI_LEGALI.txt per la normativa (Art. 4 Statuto Lavoratori, GDPR,
-Codice Privacy, Provvedimento Garante 13/07/2016).
+Codice Privacy, Linee guida Garante 1 marzo 2007).
 
 
 ════════════════════════════════════════════════════════════════════════════════

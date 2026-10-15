@@ -19,7 +19,7 @@
                        firma crittografica ed estrae la data attestata da terzi.
 
 .NOTES
-    Licenza GNU GPL v3.0 - DigitalValut - www.digitalvalut.it
+    Licenza Apache 2.0 - Digital Valut APS - www.digitalvalut.it
     Questo strumento NON esprime valutazioni sul merito: dice soltanto se il
     materiale e' integro e da quando esiste.
 #>

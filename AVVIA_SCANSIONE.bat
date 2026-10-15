@@ -20,7 +20,7 @@ echo   AVVERTENZA: software fornito COSI' COM'E', senza garanzie. Il report
 echo   e' una segnalazione tecnica, NON una perizia forense ne' una prova
 echo   legale; puo' contenere falsi positivi e falsi negativi. Usalo solo
 echo   su dispositivi tuoi o su cui hai legittimo accesso.
-echo   Avvertenza completa: file DISCLAIMER.md - Licenza: GNU GPL v3.0
+echo   Avvertenza completa: file DISCLAIMER.md - Licenza: Apache 2.0
 echo.
 echo  [*] Scansione rapida in corso... NON CHIUDERE QUESTA FINESTRA
 echo.

@@ -144,4 +144,4 @@ perfettamente in locale, senza che nessuno debba approvarle.
 ---
 
 **DigitalValut** — [www.digitalvalut.it](https://www.digitalvalut.it)
-Licenza GNU GPL v3.0 · Vedi [`DISCLAIMER.md`](DISCLAIMER.md) per i limiti dello strumento
+Licenza Apache 2.0 · Vedi [`DISCLAIMER.md`](DISCLAIMER.md) per i limiti dello strumento

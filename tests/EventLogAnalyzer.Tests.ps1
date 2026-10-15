@@ -92,3 +92,22 @@ Describe "Get-DVEventLogFindings" {
         }
     }
 }
+
+Describe 'Test-DVLocalSessionAddress - sessioni locali non sono accessi remoti' {
+    BeforeAll {
+        Import-Module (Join-Path $PSScriptRoot '..\core\modules\EventLogAnalyzer.psm1') -Force
+    }
+    It 'riconosce LOCALE (sistema in italiano) come console locale' {
+        Test-DVLocalSessionAddress -Address 'LOCALE' | Should -BeTrue
+    }
+    It 'riconosce LOCAL, loopback IPv4 e IPv6' {
+        foreach ($a in 'LOCAL', 'local', '127.0.0.1', '::1') { Test-DVLocalSessionAddress -Address $a | Should -BeTrue }
+    }
+    It 'un indirizzo IP di rete NON e'' locale' {
+        foreach ($a in '10.30.1.5', '192.168.1.20', '172.16.0.9') { Test-DVLocalSessionAddress -Address $a | Should -BeFalse }
+    }
+    It 'un indirizzo vuoto NON e'' considerato locale (non si nasconde un possibile accesso remoto)' {
+        Test-DVLocalSessionAddress -Address '' | Should -BeFalse
+        Test-DVLocalSessionAddress -Address $null | Should -BeFalse
+    }
+}

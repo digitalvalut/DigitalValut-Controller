@@ -32,11 +32,11 @@
     {
         "id":  "DV-PORT-0003",
         "name":  "RPC",
-        "description":  "Microsoft RPC",
+        "description":  "Microsoft RPC - servizio standard di Windows/dominio: la sua presenza e\u0027 normale e NON indica controllo remoto",
         "author":  "DigitalValut",
         "type":  "port",
         "category":  "Windows",
-        "risk":  "MEDIUM",
+        "risk":  "LOW",
         "match":  {
                       "ports":  [
                                     135
@@ -47,11 +47,11 @@
     {
         "id":  "DV-PORT-0004",
         "name":  "NetBIOS",
-        "description":  "NetBIOS Session",
+        "description":  "NetBIOS Session - servizio standard di Windows/dominio: la sua presenza e\u0027 normale e NON indica controllo remoto",
         "author":  "DigitalValut",
         "type":  "port",
         "category":  "Windows",
-        "risk":  "MEDIUM",
+        "risk":  "LOW",
         "match":  {
                       "ports":  [
                                     139
@@ -62,11 +62,11 @@
     {
         "id":  "DV-PORT-0005",
         "name":  "SMB",
-        "description":  "Server Message Block",
+        "description":  "Server Message Block - servizio standard di Windows/dominio: la sua presenza e\u0027 normale e NON indica controllo remoto",
         "author":  "DigitalValut",
         "type":  "port",
         "category":  "Windows",
-        "risk":  "MEDIUM",
+        "risk":  "LOW",
         "match":  {
                       "ports":  [
                                     445

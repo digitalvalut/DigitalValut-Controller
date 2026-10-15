@@ -35,11 +35,11 @@
   SANZIONI
   -------------------------------------------------------------------------------
   - GDPR: fino a 20 milioni EUR o 4% fatturato globale
-  - Codice Privacy: ammenda da 154 EUR a 1.549 EUR o arresto fino a 3 anni
-  - Utilizzo dati illegittimi: prove inutilizzabili in sede disciplinare
+  - Codice Privacy: ammenda da 154 EUR a 1.549 EUR o arresto da 15 giorni a 1 anno
+  - Utilizzo dati illegittimi: dati possibilmente non utilizzabili in sede disciplinare (da valutare con un legale)
 
 ════════════════════════════════════════════════════════════════════════════════
-             DigitalValut Association - Informazione non costituisce
+             Digital Valut APS - Informazione non costituisce
              parere legale. Per questioni specifiche rivolgersi a
              un professionista qualificato.
 ════════════════════════════════════════════════════════════════════════════════

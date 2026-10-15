@@ -122,4 +122,4 @@ a emettere una sentenza. Fatti assistere prima di muoverti.
 
 **DigitalValut** — [www.digitalvalut.it](https://www.digitalvalut.it)
 Sviluppatore: Dott. Giuseppe Falsone e il team DigitalValut
-Licenza GNU GPL v3.0 · Limiti completi: [`DISCLAIMER.md`](DISCLAIMER.md)
+Licenza Apache 2.0 · Limiti completi: [`DISCLAIMER.md`](DISCLAIMER.md)

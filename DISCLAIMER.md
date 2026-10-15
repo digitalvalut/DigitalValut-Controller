@@ -2,7 +2,7 @@
 
 **Leggere integralmente prima di scaricare, eseguire o utilizzare DigitalValut Controller (di seguito "il Software").**
 
-Scaricando, installando, eseguendo o utilizzando il Software, l'utente dichiara di aver letto, compreso e accettato integralmente il presente documento e i termini della licenza GNU General Public License v3.0 (file `LICENSE`), con particolare riferimento alle **Sezioni 15, 16 e 17** ivi contenute.
+Scaricando, installando, eseguendo o utilizzando il Software, l'utente dichiara di aver letto, compreso e accettato integralmente il presente documento e i termini della Licenza Apache, Versione 2.0 (file `LICENSE`), con particolare riferimento alle **Sezioni 15, 16 e 17** ivi contenute.
 
 Se non si accettano tali condizioni, **non utilizzare il Software**.
 
@@ -121,7 +121,7 @@ L'autore **non è un avvocato** e non fornisce, tramite il Software, alcuna pres
 
 ## 6. ESCLUSIONE DI RESPONSABILITÀ
 
-Nella misura massima consentita dalla legge applicabile, l'autore, i collaboratori e DigitalValut Association **non potranno in alcun caso essere ritenuti responsabili** per danni di qualsiasi natura — diretti, indiretti, incidentali, speciali, punitivi o consequenziali — inclusi a titolo esemplificativo:
+Nella misura massima consentita dalla legge applicabile, l'autore, i collaboratori e Digital Valut APS **non potranno in alcun caso essere ritenuti responsabili** per danni di qualsiasi natura — diretti, indiretti, incidentali, speciali, punitivi o consequenziali — inclusi a titolo esemplificativo:
 
 - perdita di dati, mancato guadagno, perdita di chance, danno reputazionale o d'immagine;
 - interruzione dell'attività lavorativa o di servizio;
@@ -149,7 +149,7 @@ L'utente è **unico ed esclusivo responsabile** dell'uso che fa del Software e s
 
 **e)** non utilizzare il Software per finalità di sorveglianza, spionaggio, profilazione di terzi o per qualsiasi scopo illecito.
 
-L'utente si impegna a **manlevare e tenere indenne** l'autore, i collaboratori e DigitalValut Association da ogni pretesa, richiesta risarcitoria, azione, contestazione, sanzione o spesa (incluse le spese legali) avanzata da terzi e derivante da un uso del Software difforme dal presente documento, dalla licenza o dalla legge.
+L'utente si impegna a **manlevare e tenere indenne** l'autore, i collaboratori e Digital Valut APS da ogni pretesa, richiesta risarcitoria, azione, contestazione, sanzione o spesa (incluse le spese legali) avanzata da terzi e derivante da un uso del Software difforme dal presente documento, dalla licenza o dalla legge.
 
 ## 8. GRATUITÀ E ASSENZA DI OBBLIGHI DI ASSISTENZA
 
@@ -161,11 +161,15 @@ Trattandosi di donazione di bene senza corrispettivo, la responsabilità dell'au
 
 ## 9. PROPRIETÀ INTELLETTUALE
 
-Il Software è protetto dal diritto d'autore. La titolarità dei diritti e la paternità dell'opera restano in capo a **DigitalValut** (sviluppo a cura del Dott. Giuseppe Falsone e del team DigitalValut).
+Il Software è protetto dal diritto d'autore. La titolarità dei diritti e la paternità dell'opera restano in capo a **Digital Valut APS** (CF 90036980846; sviluppo a cura del Dott. Giuseppe Falsone e del team DigitalValut).
 
-La concessione in licenza GNU GPLv3 attribuisce agli utenti ampie libertà d'uso, copia, modifica e ridistribuzione, **non comporta alcuna cessione di titolarità** e non fa sorgere in capo all'autore alcun obbligo o garanzia ulteriore rispetto a quanto previsto dalla licenza medesima.
+La concessione in licenza Apache 2.0 attribuisce agli utenti ampie libertà d'uso, copia, modifica e ridistribuzione, **non comporta alcuna cessione di titolarità** e non fa sorgere in capo all'autore alcun obbligo o garanzia ulteriore rispetto a quanto previsto dalla licenza medesima.
 
 Chi ridistribuisce versioni modificate del Software è tenuto a **indicarlo chiaramente** e ne assume la piena responsabilità: l'autore originale non risponde di modifiche, fork o derivati realizzati da terzi.
+
+## 9-bis. RICHIESTE DI CHIARIMENTO (AVVIA_RICHIESTE.bat)
+
+Le lettere generate dal modulo *Richieste* sono **modelli di testo** che l'utente completa, rivede e invia sotto la propria responsabilità. Il Software **non invia nulla** e **non sostituisce un avvocato**: i riferimenti normativi e la competenza degli enti destinatari (ad esempio dell'Ispettorato del lavoro per il pubblico impiego) vanno verificati con un legale o con il proprio sindacato prima dell'uso. I termini calcolati dallo scadenzario sono indicativi; il registro delle richieste è tamper-evident ma **non è una marca temporale di terza parte**: conserva sempre le ricevute di consegna (PEC o raccomandata). L'invio di richieste contenenti affermazioni inesatte può avere conseguenze per chi le firma.
 
 ## 10. LEGGE APPLICABILE
 
@@ -177,6 +181,6 @@ L'eventuale invalidità o inefficacia di una singola clausola non pregiudica la 
 
 **DigitalValut** — [www.digitalvalut.it](https://www.digitalvalut.it)
 Sviluppatore: Dott. Giuseppe Falsone e il team DigitalValut
-© 2024–2026 — Licenza GNU GPL v3.0 o successiva
+© 2024–2026 Digital Valut APS — Licenza Apache 2.0
 
 *Documento aggiornato al 6 agosto 2026.*

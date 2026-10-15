@@ -23,7 +23,7 @@ echo  ║         Strumento di Difesa per Lavoratori PA                    ║
 echo  ║                                                                  ║
 echo  ║   Autore: DigitalValut - www.digitalvalut.it                     ║
 echo  ║   Sviluppo: Dott. Giuseppe Falsone e il team DigitalValut        ║
-echo  ║   Licenza: GNU GPL v3.0 - Software libero e gratuito             ║
+echo  ║   Licenza: Apache 2.0 - Software libero e gratuito              ║
 echo  ╚══════════════════════════════════════════════════════════════════╝
 echo.
 echo  ------------------------------------------------------------------

@@ -1,5 +1,5 @@
 {
-  "Version": "5.0.0",
+  "Version": "5.4.0",
   "Language": "it",
   "ReportPath": "DigitalValut_Reports",
   "_ReportPathNote": "Non configurabile: i report sono sempre salvati in DigitalValut_Reports accanto al programma, per mantenere un'unica cartella e un'unica catena di custodia su qualunque PC venga usato lo strumento.",
@@ -16,7 +16,7 @@
   "Author": {
     "Name": "DigitalValut",
     "Title": "Sviluppatore: Dott. Giuseppe Falsone e il team DigitalValut",
-    "Organization": "DigitalValut Association",
+    "Organization": "Digital Valut APS",
     "Website": "https://www.digitalvalut.it",
     "Email": "info@digitalvalut.com"
   }

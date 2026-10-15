@@ -1,15 +1,16 @@
-# DigitalValut Controller v5.0 - SurveillanceDetector Module
+# DigitalValut Controller v5.1 - SurveillanceDetector Module
 # Modulo rilevamento sorveglianza audio/video
-# Copyright (C) 2024-2026 DigitalValut - www.digitalvalut.it
+# Copyright 2024-2026 Digital Valut APS - www.digitalvalut.it
 # Sviluppatore: Dott. Giuseppe Falsone e il team DigitalValut
 #
 # Questo file e' parte di DigitalValut Controller.
-# Software libero: puoi ridistribuirlo e/o modificarlo secondo i termini della
-# GNU General Public License v3.0 o (a tua scelta) qualsiasi versione successiva,
-# come pubblicata dalla Free Software Foundation.
-# Distribuito SENZA ALCUNA GARANZIA; senza neppure la garanzia implicita di
-# COMMERCIABILITA' o IDONEITA' PER UNO SCOPO PARTICOLARE. Vedi la GNU GPL v3.
-# Copia della licenza nel file LICENSE. Avvertenze e limiti: DISCLAIMER.md
+# Licenza Apache, Versione 2.0 (la "Licenza"): puoi usare questo file solo nel
+# rispetto della Licenza, di cui trovi copia nel file LICENSE e su
+# http://www.apache.org/licenses/LICENSE-2.0
+# Salvo diversa disposizione di legge o accordo scritto, il software e' distribuito
+# "COSI' COM'E'", SENZA GARANZIE O CONDIZIONI DI ALCUN TIPO, esplicite o implicite.
+# Avvertenze e limiti: DISCLAIMER.md
+# SPDX-License-Identifier: Apache-2.0
 
 $script:SurveillanceWhitelist = @(
     'teams.exe', 'zoom.exe', 'skype.exe', 'discord.exe',
@@ -21,20 +22,131 @@ $script:VirtualAudioKeywords = @('virtual', 'cable', 'vb-audio', 'voicemeeter', 
 $script:SpywareFileKeywords = @('record', 'audio', 'capture', 'spy', 'monitor')
 $script:SurveillanceTimeoutMs = 5000
 
-function Invoke-WithTimeout {
-    param([scriptblock]$ScriptBlock)
+# Percorso di questo modulo: serve per ricaricarlo in un runspace separato.
+$script:SurveillanceModulePath = $PSCommandPath
+
+# Esegue un controllo con timeout e restituisce SEMPRE un esito esplicito
+# (OK / TIMEOUT / FALLITO). Cosi' un controllo che non riesce non viene mai
+# scambiato per "nessun problema trovato".
+#
+# NOTA TECNICA (corretto in v5.1): la versione precedente usava Start-Job, che
+# avvia un processo separato nel quale le funzioni di questo modulo NON esistono:
+# ogni controllo falliva in silenzio e il report mostrava dati vuoti. Qui si usa
+# un runspace nello stesso processo che ricarica il modulo; se il caricamento e'
+# bloccato (es. policy di esecuzione), si ripiega sull'esecuzione diretta.
+function Invoke-DVCheck {
+    param(
+        [Parameter(Mandatory)][string]$Name,
+        [Parameter(Mandatory)][string]$FunctionName,
+        [int]$TimeoutMs = $script:SurveillanceTimeoutMs
+    )
+    $sw = [System.Diagnostics.Stopwatch]::StartNew()
+    $status = 'OK'
+    $detail = ''
+    $data = @()
+    $ps = $null
     try {
-        $job = Start-Job -ScriptBlock $ScriptBlock
-        $null = Wait-Job $job -Timeout ($script:SurveillanceTimeoutMs / 1000) -ErrorAction SilentlyContinue
-        if ($job.State -eq 'Completed') {
-            $result = Receive-Job $job
-            Remove-Job $job -Force -ErrorAction SilentlyContinue
-            return $result
+        $ps = [powershell]::Create()
+        $null = $ps.AddScript({
+            param($ModulePath, $Fn)
+            Import-Module $ModulePath -Force -DisableNameChecking -ErrorAction Stop
+            , @(& $Fn)
+        }).AddArgument($script:SurveillanceModulePath).AddArgument($FunctionName)
+        $async = $ps.BeginInvoke()
+        if (-not $async.AsyncWaitHandle.WaitOne($TimeoutMs)) {
+            try { $ps.Stop() } catch { Write-Verbose "Stop runspace: $($_.Exception.Message)" }
+            $status = 'TIMEOUT'
+            $detail = "Controllo interrotto dopo $([math]::Round($TimeoutMs / 1000)) s"
+        } else {
+            $out = $ps.EndInvoke($async)
+            if ($ps.HadErrors -and $ps.Streams.Error.Count -gt 0 -and (-not $out -or $out.Count -eq 0)) {
+                $status = 'FALLITO'
+                $detail = [string]$ps.Streams.Error[0].Exception.Message
+            } elseif ($out -and $out.Count -gt 0) {
+                $data = @($out[0].BaseObject)
+            }
         }
-        Stop-Job $job -ErrorAction SilentlyContinue
-        Remove-Job $job -Force -ErrorAction SilentlyContinue
-    } catch { }
-    return $null
+    } catch {
+        $status = 'FALLITO'
+        $detail = $_.Exception.Message
+    } finally {
+        if ($ps) { $ps.Dispose() }
+    }
+
+    # Ripiego: se il runspace non ha potuto ricaricare il modulo, esecuzione diretta.
+    if ($status -eq 'FALLITO' -and $detail -match 'Import-Module|non pu.* essere caricat|cannot be loaded|execution policy|ExecutionPolicy') {
+        try {
+            $data = @(& $FunctionName)
+            $status = 'OK'
+            $detail = 'Eseguito direttamente (runspace separato non disponibile)'
+        } catch {
+            $status = 'FALLITO'
+            $detail = $_.Exception.Message
+        }
+    }
+    $sw.Stop()
+    return [PSCustomObject]@{
+        Name   = $Name
+        Status = $status
+        Detail = $detail
+        Ms     = [int]$sw.ElapsedMilliseconds
+        Data   = $data
+    }
+}
+
+# Converte il nome della sottochiave ConsentStore (percorso con '#' al posto di '\')
+# in percorso leggibile.
+function ConvertFrom-DVConsentKeyName {
+    param([string]$KeyName)
+    if (-not $KeyName) { return '' }
+    return ($KeyName -replace '#', '\')
+}
+
+# True se il percorso e' in una cartella scrivibile dall'utente tipica di software
+# non installato in modo ufficiale (Temp, AppData, Public, ProgramData).
+function Test-DVUserWritablePath {
+    param([string]$Path)
+    if (-not $Path) { return $false }
+    return ($Path -match '(?i)\\Users\\[^\\]+\\AppData\\(Local\\Temp|Roaming|Local\\Programs)\\|\\Users\\Public\\|\\Windows\\Temp\\|\\ProgramData\\|\\Temp\\')
+}
+
+# Interpreta una voce del ConsentStore (microfono/webcam). Funzione pura (testabile):
+# LastUsedTimeStart/Stop sono FILETIME; Stop = 0 con Start > 0 significa "in uso adesso".
+function ConvertFrom-DVConsentEntry {
+    param(
+        [Parameter(Mandatory)][string]$Store,
+        [Parameter(Mandatory)][string]$KeyName,
+        [long]$StartFileTime = 0,
+        [long]$StopFileTime = 0,
+        [string]$Value = ''
+    )
+    if ($StartFileTime -le 0) { return $null }
+    $path = ConvertFrom-DVConsentKeyName -KeyName $KeyName
+    $startDt = [DateTime]::FromFileTime($StartFileTime)
+    $inUse = ($StopFileTime -le 0)
+    $stopDt = $null
+    $durationText = ''
+    if (-not $inUse) {
+        $stopDt = [DateTime]::FromFileTime($StopFileTime)
+        $span = $stopDt - $startDt
+        if ($span.TotalSeconds -lt 0) { $span = [TimeSpan]::Zero }
+        $durationText = '{0:00}:{1:00}:{2:00}' -f [math]::Floor($span.TotalHours), $span.Minutes, $span.Seconds
+    }
+    $exe = if ($path -match '\\') { Split-Path -Leaf $path } else { $path }
+    # ProcessName/PID/Suspicious: compatibilita' con SentinelMonitor e con il report.
+    return [PSCustomObject]@{
+        Store         = $Store
+        AppName       = $exe
+        ProcessName   = [System.IO.Path]::GetFileNameWithoutExtension($exe)
+        PID           = $null
+        Suspicious    = (-not (Test-DVKnownMediaApp -AppName $exe))
+        Path          = $path
+        InUseNow      = $inUse
+        LastUsedStart = $startDt.ToString('yyyy-MM-dd HH:mm:ss')
+        LastUsedStop  = if ($stopDt) { $stopDt.ToString('yyyy-MM-dd HH:mm:ss') } else { $null }
+        Duration      = $durationText
+        Value         = $Value
+    }
 }
 
 # --- 1. Get-MicrophoneAccess: processi che usano il microfono in tempo reale ---
@@ -55,20 +167,21 @@ function Get-MicrophoneAccess {
             $isWhitelisted = $script:SurveillanceWhitelist -contains $name.ToLower()
             $reason = $null
             if (-not $isWhitelisted) {
-                $reason = 'Processo non riconosciuto con accesso al microfono'
+                $reason = 'Ha caricato librerie audio (non prova che stia registrando): verificare in "in uso adesso"'
             }
-            $procPath = $null; try { $procPath = $proc.Path } catch { }
-            $procStart = $null; try { $procStart = $proc.StartTime.ToString('yyyy-MM-dd HH:mm:ss') } catch { }
+            $procPath = $null; try { $procPath = $proc.Path } catch { Write-Verbose "Path non leggibile: $($proc.Id)" }
+            $procStart = $null; try { $procStart = $proc.StartTime.ToString('yyyy-MM-dd HH:mm:ss') } catch { Write-Verbose "StartTime non leggibile: $($proc.Id)" }
             $result += [PSCustomObject]@{
                 ProcessName = $proc.ProcessName
                 PID         = $proc.Id
                 Path        = $procPath
                 StartTime   = $procStart
-                Suspicious  = -not $isWhitelisted
+                Suspicious  = $false
+                Informational = (-not $isWhitelisted)
                 Reason      = $reason
             }
         }
-    } catch { }
+    } catch { throw }
     return $result
 }
 
@@ -86,18 +199,19 @@ function Get-WebcamAccess {
         foreach ($proc in $cameraProcesses) {
             $name = $proc.ProcessName + '.exe'
             $isWhitelisted = $script:SurveillanceWhitelist -contains $name.ToLower()
-            $procPath = $null; try { $procPath = $proc.Path } catch { }
+            $procPath = $null; try { $procPath = $proc.Path } catch { Write-Verbose "Path non leggibile: $($proc.Id)" }
             $active += [PSCustomObject]@{
                 ProcessName = $proc.ProcessName
                 PID         = $proc.Id
                 Path        = $procPath
-                Suspicious  = -not $isWhitelisted
+                Suspicious  = $false
+                Informational = (-not $isWhitelisted)
             }
         }
         # Virtual cameras: driver / software noti
         $pnp = Get-PnpDevice -Class Camera -Status OK -ErrorAction SilentlyContinue
         foreach ($d in $pnp) {
-            $fn = ($d.FriendlyName -or '').ToLower()
+            $fn = ([string]$d.FriendlyName).ToLower()
             if ($fn -match 'obs virtual|manycam|virtual cam|vcam|e2e soft|splitcam|webcamoid|droidcam') {
                 $virtualCams += [PSCustomObject]@{
                     DeviceName = $d.FriendlyName
@@ -105,47 +219,36 @@ function Get-WebcamAccess {
                 }
             }
         }
-    } catch { }
+    } catch { throw }
     return @{ ActiveProcesses = $active; VirtualCamerasDetected = $virtualCams }
 }
 
-# --- 3. Get-MediaAccessHistory: cronologia microfono/webcam dal registro ---
+# --- 3. Get-MediaAccessHistory: cronologia microfono/webcam dal registro (ConsentStore) ---
+# Include InUseNow: Windows scrive LastUsedTimeStop = 0 finche' il dispositivo e' in uso.
 function Get-MediaAccessHistory {
     $micHistory = @()
     $webcamHistory = @()
+    $base = 'HKCU:\SOFTWARE\Microsoft\Windows\CurrentVersion\CapabilityAccessManager\ConsentStore'
     $regPaths = @(
-        @{ Store = 'microphone'; Path = "HKCU:\SOFTWARE\Microsoft\Windows\CurrentVersion\CapabilityAccessManager\ConsentStore\microphone\NonPackaged" }
-        @{ Store = 'microphone'; Path = "HKCU:\SOFTWARE\Microsoft\Windows\CurrentVersion\CapabilityAccessManager\ConsentStore\microphone" }
-        @{ Store = 'webcam';     Path = "HKCU:\SOFTWARE\Microsoft\Windows\CurrentVersion\CapabilityAccessManager\ConsentStore\webcam\NonPackaged" }
-        @{ Store = 'webcam';     Path = "HKCU:\SOFTWARE\Microsoft\Windows\CurrentVersion\CapabilityAccessManager\ConsentStore\webcam" }
+        @{ Store = 'microphone'; Path = "$base\microphone\NonPackaged" }
+        @{ Store = 'microphone'; Path = "$base\microphone" }
+        @{ Store = 'webcam';     Path = "$base\webcam\NonPackaged" }
+        @{ Store = 'webcam';     Path = "$base\webcam" }
     )
     foreach ($entry in $regPaths) {
-        try {
-            $items = Get-ChildItem $entry.Path -ErrorAction SilentlyContinue
-            foreach ($key in $items) {
-                $appName = $key.PSChildName
-                $start = (Get-ItemProperty -LiteralPath $key.PSPath -Name 'LastUsedTimeStart' -ErrorAction SilentlyContinue).LastUsedTimeStart
-                $stop  = (Get-ItemProperty -LiteralPath $key.PSPath -Name 'LastUsedTimeStop'  -ErrorAction SilentlyContinue).LastUsedTimeStop
-                if ($start) {
-                    $startDt = [DateTime]::FromFileTime([long]$start)
-                    $stopDt = $null
-                    $duration = ''
-                    if ($stop) {
-                        $stopDt = [DateTime]::FromFileTime([long]$stop)
-                        $duration = ($stopDt - $startDt).ToString().TrimEnd('\.\d+')
-                        if (-not $duration) { $duration = 'N/A' }
-                    }
-                    $obj = [PSCustomObject]@{
-                        AppName       = $appName
-                        LastUsedStart = $startDt.ToString('yyyy-MM-dd HH:mm:ss')
-                        LastUsedStop  = if ($stopDt) { $stopDt.ToString('yyyy-MM-dd HH:mm:ss') } else { $null }
-                        Duration      = $duration
-                    }
-                    if ($entry.Store -eq 'microphone') { $micHistory += $obj }
-                    else { $webcamHistory += $obj }
-                }
-            }
-        } catch { }
+        $items = Get-ChildItem $entry.Path -ErrorAction SilentlyContinue
+        foreach ($key in $items) {
+            if ($key.PSChildName -eq 'NonPackaged') { continue }
+            $props = Get-ItemProperty -LiteralPath $key.PSPath -ErrorAction SilentlyContinue
+            if (-not $props) { continue }
+            $start = 0; $stop = 0
+            if ($null -ne $props.LastUsedTimeStart) { $start = [long]$props.LastUsedTimeStart }
+            if ($null -ne $props.LastUsedTimeStop)  { $stop  = [long]$props.LastUsedTimeStop }
+            $obj = ConvertFrom-DVConsentEntry -Store $entry.Store -KeyName $key.PSChildName `
+                -StartFileTime $start -StopFileTime $stop -Value ([string]$props.Value)
+            if (-not $obj) { continue }
+            if ($entry.Store -eq 'microphone') { $micHistory += $obj } else { $webcamHistory += $obj }
+        }
     }
     return @{ Microphone = $micHistory; Webcam = $webcamHistory }
 }
@@ -156,19 +259,19 @@ function Get-VirtualAudioDevices {
     try {
         $devices = Get-PnpDevice -Class AudioEndpoint -Status OK -ErrorAction SilentlyContinue
         foreach ($d in $devices) {
-            $name = ($d.FriendlyName -or '').ToLower()
+            $name = ([string]$d.FriendlyName).ToLower()
             $suspicious = $script:VirtualAudioKeywords | Where-Object { $name -match [regex]::Escape($_) }
             if ($suspicious) {
-                $reason = 'Può redirigere audio a software di registrazione nascosti'
+                $reason = 'Dispositivo audio virtuale: puo'' essere software legittimo (streaming, videoconferenza) ma permette anche di reindirizzare l''audio verso programmi di registrazione'
                 $result += [PSCustomObject]@{
                     DeviceName = $d.FriendlyName
                     Status     = $d.Status
-                    Risk       = 'ALTO'
+                    Risk       = 'MEDIO'
                     Reason     = $reason
                 }
             }
         }
-    } catch { }
+    } catch { throw }
     return $result
 }
 
@@ -196,11 +299,11 @@ function Get-AudioSpywareSigns {
             $result += [PSCustomObject]@{
                 Type   = 'SuspiciousFile'
                 Path   = $f.FullName
-                Risk   = 'CRITICO'
-                Reason = 'File sospetto nella cartella utente con nome relativo a registrazione/audio'
+                Risk   = 'MEDIO'
+                Reason = 'File nella cartella utente il cui NOME richiama registrazione/audio: corrispondenza sul nome, non prova di spyware'
             }
         }
-    } catch { }
+    } catch { throw }
     # audiodg.exe con connessioni esterne (richiede admin / netstat)
     try {
         $audiodg = Get-Process -Name 'audiodg' -ErrorAction SilentlyContinue
@@ -216,7 +319,7 @@ function Get-AudioSpywareSigns {
                 }
             }
         }
-    } catch { }
+    } catch { Write-Verbose "audiodg: controllo rete non disponibile senza privilegi ($($_.Exception.Message))" }
     return $result
 }
 
@@ -247,7 +350,7 @@ function Get-PrivacyPermissions {
             }
             if ($store -eq 'microphone') { $micApps = $apps } else { $camApps = $apps }
         }
-    } catch { }
+    } catch { throw }
     return @{
         MicrophoneEnabled = $micEnabled
         WebcamEnabled     = $camEnabled
@@ -256,166 +359,180 @@ function Get-PrivacyPermissions {
     }
 }
 
-# --- Wrapper: costruisce SurveillanceCapabilities e OverallAudioVideoRisk ---
-function Get-DVSurveillanceCapabilities {
-    $ts = Get-Date -Format 'yyyy-MM-dd HH:mm:ss'
-    $micAccess = @()
-    $webcamData = @{ ActiveProcesses = @(); VirtualCamerasDetected = @() }
-    $micHistory = @()
-    $webcamHistory = @()
-    $virtualAudio = @()
-    $spywareIndicators = @()
-    $privacy = @{ MicrophoneEnabled = $null; WebcamEnabled = $null; AppsWithMicPermission = @(); AppsWithWebcamPermission = @() }
+# --- Applicazioni note per microfono/webcam (confronto sul nome del file) ---
+function Test-DVKnownMediaApp {
+    param([string]$AppName)
+    if (-not $AppName) { return $false }
+    $n = $AppName.ToLower()
+    if ($script:SurveillanceWhitelist -contains $n) { return $true }
+    if ($script:SurveillanceWhitelist -contains ($n + '.exe')) { return $true }
+    if ($n -match '^microsoft\.|^windows\.') { return $true }
+    return $false
+}
 
-    $micAccess = Invoke-WithTimeout { Get-MicrophoneAccess }
-    if (-not $micAccess) { $micAccess = @() }
+# --- Punteggio e findings audio/video: funzione PURA (testabile senza Windows) ---
+# Ogni segnalazione e' formulata come elemento DA VERIFICARE, non come accusa.
+function Measure-DVSurveillance {
+    param(
+        [object[]]$MicInUse = @(),
+        [object[]]$CamInUse = @(),
+        [object[]]$VirtualAudio = @(),
+        [object[]]$VirtualCams = @(),
+        [object[]]$SpywareIndicators = @(),
+        [object[]]$MicAppsWithPermission = @(),
+        [object[]]$CamAppsWithPermission = @(),
+        [object[]]$Checks = @()
+    )
+    $score = 0
+    $canListen = $false; $canWatch = $false; $canRecordWebcam = $false
+    $parts = @(); $findings = @()
 
-    $webcamResult = Invoke-WithTimeout { Get-WebcamAccess }
-    if ($webcamResult) {
-        $webcamData = $webcamResult
+    foreach ($m in @($MicInUse | Where-Object { $_ -and -not (Test-DVKnownMediaApp $_.AppName) })) {
+        $score += 30; $canListen = $true
+        $odd = Test-DVUserWritablePath $m.Path
+        if ($odd) { $score += 10 }
+        $findings += "[ATTENZIONE] Microfono in uso adesso da un'applicazione non presente nell'elenco delle note: $($m.AppName) ($($m.Path))$(if ($odd) { ' - percorso insolito' }). Verificare se e' un programma che hai avviato tu."
+        $parts += 'Microfono in uso da applicazione non nota'
     }
-
-    $history = Invoke-WithTimeout { Get-MediaAccessHistory }
-    if ($history) {
-        $micHistory = $history.Microphone
-        $webcamHistory = $history.Webcam
+    foreach ($c in @($CamInUse | Where-Object { $_ -and -not (Test-DVKnownMediaApp $_.AppName) })) {
+        $score += 30; $canWatch = $true
+        $odd = Test-DVUserWritablePath $c.Path
+        if ($odd) { $score += 10 }
+        $findings += "[ATTENZIONE] Webcam in uso adesso da un'applicazione non presente nell'elenco delle note: $($c.AppName) ($($c.Path))$(if ($odd) { ' - percorso insolito' }). Verificare se e' un programma che hai avviato tu."
+        $parts += 'Webcam in uso da applicazione non nota'
     }
-
-    $virtualAudio = Invoke-WithTimeout { Get-VirtualAudioDevices }
-    if (-not $virtualAudio) { $virtualAudio = @() }
-
-    $spywareIndicators = Invoke-WithTimeout { Get-AudioSpywareSigns }
-    if (-not $spywareIndicators) { $spywareIndicators = @() }
-
-    $privacy = Invoke-WithTimeout { Get-PrivacyPermissions }
-    if (-not $privacy) {
-        $privacy = @{ MicrophoneEnabled = $null; WebcamEnabled = $null; AppsWithMicPermission = @(); AppsWithWebcamPermission = @() }
+    if (@($VirtualAudio).Count -gt 0) {
+        $score += 10; $canListen = $true
+        $parts += 'Dispositivo audio virtuale presente'
+        $findings += "[MEDIO] Dispositivo audio virtuale presente ($(@($VirtualAudio | ForEach-Object { $_.DeviceName }) -join ', ')): puo' essere software legittimo; verificare chi lo ha installato."
+        if (@($VirtualAudio | Where-Object { ([string]$_.DeviceName).ToLower() -match 'stereo mix' }).Count -gt 0) {
+            $score += 10
+            $findings += "[MEDIO] Stereo Mix abilitato: l'audio riprodotto dal PC puo' essere registrato."
+        }
     }
-
-    # Recent access per microfono (per output JSON)
-    $recentMic = $micHistory | ForEach-Object {
-        [PSCustomObject]@{
-            AppName   = $_.AppName
-            LastUsed  = $_.LastUsedStart
-            Duration  = $_.Duration
+    if (@($VirtualCams).Count -gt 0) {
+        $score += 10; $canRecordWebcam = $true
+        $parts += 'Webcam virtuale presente'
+        $findings += "[MEDIO] Webcam virtuale presente: puo' essere software legittimo (es. OBS); verificare chi l'ha installata."
+    }
+    $oddMic = @($MicAppsWithPermission | Where-Object { $_ -and (Test-DVUserWritablePath (ConvertFrom-DVConsentKeyName $_)) })
+    if ($oddMic.Count -gt 0) {
+        $score += 15; $parts += 'App in cartella insolita con permesso microfono'
+        $findings += "[MEDIO] Applicazione in una cartella insolita con permesso microfono: $((($oddMic | ForEach-Object { ConvertFrom-DVConsentKeyName $_ }) | Select-Object -First 3) -join '; ')"
+    }
+    $oddCam = @($CamAppsWithPermission | Where-Object { $_ -and (Test-DVUserWritablePath (ConvertFrom-DVConsentKeyName $_)) })
+    if ($oddCam.Count -gt 0) {
+        $score += 15; $parts += 'App in cartella insolita con permesso webcam'
+        $findings += "[MEDIO] Applicazione in una cartella insolita con permesso webcam: $((($oddCam | ForEach-Object { ConvertFrom-DVConsentKeyName $_ }) | Select-Object -First 3) -join '; ')"
+    }
+    foreach ($sp in @($SpywareIndicators | Where-Object { $_ })) {
+        if ($sp.Type -eq 'AudiodgExternalConnections') {
+            $score += 35; $parts += 'audiodg.exe con connessioni esterne'
+            $findings += "[ALTO] audiodg.exe (servizio audio di Windows) ha connessioni di rete esterne: insolito, da approfondire."
+        } else {
+            $score += 10; $parts += 'File con nome riconducibile a registrazione audio'
+            $findings += "[MEDIO] File il cui nome richiama registrazione/audio: $($sp.Path) (corrispondenza sul nome, non prova di spyware)."
         }
     }
 
-    # Calcolo risk score e summary audio/video
-    $score = 0
-    $canListen = $false
-    $canWatch = $false
-    $canRecordWebcam = $false
-    $summaryParts = @()
-
-    $suspMic = @($micAccess | Where-Object { $_.Suspicious })
-    if ($suspMic.Count -gt 0) {
-        $score += 30
-        $canListen = $true
-        $summaryParts += 'Rilevato accesso microfono da processo sconosciuto'
+    $notOk = @($Checks | Where-Object { $_ -and $_.Status -ne 'OK' })
+    foreach ($ck in $notOk) {
+        $findings += "[INFO] Controllo '$($ck.Name)' non completato ($($ck.Status)$(if ($ck.Detail) { ': ' + $ck.Detail })): per questa categoria il risultato NON e' affidabile."
     }
-    $suspWebcam = @($webcamData.ActiveProcesses | Where-Object { $_.Suspicious })
-    if ($suspWebcam.Count -gt 0) {
-        $score += 30
-        $canWatch = $true
-        $summaryParts += 'Rilevato accesso webcam da processo sconosciuto'
-    }
-    if ($virtualAudio.Count -gt 0) {
-        $score += 20
-        $canListen = $true
-        $summaryParts += 'Virtual audio cable installato'
-    }
-    if ($webcamData.VirtualCamerasDetected -and $webcamData.VirtualCamerasDetected.Count -gt 0) {
-        $score += 15
-        $canRecordWebcam = $true
-    }
-    # Stereo Mix nei virtual devices
-    $stereoMix = $virtualAudio | Where-Object { ($_.DeviceName -or '').ToLower() -match 'stereo mix' }
-    if ($stereoMix) { $score += 10 }
-    # App sconosciute con permesso
-    $knownApps = $script:SurveillanceWhitelist -replace '\.exe$',''
-    $unknownMicApps = @($privacy.AppsWithMicPermission | Where-Object {
-        $a = $_.ToLower()
-        $knownApps -notcontains $a -and ($a -notmatch '^microsoft\.|^windows\.')
-    })
-    if ($unknownMicApps.Count -gt 0) { $score += 15; $summaryParts += 'App sconosciuta con permesso microfono' }
-    $unknownCamApps = @($privacy.AppsWithWebcamPermission | Where-Object {
-        $a = $_.ToLower()
-        $knownApps -notcontains $a -and ($a -notmatch '^microsoft\.|^windows\.')
-    })
-    if ($unknownCamApps.Count -gt 0) { $score += 15; $summaryParts += 'App sconosciuta con permesso webcam' }
-    if ($spywareIndicators.Count -gt 0) {
-        $score += 25
-        $summaryParts += 'File o indicatori spyware audio rilevati'
-    }
-    $audiodgCritical = @($spywareIndicators | Where-Object { $_.Type -eq 'AudiodgExternalConnections' })
-    if ($audiodgCritical.Count -gt 0) { $score += 35 }
 
     $level = if ($score -ge 80) { 'CRITICO' } elseif ($score -ge 50) { 'ALTO' } elseif ($score -ge 25) { 'MEDIO' } else { 'BASSO' }
-    $summary = if ($summaryParts.Count -gt 0) { ($summaryParts -join '; ') } else { 'Nessun indicatore di sorveglianza audio/video rilevato' }
+    $summary = if ($parts.Count -gt 0) { (($parts | Select-Object -Unique) -join '; ') }
+               elseif ($notOk.Count -gt 0) { "Nessun indicatore rilevato, ma $($notOk.Count) controllo/i non completato/i: esito parziale" }
+               else { 'Nessun indicatore di sorveglianza audio/video rilevato' }
 
-    $overall = [PSCustomObject]@{
+    return [PSCustomObject]@{
         Score           = $score
         Level           = $level
         CanListenAudio  = $canListen
         CanWatchScreen  = $canWatch
         CanRecordWebcam = $canRecordWebcam
         Summary         = $summary
+        Findings        = @($findings)
+    }
+}
+
+# --- Wrapper: costruisce SurveillanceCapabilities e OverallAudioVideoRisk ---
+function Get-DVSurveillanceCapabilities {
+    $ts = Get-Date -Format 'yyyy-MM-dd HH:mm:ss'
+
+    $cMic   = Invoke-DVCheck -Name 'Processi con librerie audio'      -FunctionName 'Get-MicrophoneAccess'
+    $cCam   = Invoke-DVCheck -Name 'Processi con librerie video'      -FunctionName 'Get-WebcamAccess'
+    $cHist  = Invoke-DVCheck -Name 'Cronologia microfono/webcam'      -FunctionName 'Get-MediaAccessHistory' -TimeoutMs 8000
+    $cVirt  = Invoke-DVCheck -Name 'Dispositivi audio virtuali'       -FunctionName 'Get-VirtualAudioDevices'
+    $cSpy   = Invoke-DVCheck -Name 'Indicatori spyware audio'         -FunctionName 'Get-AudioSpywareSigns' -TimeoutMs 15000
+    $cPriv  = Invoke-DVCheck -Name 'Permessi privacy Windows'         -FunctionName 'Get-PrivacyPermissions'
+    $checks = @($cMic, $cCam, $cHist, $cVirt, $cSpy, $cPriv)
+
+    $micAccess = @($cMic.Data)
+    $webcamData = @{ ActiveProcesses = @(); VirtualCamerasDetected = @() }
+    if ($cCam.Status -eq 'OK' -and $cCam.Data.Count -gt 0 -and $cCam.Data[0]) { $webcamData = $cCam.Data[0] }
+    $micHistory = @(); $webcamHistory = @()
+    if ($cHist.Status -eq 'OK' -and $cHist.Data.Count -gt 0 -and $cHist.Data[0]) {
+        $micHistory = @($cHist.Data[0].Microphone)
+        $webcamHistory = @($cHist.Data[0].Webcam)
+    }
+    $virtualAudio = @($cVirt.Data)
+    $spywareIndicators = @($cSpy.Data)
+    $privacy = @{ MicrophoneEnabled = $null; WebcamEnabled = $null; AppsWithMicPermission = @(); AppsWithWebcamPermission = @() }
+    if ($cPriv.Status -eq 'OK' -and $cPriv.Data.Count -gt 0 -and $cPriv.Data[0]) { $privacy = $cPriv.Data[0] }
+
+    $micInUse = @($micHistory | Where-Object { $_ -and $_.InUseNow })
+    $camInUse = @($webcamHistory | Where-Object { $_ -and $_.InUseNow })
+
+    $av = Measure-DVSurveillance -MicInUse $micInUse -CamInUse $camInUse `
+        -VirtualAudio $virtualAudio -VirtualCams @($webcamData.VirtualCamerasDetected) `
+        -SpywareIndicators $spywareIndicators `
+        -MicAppsWithPermission @($privacy.AppsWithMicPermission) `
+        -CamAppsWithPermission @($privacy.AppsWithWebcamPermission) -Checks $checks
+
+    $overall = [PSCustomObject]@{
+        Score           = $av.Score
+        Level           = $av.Level
+        CanListenAudio  = $av.CanListenAudio
+        CanWatchScreen  = $av.CanWatchScreen
+        CanRecordWebcam = $av.CanRecordWebcam
+        Summary         = $av.Summary
     }
 
-    # Findings per report (formato richiesto)
-    $survFindings = @()
-    foreach ($p in $suspMic) {
-        $survFindings += "[CRITICO] Microfono attivo: processo sconosciuto ($($p.ProcessName).exe)"
-    }
-    foreach ($p in $suspWebcam) {
-        $survFindings += "[CRITICO] Webcam attiva: processo sconosciuto ($($p.ProcessName).exe)"
-    }
-    if ($virtualAudio.Count -gt 0) {
-        $survFindings += "[ALTO] Virtual Audio Cable rilevato: possibile intercettazione audio"
-    }
-    if ($stereoMix) {
-        $survFindings += "[MEDIO] Stereo Mix abilitato: audio può essere registrato"
-    }
-    if ($spywareIndicators.Count -gt 0) {
-        foreach ($s in $spywareIndicators) {
-            if ($s.Type -eq 'AudiodgExternalConnections') {
-                $survFindings += "[CRITICO] audiodg.exe con connessioni esterne: possibile intercettazione"
-            } else {
-                $survFindings += "[CRITICO] File sospetto rilevato: $($s.Path)"
-            }
-        }
-    }
-    if ($webcamData.VirtualCamerasDetected -and $webcamData.VirtualCamerasDetected.Count -gt 0) {
-        $survFindings += "[MEDIO] Virtual camera rilevata: possibile registrazione video"
-    }
+    $recentMic = @($micHistory | ForEach-Object {
+        [PSCustomObject]@{ AppName = $_.AppName; LastUsed = $_.LastUsedStart; Duration = $_.Duration; InUseNow = $_.InUseNow }
+    })
 
     $microphoneBlock = [PSCustomObject]@{
-        CurrentlyInUse     = ($micAccess -and $micAccess.Count -gt 0)
-        ActiveProcesses   = $micAccess
-        PermissionEnabled = $privacy.MicrophoneEnabled
+        CurrentlyInUse     = ($micInUse.Count -gt 0)
+        ActiveProcesses    = $micInUse
+        ProcessesWithAudioLibraries = $micAccess
+        PermissionEnabled  = $privacy.MicrophoneEnabled
         AppsWithPermission = $privacy.AppsWithMicPermission
-        RecentAccess      = @($recentMic)
+        RecentAccess       = $recentMic
     }
-
     $webcamBlock = [PSCustomObject]@{
-        CurrentlyInUse     = ($webcamData.ActiveProcesses -and $webcamData.ActiveProcesses.Count -gt 0)
-        ActiveProcesses   = $webcamData.ActiveProcesses
-        PermissionEnabled = $privacy.WebcamEnabled
+        CurrentlyInUse     = ($camInUse.Count -gt 0)
+        ActiveProcesses    = $camInUse
+        ProcessesWithVideoLibraries = @($webcamData.ActiveProcesses)
+        PermissionEnabled  = $privacy.WebcamEnabled
         AppsWithPermission = $privacy.AppsWithWebcamPermission
         VirtualCamerasDetected = $webcamData.VirtualCamerasDetected
     }
 
     return [PSCustomObject]@{
-        Timestamp                 = $ts
-        Microphone                = $microphoneBlock
-        Webcam                    = $webcamBlock
-        VirtualAudioDevices       = $virtualAudio
-        AudioSpywareIndicators    = $spywareIndicators
-        OverallAudioVideoRisk     = $overall
-        SurveillanceFindings     = $survFindings
+        Timestamp              = $ts
+        Microphone             = $microphoneBlock
+        Webcam                 = $webcamBlock
+        VirtualAudioDevices    = $virtualAudio
+        AudioSpywareIndicators = $spywareIndicators
+        OverallAudioVideoRisk  = $overall
+        SurveillanceFindings   = @($av.Findings)
+        Checks                 = @($checks | ForEach-Object { [PSCustomObject]@{ Name = $_.Name; Status = $_.Status; Detail = $_.Detail; Ms = $_.Ms } })
     }
 }
 
 Export-ModuleMember -Function Get-MicrophoneAccess, Get-WebcamAccess, Get-MediaAccessHistory,
-    Get-VirtualAudioDevices, Get-AudioSpywareSigns, Get-PrivacyPermissions, Get-DVSurveillanceCapabilities
+    Get-VirtualAudioDevices, Get-AudioSpywareSigns, Get-PrivacyPermissions, Get-DVSurveillanceCapabilities,
+    Invoke-DVCheck, ConvertFrom-DVConsentKeyName, ConvertFrom-DVConsentEntry, Test-DVUserWritablePath,
+    Test-DVKnownMediaApp, Measure-DVSurveillance

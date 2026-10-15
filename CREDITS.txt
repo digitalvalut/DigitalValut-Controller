@@ -14,7 +14,7 @@ Crypto-Forensics & Blockchain Security Expert
 
 ORGANIZZAZIONE
 ──────────────
-DigitalValut Association
+Digital Valut APS
 Associazione no-profit - Sicurezza informatica e tutela dei lavoratori
 
 SCOPO DEL PROGETTO
@@ -36,6 +36,6 @@ Email: info@digitalvalut.com
 
 ════════════════════════════════════════════════════════════════════════════════
              DigitalValut Controller v4.0 - Open Source, gratuito per sempre
-             © 2024-2026 DigitalValut Association - www.digitalvalut.it
+             © 2024-2026 Digital Valut APS - www.digitalvalut.it
              Sviluppatore: Dott. Giuseppe Falsone e il team DigitalValut
 ════════════════════════════════════════════════════════════════════════════════
