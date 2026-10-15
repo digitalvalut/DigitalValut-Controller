@@ -2,7 +2,7 @@
 
 **Leggere integralmente prima di scaricare, eseguire o utilizzare DigitalValut Controller (di seguito "il Software").**
 
-Scaricando, installando, eseguendo o utilizzando il Software, l'utente dichiara di aver letto, compreso e accettato integralmente il presente documento e i termini della Licenza Apache, Versione 2.0 (file `LICENSE`), con particolare riferimento alle **Sezioni 15, 16 e 17** ivi contenute.
+Scaricando, installando, eseguendo o utilizzando il Software, l'utente dichiara di aver letto, compreso e accettato integralmente il presente documento e i termini della Licenza Apache, Versione 2.0 (file `LICENSE`), con particolare riferimento alle **Sezioni 7 (esclusione di garanzia), 8 (limitazione di responsabilità) e 9** ivi contenute.
 
 Se non si accettano tali condizioni, **non utilizzare il Software**.
 
@@ -177,10 +177,35 @@ Il presente documento è regolato dalla **legge italiana**. Per le controversie 
 
 L'eventuale invalidità o inefficacia di una singola clausola non pregiudica la validità delle restanti disposizioni, che continueranno ad applicarsi nella massima misura consentita dalla legge.
 
+
+## 11. ENTI, PUBBLICHE AMMINISTRAZIONI E TITOLARI DEL TRATTAMENTO
+
+Chi usa il Software all'interno di un ente pubblico o privato lo fa **sotto la responsabilità dell'ente e dei propri responsabili**. Digital Valut APS non è fornitore, appaltatore, consulente né responsabile del trattamento dell'ente, non assume obblighi di conformità (GDPR, L. 300/1970, norme sulla sicurezza informatica) e non garantisce che l'uso del Software sia sufficiente a rispettarli. Le valutazioni su informative, basi giuridiche, accordi sindacali, autorizzazioni, nomine e misure di sicurezza spettano esclusivamente all'ente, al suo DPO e ai suoi consulenti. La guida `docs/PUBBLICA_AMMINISTRAZIONE.md` è un'indicazione generale e non un parere.
+
+## 12. DATI PERSONALI: IL SOFTWARE NON LI RACCOGLIE
+
+Il Software funziona in locale e **non trasmette dati** a Digital Valut APS né ad altri; non contiene telemetria. Di conseguenza Digital Valut APS **non riceve, non conserva e non tratta** i dati contenuti nei report, e non agisce né come titolare né come responsabile del trattamento rispetto all'uso che ne fa l'utente. L'utente è titolare di ciò che genera, conserva, invia o pubblica (inclusi report, pacchetti prova e lettere) e risponde della loro riservatezza. Se un funzionamento opzionale prevede il contatto con servizi esterni (ad esempio una marca temporale RFC 3161 o un assistente locale), ciò avviene solo per scelta dell'utente e secondo i termini di quei servizi.
+
+## 13. SOFTWARE, SERVIZI E CONTENUTI DI TERZI
+
+Il Software legge e descrive programmi e servizi di terzi (ad esempio UltraVNC, Windows, antivirus) e può far riferimento a servizi di terzi (autorità di marcatura temporale, assistenti locali). Digital Valut APS **non è responsabile** del funzionamento, della sicurezza, della disponibilità, dei termini d'uso o dell'accuratezza della documentazione di tali terzi; le descrizioni delle impostazioni riportano la documentazione del produttore alla data di redazione e possono essere cambiate o inesatte. Marchi e nomi citati appartengono ai rispettivi titolari e sono usati solo per identificare i programmi analizzati.
+
+## 14. NOME E MARCHIO
+
+La Licenza Apache 2.0 non concede diritti sul nome, sul marchio e sui loghi di Digital Valut APS (sezione 6 della Licenza). Le versioni modificate non possono presentarsi come prodotto o come posizione ufficiale di Digital Valut APS.
+
+## 15. SICUREZZA, AGGIORNAMENTI E MODIFICHE DI QUESTO DOCUMENTO
+
+Il Software può contenere errori o vulnerabilità. Per le segnalazioni di sicurezza vedi `SECURITY.md`. Prima di eseguirlo su sistemi importanti, l'utente è invitato a verificare l'integrità del download (`SHA256SUMS.txt`), a leggere il codice sorgente e a disporre di copie di sicurezza. Digital Valut APS può modificare questo documento in qualsiasi momento; fa fede la versione allegata alla copia del Software che si utilizza.
+
+## 16. RAPPORTO CON LA LICENZA E INTERPRETAZIONE
+
+Il presente documento integra la Licenza Apache 2.0 e non la restringe. In caso di contrasto prevale la Licenza per quanto riguarda i diritti di uso, copia, modifica e ridistribuzione. Le esclusioni di responsabilità valgono per l'autore, i collaboratori, i volontari, i soci e gli amministratori di Digital Valut APS, **nella massima misura consentita dalla legge**; restano ferme le riserve imperative indicate alla sezione 6 (dolo, colpa grave, danni alla persona, diritti inderogabili). Le versioni del Software fino alla 5.3.1, distribuite sotto GPLv3, restano regolate da quella licenza per chi le ha ricevute.
+
 ---
 
 **DigitalValut** — [www.digitalvalut.it](https://www.digitalvalut.it)
 Sviluppatore: Dott. Giuseppe Falsone e il team DigitalValut
 © 2024–2026 Digital Valut APS — Licenza Apache 2.0
 
-*Documento aggiornato al 6 agosto 2026.*
+*Documento aggiornato al 15 ottobre 2026.*

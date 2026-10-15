@@ -1,4 +1,4 @@
-# DigitalValut Controller v5.4.0
+# DigitalValut Controller v5.4.1
 
 [![CI](https://github.com/digitalvalut/DigitalValut-Controller/actions/workflows/ci.yml/badge.svg)](https://github.com/digitalvalut/DigitalValut-Controller/actions/workflows/ci.yml)
 [![Licenza: Apache 2.0](https://img.shields.io/badge/Licenza-Apache%202.0-blue.svg)](LICENSE)

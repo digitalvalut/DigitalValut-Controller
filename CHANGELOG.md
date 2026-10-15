@@ -5,6 +5,14 @@ Tutte le modifiche rilevanti a questo progetto sono documentate in questo file.
 Il formato si ispira a [Keep a Changelog](https://keepachangelog.com/it/1.1.0/)
 e il progetto adotta il [Versionamento Semantico](https://semver.org/lang/it/).
 
+## [5.4.1] — 2026-10-15
+
+### Aggiunto
+
+- `DISCLAIMER.md`: sezioni 11-16 (enti e PA, dati personali non raccolti, software e servizi di
+  terzi, nome e marchio, sicurezza e aggiornamenti, rapporto con la Licenza). Corretto il
+  rinvio alle sezioni della licenza (ora Apache 2.0, sezioni 7-9).
+
 ## [5.4.0] — 2026-10-15
 
 ### Cambiato

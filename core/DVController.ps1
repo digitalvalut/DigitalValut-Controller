@@ -22,7 +22,7 @@
     See the LICENSE and NOTICE files for details.
 
 .VERSION
-    5.4.0
+    5.4.1
 
 .LINK
     https://www.digitalvalut.it
@@ -81,7 +81,7 @@ $ErrorActionPreference = "Continue"
 
 # === CONFIGURAZIONE GLOBALE ===
 $Global:DVConfig = @{
-    Version         = "5.4.0"
+    Version         = "5.4.1"
     Author          = "DigitalValut"
     AuthorTitle     = "Sviluppatore: Dott. Giuseppe Falsone e il team DigitalValut"
     Organization    = "Digital Valut APS"
